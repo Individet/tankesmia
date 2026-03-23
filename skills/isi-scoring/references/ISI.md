@@ -138,7 +138,7 @@ _Forankring: Hayek (spontan orden i sivilsamfunnet), Lane/Paterson (sivilsamfunn
 | 5.1 | Religionsfrihet                       | Støtter aktøren statlig regulering av religiøs praksis, tvungen sekularisme eller privilegering av én religiøs tradisjon? |
 | 5.2 | Politisk foreningsfrihet              | Støtter aktøren forbud mot eller regulering av politiske partier eller bevegelser basert på ideologisk innhold?           |
 | 5.3 | Sivilsamfunn vs. statlig substitusjon | Fremmer aktøren statlige løsninger der frivillig sivilsamfunn historisk har fylt behovet?                                 |
-| 5.4 | Forsamlingsfrihet                     | Har aktøren støttet tiltak som begrenser retten til å møtes, demonstrere eller samles?                                    |
+| 5.4 | Forsamlingsfrihet                     | Har aktøren støttet tiltak som begrenser retten til å møtes, demonstrere eller samles? Støtter aktøren statlig overvåkning, fotografering eller registrering av deltakere i lovlige forsamlinger? Verner aktøren om retten til å ikke bli identifisert mens man er forsamlet, og retten til at lovlig deltakelse i en forsamling ikke kan brukes mot en i ettertid av statlige aktører? |
 
 ---
 
