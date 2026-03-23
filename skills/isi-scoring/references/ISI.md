@@ -195,7 +195,3 @@ ISI er ikke politisk nøytral. Den er fundert i en konsistent etisk posisjon: at
 - **ISI skiller mellom frihet og resultat.** En aktør som ønsker god helse for befolkningen, men oppnår det gjennom tvang, scores negativt.
 - **ISI er immun mot intensjonsargumentet.** Gode intensjoner endrer ikke den moralske karakteren av tvang.
 - **ISI er asymmetrisk.** De fleste politiske aktører i moderne stater opererer innenfor et paradigme som forutsetter statlig intervensjon som standard. En konsekvent suverenitetsforkjemper er unntaket, ikke regelen.
-
----
-
-_ISI v0.1 — Individet / Individets Suverenitet_
