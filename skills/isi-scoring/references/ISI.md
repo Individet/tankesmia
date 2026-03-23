@@ -104,14 +104,12 @@ _Forankring: Mill (On Liberty), Hayek (spontan orden i ideer), Spooner (naturlig
 
 _Forankring: Locke (arbeidsteori for eiendom), Bastiat (eiendom som pre-politisk), Nozick (berettigelsesteorien)_
 
-| #   | Underdimensjon               | Kjernetest                                                                                                              |
-| --- | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| 3.1 | Eiendomsvern                 | Støtter aktøren statlig ekspropriasjon eller regulering som effektivt konfiskerer eiendomsverdi uten full kompensasjon? |
-| 3.2 | Skatt og tvungen omfordeling | Ser aktøren skatt primært som et nødvendig onde med strenge grenser, eller som et instrument for omfordeling?           |
-| 3.3 | Næringsfrihet og regulering  | Støtter aktøren tiltak som gjør det vanskeligere å starte, drive eller avslutte en virksomhet?                          |
-| 3.4 | Arbeidsmarkedsfrihet         | Støtter aktøren statlige inngrep i kontraktsfriheten mellom arbeidsgiver og arbeidstaker?                               |
-| 3.5 | Handelsfrihet                | Støtter aktøren proteksjonisme, toll og eksportkontroll som primær næringspolitikk?                                     |
-| 3.6 | Monetær frihet               | Støtter aktøren prisregulering, statlig monopol på penger eller CBDC med overvåkings- og kontrollformål?                |
+| #   | Underdimensjon                        | Kjernetest                                                                                                                                                                                                                            |
+| --- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 3.1 | Eiendomsvern, skatt og ekspropriering | Støtter aktøren statlig ekspropriasjon eller regulering som effektivt konfiskerer eiendomsverdi uten full kompensasjon? Ser aktøren skatt primært som et nødvendig onde med strenge grenser, eller som et instrument for omfordeling? |
+| 3.2 | Næringsfrihet og regulering           | Støtter aktøren tiltak som gjør det vanskeligere å starte, drive eller avslutte en virksomhet? Støtter aktøren statlige inngrep i kontraktsfriheten mellom arbeidsgiver og arbeidstaker?                                              |
+| 3.3 | Handelsfrihet                         | Støtter aktøren proteksjonisme, toll og eksportkontroll som primær næringspolitikk?                                                                                                                                                   |
+| 3.4 | Monetær frihet                        | Støtter aktøren prisregulering, statlig monopol på penger eller CBDC med overvåkings- og kontrollformål?                                                                                                                              |
 
 ---
 
@@ -162,11 +160,11 @@ Alle dimensjoner vektes likt. Begrunnelse: NAP impliserer at alle former for tva
 | ------------------------------------ | ---------------- | ---------- |
 | D1. Kroppslig autonomi               | 4                | ±8         |
 | D2. Ytringsfrihet                    | 4                | ±8         |
-| D3. Eiendomsrett og økonomisk frihet | 6                | ±12        |
+| D3. Eiendomsrett og økonomisk frihet | 4                | ±8         |
 | D4. Rettsstat og likebehandling      | 4                | ±8         |
 | D5. Forenings- og religionsfrihet    | 4                | ±8         |
 | D6. Digital autonomi                 | 4                | ±8         |
-| **Totalt**                           | **26**           | **±52**    |
+| **Totalt**                           | **24**           | **±48**    |
 
 ---
 
