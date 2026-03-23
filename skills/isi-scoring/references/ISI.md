@@ -78,12 +78,12 @@ Hver underdimensjon scores på en **skala fra −2 til +2**:
 
 _Forankring: Locke (selveierskapet), Rothbard (selveierskapsaksiomet), Mill (skadeprinsippet)_
 
-| #   | Underdimensjon                   | Kjernetest                                                                                                                                                                    |
-| --- | -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1.1 | Medisinsk selvbestemmelse        | Støtter aktøren individets rett til egne medisinske beslutninger uten statlig tvang? Har aktøren støttet obligatoriske medisinske tiltak?                                     |
-| 1.2 | Livsstilsautonomi                | Fremmer aktøren individets rett til å velge livsstil (kosthold, rusmidler til eget bruk, seksualitet, religiøs praksis) uten statlig innblanding der ingen tredjepart skades? |
-| 1.3 | Bevegelsesfrihet                 | Støtter aktøren fri bevegelse — inkl. retten til å forlate et land, bosette seg og arbeide uten unødige statlige restriksjoner?                                               |
-| 1.4 | Selvbestemmelse ved livets slutt | Anerkjenner aktøren individets rett til å bestemme over eget livs avslutning?                                                                                                 |
+| #   | Underdimensjon                   | Kjernetest                                                                                                                                                                                |
+| --- | -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.1 | Medisinsk selvbestemmelse        | Støtter aktøren individets rett til egne medisinske beslutninger uten statlig tvang? Har aktøren støttet obligatoriske medisinske tiltak?                                                 |
+| 1.2 | Sosial frihet/Livsstilsautonomi  | Fremmer aktøren individets rett til å velge livsstil (familieliv, kosthold, rusmidler til eget bruk, seksualitet, religiøs praksis) uten statlig innblanding der ingen tredjepart skades? |
+| 1.3 | Bevegelsesfrihet                 | Støtter aktøren fri bevegelse — inkl. retten til å forlate et land, bosette seg og arbeide uten unødige statlige restriksjoner?                                                           |
+| 1.4 | Selvbestemmelse ved livets slutt | Anerkjenner aktøren individets rett til å bestemme over eget livs avslutning?                                                                                                             |
 
 ---
 
