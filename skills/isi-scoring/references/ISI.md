@@ -75,14 +75,6 @@ Hver underdimensjon scores på en **skala fra −2 til +2**:
 
 ---
 
-### Om `templateVersion`
-
-`templateVersion` er den eneste versjonsmarkøren i rapportmalen. Den beskriver hvilken versjon av ISI-malen rapporten følger, inkludert frontmatter-felt, seksjonsstruktur og andre krav til outputformat.
-
-Øk `templateVersion` når malen endres, for eksempel når et felt legges til eller fjernes, når frontmatter endres, eller når rapportstrukturen justeres på en måte som nye rapporter må følge.
-
----
-
 ### Dimensjon 1: Kroppslig autonomi og selvbestemmelse (D1)
 
 _Forankring: Locke (selveierskapet), Rothbard (selveierskapsaksiomet), Mill (skadeprinsippet)_
