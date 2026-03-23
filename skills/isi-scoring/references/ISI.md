@@ -72,7 +72,6 @@ Hver underdimensjon scores på en **skala fra −2 til +2**:
 
 **Totalskår:** Summer av alle underdimensjoner.
 
-
 ---
 
 ### Dimensjon 1: Kroppslig autonomi og selvbestemmelse (D1)
@@ -133,12 +132,12 @@ _Forankring: Cicero (lex naturalis), Hayek (upersonlige regler), Bastiat (loven 
 
 _Forankring: Hayek (spontan orden i sivilsamfunnet), Lane/Paterson (sivilsamfunn som alternativ til staten)_
 
-| #   | Underdimensjon                        | Kjernetest                                                                                                                |
-| --- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| 5.1 | Religionsfrihet                       | Støtter aktøren statlig regulering av religiøs praksis, tvungen sekularisme eller privilegering av én religiøs tradisjon? |
-| 5.2 | Politisk foreningsfrihet              | Støtter aktøren forbud mot eller regulering av politiske partier eller bevegelser basert på ideologisk innhold?           |
-| 5.3 | Sivilsamfunn vs. statlig substitusjon | Fremmer aktøren statlige løsninger der frivillig sivilsamfunn historisk har fylt behovet?                                 |
-| 5.4 | Forsamlingsfrihet                     | Har aktøren støttet tiltak som begrenser retten til å møtes, demonstrere eller samles?                                    |
+| #   | Underdimensjon                        | Kjernetest                                                                                                                                                                                                                                                 |
+| --- | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 5.1 | Religionsfrihet                       | Støtter aktøren statlig regulering av religiøs praksis, tvungen sekularisme eller privilegering av én religiøs tradisjon?                                                                                                                                  |
+| 5.2 | Politisk foreningsfrihet              | Støtter aktøren forbud mot eller regulering av politiske partier eller bevegelser basert på ideologisk innhold?                                                                                                                                            |
+| 5.3 | Sivilsamfunn vs. statlig substitusjon | Fremmer aktøren statlige løsninger der frivillig sivilsamfunn historisk har fylt behovet?                                                                                                                                                                  |
+| 5.4 | Forsamlingsfrihet                     | Har aktøren støttet tiltak som begrenser retten til å møtes, demonstrere eller samles? Har aktøren ytret støtte til overvåking, identifisering av eller statlig trakkasering av lovlydige individer på bakgrunn av at de møtes, demonstrerer eller samles? |
 
 ---
 
