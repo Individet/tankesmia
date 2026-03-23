@@ -19,7 +19,7 @@ tags: []
 scores:
   d1: { total: 0, d1_1: 0, d1_2: 0, d1_3: 0, d1_4: 0 }
   d2: { total: 0, d2_1: 0, d2_2: 0, d2_3: 0, d2_4: 0 }
-  d3: { total: 0, d3_1: 0, d3_2: 0, d3_3: 0, d3_4: 0, d3_5: 0, d3_6: 0 }
+  d3: { total: 0, d3_1: 0, d3_2: 0, d3_3: 0, d3_4: 0 }
   d4: { total: 0, d4_1: 0, d4_2: 0, d4_3: 0, d4_4: 0 }
   d5: { total: 0, d5_1: 0, d5_2: 0, d5_3: 0, d5_4: 0 }
   d6: { total: 0, d6_1: 0, d6_2: 0, d6_3: 0, d6_4: 0 }
@@ -43,7 +43,7 @@ scores:
 
 ### Styrker og svakheter
 
-#### Fremmer individuell suverenite
+#### Fremmer individuell suverenitet
 
 - **[Dimensjon / underdimensjon]**: Én linje begrunnelse
 
@@ -65,7 +65,7 @@ scores:
 
 [Vurdering med kildehenvisning.]
 
-### 1.2 Livsstilsautonomi
+### 1.2 Sosial frihet/Livsstilsautonomi
 
 [Vurdering med kildehenvisning.]
 
@@ -105,27 +105,19 @@ scores:
 
 [Overordnet mønster.]
 
-### 3.1 Eiendomsvern
+### 3.1 Eiendomsvern, skatt og ekspropriering
 
 [Vurdering med kildehenvisning.]
 
-### 3.2 Skatt og tvungen omfordeling
+### 3.2 Næringsfrihet og regulering
 
 [Vurdering med kildehenvisning.]
 
-### 3.3 Næringsfrihet og regulering
+### 3.3 Handelsfrihet
 
 [Vurdering med kildehenvisning.]
 
-### 3.4 Arbeidsmarkedsfrihet
-
-[Vurdering med kildehenvisning.]
-
-### 3.5 Handelsfrihet
-
-[Vurdering med kildehenvisning.]
-
-### 3.6 Monetær frihet
+### 3.4 Monetær frihet
 
 [Vurdering med kildehenvisning.]
 
