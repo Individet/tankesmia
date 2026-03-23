@@ -78,12 +78,21 @@ Hver underdimensjon scores på en **skala fra −2 til +2**:
 
 _Forankring: Locke (selveierskapet), Rothbard (selveierskapsaksiomet), Mill (skadeprinsippet)_
 
-| #   | Underdimensjon                   | Kjernetest                                                                                                                                                                                |
-| --- | -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1.1 | Medisinsk selvbestemmelse        | Støtter aktøren individets rett til egne medisinske beslutninger uten statlig tvang? Har aktøren støttet obligatoriske medisinske tiltak?                                                 |
-| 1.2 | Sosial frihet/Livsstilsautonomi  | Fremmer aktøren individets rett til å velge livsstil (familieliv, kosthold, rusmidler til eget bruk, seksualitet, religiøs praksis) uten statlig innblanding der ingen tredjepart skades? |
-| 1.3 | Bevegelsesfrihet                 | Støtter aktøren fri bevegelse — inkl. retten til å forlate et land, bosette seg og arbeide uten unødige statlige restriksjoner?                                                           |
-| 1.4 | Selvbestemmelse ved livets slutt | Anerkjenner aktøren individets rett til å bestemme over eget livs avslutning?                                                                                                             |
+#### 1.1 Medisinsk selvbestemmelse
+
+Støtter aktøren individets rett til egne medisinske beslutninger uten statlig tvang? Har aktøren støttet obligatoriske medisinske tiltak?
+
+#### 1.2 Sosial frihet/Livsstilsautonomi
+
+Fremmer aktøren individets rett til å velge livsstil (familieliv, kosthold, rusmidler til eget bruk, seksualitet, religiøs praksis) uten statlig innblanding der ingen tredjepart skades?
+
+#### 1.3 Bevegelsesfrihet
+
+Støtter aktøren fri bevegelse — inkl. retten til å forlate et land, bosette seg og arbeide uten unødige statlige restriksjoner?
+
+#### 1.4 Selvbestemmelse ved livets slutt
+
+Anerkjenner aktøren individets rett til å bestemme over eget livs avslutning?
 
 ---
 
@@ -91,12 +100,21 @@ _Forankring: Locke (selveierskapet), Rothbard (selveierskapsaksiomet), Mill (ska
 
 _Forankring: Mill (On Liberty), Hayek (spontan orden i ideer), Spooner (naturlig rett til ytring)_
 
-| #   | Underdimensjon                            | Kjernetest                                                                                                                                              |
-| --- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2.1 | Ytringsfrihet — innhold                   | Har aktøren støttet lover eller regulering som begrenser lovlig ytring basert på innhold (hatytringslover, blasfemilover, "desinformasjon"-lovgivning)? |
-| 2.2 | Pressefrihet og redaksjonell uavhengighet | Støtter aktøren statlig finansiering eller regulering av medier som skaper avhengighet? Har aktøren fremmet inngrep i redaksjonelle beslutninger?       |
-| 2.3 | Akademisk og vitenskapelig frihet         | Har aktøren støttet posisjoner som underlegger akademisk forskning politisk kontroll?                                                                   |
-| 2.4 | Ytringsfrihet på digitale plattformer     | Støtter aktøren statlig regulering av private plattformers innholdsmoderering? Har aktøren oppfordret til avplattforming av lovlige ytringer?           |
+#### 2.1 Ytringsfrihet — innhold
+
+Har aktøren støttet lover eller regulering som begrenser lovlig ytring basert på innhold (hatytringslover, blasfemilover, "desinformasjon"-lovgivning)?
+
+#### 2.2 Pressefrihet og redaksjonell uavhengighet
+
+Støtter aktøren statlig finansiering eller regulering av medier som skaper avhengighet? Har aktøren fremmet inngrep i redaksjonelle beslutninger?
+
+#### 2.3 Akademisk og vitenskapelig frihet
+
+Har aktøren støttet posisjoner som underlegger akademisk forskning politisk kontroll?
+
+#### 2.4 Ytringsfrihet på digitale plattformer
+
+Støtter aktøren statlig regulering av private plattformers innholdsmoderering? Har aktøren oppfordret til avplattforming av lovlige ytringer?
 
 ---
 
@@ -104,12 +122,21 @@ _Forankring: Mill (On Liberty), Hayek (spontan orden i ideer), Spooner (naturlig
 
 _Forankring: Locke (arbeidsteori for eiendom), Bastiat (eiendom som pre-politisk), Nozick (berettigelsesteorien)_
 
-| #   | Underdimensjon                        | Kjernetest                                                                                                                                                                                                                            |
-| --- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 3.1 | Eiendomsvern, skatt og ekspropriering | Støtter aktøren statlig ekspropriasjon eller regulering som effektivt konfiskerer eiendomsverdi uten full kompensasjon? Ser aktøren skatt primært som et nødvendig onde med strenge grenser, eller som et instrument for omfordeling? |
-| 3.2 | Næringsfrihet og regulering           | Støtter aktøren tiltak som gjør det vanskeligere å starte, drive eller avslutte en virksomhet? Støtter aktøren statlige inngrep i kontraktsfriheten mellom arbeidsgiver og arbeidstaker?                                              |
-| 3.3 | Handelsfrihet                         | Støtter aktøren proteksjonisme, toll og eksportkontroll som primær næringspolitikk?                                                                                                                                                   |
-| 3.4 | Monetær frihet                        | Støtter aktøren prisregulering, statlig monopol på penger eller CBDC med overvåkings- og kontrollformål?                                                                                                                              |
+#### 3.1 Eiendomsvern, skatt og ekspropriering
+
+Støtter aktøren statlig ekspropriasjon eller regulering som effektivt konfiskerer eiendomsverdi uten full kompensasjon? Ser aktøren skatt primært som et nødvendig onde med strenge grenser, eller som et instrument for omfordeling?
+
+#### 3.2 Næringsfrihet og regulering
+
+Støtter aktøren tiltak som gjør det vanskeligere å starte, drive eller avslutte en virksomhet? Støtter aktøren statlige inngrep i kontraktsfriheten mellom arbeidsgiver og arbeidstaker?
+
+#### 3.3 Handelsfrihet
+
+Støtter aktøren proteksjonisme, toll og eksportkontroll som primær næringspolitikk?
+
+#### 3.4 Monetær frihet
+
+Støtter aktøren prisregulering, statlig monopol på penger eller CBDC med overvåkings- og kontrollformål?
 
 ---
 
@@ -117,12 +144,21 @@ _Forankring: Locke (arbeidsteori for eiendom), Bastiat (eiendom som pre-politisk
 
 _Forankring: Cicero (lex naturalis), Hayek (upersonlige regler), Bastiat (loven som vern, ikke plyndring)_
 
-| #   | Underdimensjon                       | Kjernetest                                                                                                                                                      |
-| --- | ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 4.1 | Lik anvendelse av loven              | Støtter aktøren særbehandling (positiv diskriminering, kvotering, identitetsbaserte unntak) som bryter med likebehandlingsprinsippet?                           |
-| 4.2 | Rettslig uavhengighet                | Har aktøren forsøkt å påvirke domstolsavgjørelser eller politisere juridiske prosesser?                                                                         |
-| 4.3 | Rettssikkerhet og uskyldspresumpsjon | Støtter aktøren administrative sanksjoner eller andre tiltak som omgår rettsprosessen og reverserer bevisbyrden?                                                |
-| 4.4 | Begrenset statsmakt                  | Støtter aktøren konstitusjonelle begrensninger på statsmakten — eller søker aktøren fullmaktslover, nødrettsbestemmelser og delegering av lovgivningsmyndighet? |
+#### 4.1 Lik anvendelse av loven
+
+Støtter aktøren særbehandling (positiv diskriminering, kvotering, identitetsbaserte unntak) som bryter med likebehandlingsprinsippet?
+
+#### 4.2 Rettslig uavhengighet
+
+Har aktøren forsøkt å påvirke domstolsavgjørelser eller politisere juridiske prosesser?
+
+#### 4.3 Rettssikkerhet og uskyldspresumpsjon
+
+Støtter aktøren administrative sanksjoner eller andre tiltak som omgår rettsprosessen og reverserer bevisbyrden?
+
+#### 4.4 Begrenset statsmakt
+
+Støtter aktøren konstitusjonelle begrensninger på statsmakten — eller søker aktøren fullmaktslover, nødrettsbestemmelser og delegering av lovgivningsmyndighet?
 
 ---
 
@@ -130,12 +166,21 @@ _Forankring: Cicero (lex naturalis), Hayek (upersonlige regler), Bastiat (loven 
 
 _Forankring: Hayek (spontan orden i sivilsamfunnet), Lane/Paterson (sivilsamfunn som alternativ til staten)_
 
-| #   | Underdimensjon                        | Kjernetest                                                                                                                                                                                                                                                 |
-| --- | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 5.1 | Religionsfrihet                       | Støtter aktøren statlig regulering av religiøs praksis, tvungen sekularisme eller privilegering av én religiøs tradisjon?                                                                                                                                  |
-| 5.2 | Politisk foreningsfrihet              | Støtter aktøren forbud mot eller regulering av politiske partier eller bevegelser basert på ideologisk innhold?                                                                                                                                            |
-| 5.3 | Sivilsamfunn vs. statlig substitusjon | Fremmer aktøren statlige løsninger der frivillig sivilsamfunn historisk har fylt behovet?                                                                                                                                                                  |
-| 5.4 | Forsamlingsfrihet                     | Har aktøren støttet tiltak som begrenser retten til å møtes, demonstrere eller samles? Har aktøren ytret støtte til overvåking, identifisering av eller statlig trakkasering av lovlydige individer på bakgrunn av at de møtes, demonstrerer eller samles? |
+#### 5.1 Religionsfrihet
+
+Støtter aktøren statlig regulering av religiøs praksis, tvungen sekularisme eller privilegering av én religiøs tradisjon?
+
+#### 5.2 Politisk foreningsfrihet
+
+Støtter aktøren forbud mot eller regulering av politiske partier eller bevegelser basert på ideologisk innhold?
+
+#### 5.3 Sivilsamfunn vs. statlig substitusjon
+
+Fremmer aktøren statlige løsninger der frivillig sivilsamfunn historisk har fylt behovet?
+
+#### 5.4 Forsamlingsfrihet
+
+Har aktøren støttet tiltak som begrenser retten til å møtes, demonstrere eller samles? Har aktøren ytret støtte til overvåking, identifisering av eller statlig trakkasering av lovlydige individer på bakgrunn av at de møtes, demonstrerer eller samles?
 
 ---
 
@@ -143,12 +188,21 @@ _Forankring: Hayek (spontan orden i sivilsamfunnet), Lane/Paterson (sivilsamfunn
 
 _Forankring: Selveierskapet utvidet til digitalt liv (Locke), Hayek (informasjonsfrihet som forutsetning for spontan orden)_
 
-| #   | Underdimensjon                | Kjernetest                                                                                                                                     |
-| --- | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| 6.1 | Overvåkning og personvern     | Har aktøren støttet masseovervåkning, datalagringspåbud eller statens tilgang til privat kommunikasjon uten domstolskjennelse?                 |
-| 6.2 | Digital identitet og kontroll | Støtter aktøren obligatoriske digitale ID-systemer, CBDC med programmerbar bruk, eller sosiale kredittmekanismer?                              |
-| 6.3 | Internettfrihet og kryptering | Har aktøren støttet tiltak som begrenser kryptering, bakdører i kommunikasjonssystemer, eller statlig kontroll over internettinfrastruktur?    |
-| 6.4 | Eierskap til egne data        | Støtter aktøren individets rett til å eie og kontrollere egne data — eller fremmer aktøren statlig/korporativ datahøsting uten reelt samtykke? |
+#### 6.1 Overvåkning og personvern
+
+Har aktøren støttet masseovervåkning, datalagringspåbud eller statens tilgang til privat kommunikasjon uten domstolskjennelse?
+
+#### 6.2 Digital identitet og kontroll
+
+Støtter aktøren obligatoriske digitale ID-systemer, CBDC med programmerbar bruk, eller sosiale kredittmekanismer?
+
+#### 6.3 Internettfrihet og kryptering
+
+Har aktøren støttet tiltak som begrenser kryptering, bakdører i kommunikasjonssystemer, eller statlig kontroll over internettinfrastruktur?
+
+#### 6.4 Eierskap til egne data
+
+Støtter aktøren individets rett til å eie og kontrollere egne data — eller fremmer aktøren statlig/korporativ datahøsting uten reelt samtykke?
 
 ---
 

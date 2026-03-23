@@ -43,13 +43,13 @@ scores:
 
 ### Styrker og svakheter
 
-**Fremmer individuell suverenitet:**
+#### Fremmer individuell suverenite
 
-- [Dimensjon / underdimensjon + én linje begrunnelse]
+- **[Dimensjon / underdimensjon]**: Én linje begrunnelse
 
-**Hemmer individuell suverenitet:**
+#### Hemmer individuell suverenitet
 
-- [Dimensjon / underdimensjon + én linje begrunnelse]
+- **[Dimensjon / underdimensjon]**: Én linje begrunnelse
 
 **Interne inkonsistenser:**
 
