@@ -72,21 +72,6 @@ Hver underdimensjon scores på en **skala fra −2 til +2**:
 
 **Totalskår:** Summer av alle underdimensjoner.
 
----
-
-### Klassifisering (0-100)
-
-`isiClass` settes automatisk ut fra totalskåren på 0-100-skalaen:
-
-| ISI-skår | Klasse                           |
-| -------- | -------------------------------- |
-| 80-100   | **Sterkt suverenitetsfremmende** |
-| 60-79    | **Suverenitetsfremmende**        |
-| 40-59    | **Blandet profil**               |
-| 20-39    | **Suverenitetshemmende**         |
-| 0-19     | **Sterkt suverenitetshemmende**  |
-
-Bruk disse fem klassene konsekvent. Ikke innfør egne etiketter som "selektiv", "moderat" eller "ambivalent" i `isiClass`; slike nyanser beskrives i analysedelen.
 
 ---
 
