@@ -1,20 +1,20 @@
 ---
-created: "2026-01-01T00:00:00Z"
-lastUpdated: "2026-01-01T00:00:00Z"
-templateVersion: "0.1.2"
-author: "claude-sonnet-4-5"
-actorId: ""
-actorName: ""
-actorSlug: ""
-actorType: ""
-actorCountry: "NO"
-actorAffiliation: ""
-analysisScope: ""
+created: '2026-01-01T00:00:00Z'
+lastUpdated: '2026-01-01T00:00:00Z'
+templateVersion: '0.2.0'
+author: 'claude-sonnet-4-5'
+actorId: ''
+actorName: ''
+actorSlug: ''
+actorType: ''
+actorCountry: 'NO'
+actorAffiliation: ''
+analysisScope: ''
 isiScore: 0
-primarySources: []
-secondarySources: []
-confidenceLevel: ""
-dataGaps: ""
+primarySources: [{ title, url }, ...]
+secondarySources: [{ title, url }, ...]
+confidenceLevel: ''
+dataGaps: ''
 tags: []
 scores:
   d1: { total: 0, d1_1: 0, d1_2: 0, d1_3: 0, d1_4: 0 }
@@ -27,17 +27,19 @@ scores:
 
 # [Aktørnavn]
 
-> [Én setning — aktørens kjerneprofil og det viktigste funnet.]
+> [Én til to setninger — aktørens kjerneprofil og det viktigste funnet.]
 
 **Analysert periode:** [periode]  
 **Aktørtype:** [type]  
 **Tilhørighet:** [parti/org]
 
+En liten paragraf om aktøren, biografi/historie/nåværende stilling. Gjerne belyst fra et individualistisk perspektiv.
+
 ---
 
 ## Oversikt
 
-### Skårtabell
+### Verditabell
 
 <!-- DENNE SETTES INN PROGRAMMATISK VED HJELP AV METADATA I FRONTMATTER. IKKE FYLL UT DETTE AVSNITTET! -->
 
@@ -206,7 +208,3 @@ scores:
 ### Nøkkelrisiko
 
 [Hvilke konkrete posisjoner utgjør størst risiko for individuell suverenitet?]
-
----
-
-_Generert av [author] · Mal v[templateVersion] · [created]_
