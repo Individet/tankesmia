@@ -1,28 +1,28 @@
 ---
-created: '2026-01-01T00:00:00Z'
-lastUpdated: '2026-01-01T00:00:00Z'
-templateVersion: '0.2.0'
-author: 'claude-sonnet-4-5'
-actorId: ''
-actorName: ''
-actorSlug: ''
-actorType: ''
-actorCountry: 'NO'
-actorAffiliation: ''
-analysisScope: ''
+created: "2026-01-01T00:00:00Z"
+lastUpdated: "2026-01-01T00:00:00Z"
+templateVersion: "0.2.0"
+author: "claude-sonnet-4-5"
+actorId: ""
+actorName: ""
+actorSlug: ""
+actorType: ""
+actorCountry: "NO"
+actorAffiliation: ""
+analysisScope: ""
 isiScore: 0
 primarySources:
-  - title: ''
-    url: ''
-  - title: ''
-    url: ''
+  - title: ""
+    url: ""
+  - title: ""
+    url: ""
 secondarySources:
-  - title: ''
-    url: ''
-  - title: ''
-    url: ''
-confidenceLevel: ''
-dataGaps: ''
+  - title: ""
+    url: ""
+  - title: ""
+    url: ""
+confidenceLevel: ""
+dataGaps: ""
 tags: []
 scores:
   d1: { total: 0, d1_1: 0, d1_2: 0, d1_3: 0, d1_4: 0 }

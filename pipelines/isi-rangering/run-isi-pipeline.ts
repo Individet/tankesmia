@@ -2,7 +2,10 @@ import path from 'path'
 import { createProfilesPipeline } from './00_create_profile'
 import { outputSearchPipeline } from './01_search_pipeline'
 import { endReportPipeline } from './02_end_report'
+<<<<<<< HEAD
 import { saveReportsPipeline } from './03_save_reports'
+=======
+>>>>>>> b9ea85f... WIP
 
 const STANDARD_AKTORFIL = path.join('pipelines', 'isi-rangering', 'actors.json')
 const STANDARD_MANIFESTFIL = path.join('manifest-kondensert.md')
@@ -36,11 +39,19 @@ async function runFullPipeline() {
   )
 
   try {
+<<<<<<< HEAD
     console.log('>>> [STEG 1/4] Kjører profil-analyse (00_create_profile)...')
     await createProfilesPipeline(aktorFil, outputDir, dryRun)
     console.log('✓ Steg 1 fullført.\n')
 
     console.log('>>> [STEG 2/4] Kjører dimensjons-søk (01_search_pipeline)...')
+=======
+    console.log('>>> [STEG 1/3] Kjører profil-analyse (00_create_profile)...')
+    await createProfilesPipeline(aktorFil, outputDir, dryRun)
+    console.log('✓ Steg 1 fullført.\n')
+
+    console.log('>>> [STEG 2/3] Kjører dimensjons-søk (01_search_pipeline)...')
+>>>>>>> b9ea85f... WIP
     await outputSearchPipeline(
       aktorFil,
       STANDARD_MANIFESTFIL,
@@ -49,7 +60,11 @@ async function runFullPipeline() {
     )
     console.log('✓ Steg 2 fullført.\n')
 
+<<<<<<< HEAD
     console.log('>>> [STEG 3/4] Kompilerer sluttrapporter (02_end_report)...')
+=======
+    console.log('>>> [STEG 3/3] Kompilerer sluttrapporter (02_end_report)...')
+>>>>>>> b9ea85f... WIP
     await endReportPipeline(
       aktorFil,
       STANDARD_TEMPLATE,
@@ -61,12 +76,15 @@ async function runFullPipeline() {
     console.log('✓ Steg 3 fullført.\n')
 
     console.log(
+<<<<<<< HEAD
       '>>> [STEG 4/4] Lagrer rapporter/rådata til GitHub (03_save_reports)...',
     )
     await saveReportsPipeline(aktorFil, outputDir, dryRun)
     console.log('✓ Steg 4 fullført.\n')
 
     console.log(
+=======
+>>>>>>> b9ea85f... WIP
       '✨ All pipeline-kjøring var vellykket! Sjekk mappen:',
       outputDir,
     )

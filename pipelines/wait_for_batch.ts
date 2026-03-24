@@ -50,12 +50,20 @@ async function waitUntilEnded(
 
     if (!wait) {
       throw new Error(
+<<<<<<< HEAD
         `Batch ${batchId} er ikke ferdig (status: ${batch.processing_status}). Kjør uten --no-wait for å vente.`,
+=======
+        `Batch ${batchId} er ikke ferdig (status: ${batch.processing_status}). Kjor uten --no-wait for a vente.`,
+>>>>>>> b9ea85f... WIP
       )
     }
 
     console.error(
+<<<<<<< HEAD
       `Venter på batch ${batchId}. Status: ${batch.processing_status}. Succeeded: ${batch.request_counts.succeeded}, Errored: ${batch.request_counts.errored}`,
+=======
+      `Venter pa batch ${batchId}. Status: ${batch.processing_status}. Succeeded: ${batch.request_counts.succeeded}, Errored: ${batch.request_counts.errored}`,
+>>>>>>> b9ea85f... WIP
     )
     await sleep(POLLING_INTERVAL_MS)
   }

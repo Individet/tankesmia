@@ -5,13 +5,40 @@ import {
   sendBatch,
   ventPåBatch,
   type BatchRequest,
+<<<<<<< HEAD
 } from './anthropic-live.ts'
 import { slug } from './utils.ts'
 import { Aktor } from './types.ts'
+=======
+} from './anthropic-live'
+
+export interface Aktor {
+  name: string
+  type: string
+  parti?: string
+  tilhørighet?: string
+  jurisdiksjon?: string
+  periode?: string
+  beskrivelse?: string
+}
+>>>>>>> b9ea85f... WIP
 
 const MODEL = 'claude-opus-4-6'
 const MAX_TOKENS = 16000
 
+<<<<<<< HEAD
+=======
+function slug(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/æ/g, 'ae')
+    .replace(/ø/g, 'o')
+    .replace(/å/g, 'a')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+}
+
+>>>>>>> b9ea85f... WIP
 function lagSystemPrompt(isiRammeverk: string): Array<{
   type: 'text'
   text: string
@@ -129,7 +156,11 @@ export async function endReportPipeline(
   aktorFil: string,
   templateFil: string,
   manifestFil: string,
+<<<<<<< HEAD
   isiRammeverkFil: string,
+=======
+  isiRammeverk: string,
+>>>>>>> b9ea85f... WIP
   outputDir: string,
   dryRun: boolean,
 ): Promise<void> {
@@ -137,7 +168,10 @@ export async function endReportPipeline(
   const aktorer = JSON.parse(aktorContent) as Aktor[]
   const mal = await fs.readFile(templateFil, 'utf8')
   const manifest = await fs.readFile(manifestFil, 'utf8')
+<<<<<<< HEAD
   const isiRammeverk = await fs.readFile(isiRammeverkFil, 'utf8')
+=======
+>>>>>>> b9ea85f... WIP
 
   const requests: BatchRequest[] = []
 
@@ -145,6 +179,7 @@ export async function endReportPipeline(
     const actorSlug = slug(aktor.name)
     const actorDir = path.join(outputDir, actorSlug)
 
+<<<<<<< HEAD
     const requiredFiles = [
       'profil.md',
       'd1-search.md',
@@ -219,6 +254,71 @@ export async function endReportPipeline(
         ],
       },
     })
+=======
+    try {
+      // Les inn alle 7 filene (hvis de finnes)
+      const profilData = await fs
+        .readFile(path.join(actorDir, 'profil.md'), 'utf-8')
+        .catch(() => 'Profil ikke funnet')
+      const d1Data = await fs
+        .readFile(path.join(actorDir, 'd1-search.md'), 'utf-8')
+        .catch(() => 'D1 ikke funnet')
+      const d2Data = await fs
+        .readFile(path.join(actorDir, 'd2-search.md'), 'utf-8')
+        .catch(() => 'D2 ikke funnet')
+      const d3Data = await fs
+        .readFile(path.join(actorDir, 'd3-search.md'), 'utf-8')
+        .catch(() => 'D3 ikke funnet')
+      const d4Data = await fs
+        .readFile(path.join(actorDir, 'd4-search.md'), 'utf-8')
+        .catch(() => 'D4 ikke funnet')
+      const d5Data = await fs
+        .readFile(path.join(actorDir, 'd5-search.md'), 'utf-8')
+        .catch(() => 'D5 ikke funnet')
+      const d6Data = await fs
+        .readFile(path.join(actorDir, 'd6-search.md'), 'utf-8')
+        .catch(() => 'D6 ikke funnet')
+
+      const oppsamletResearch = [
+        `### Profil\n${profilData}`,
+        `### D1: Kroppslig autonomi\n${d1Data}`,
+        `### D2: Ytringsfrihet\n${d2Data}`,
+        `### D3: Økonomisk frihet\n${d3Data}`,
+        `### D4: Rettsstat\n${d4Data}`,
+        `### D5: Foreningsfrihet\n${d5Data}`,
+        `### D6: Digital autonomi\n${d6Data}`,
+      ].join('\n\n')
+
+      requests.push({
+        custom_id: `${actorSlug}-final-report`,
+        params: {
+          model: MODEL,
+          max_tokens: MAX_TOKENS,
+          system: lagSystemPrompt(isiRammeverk),
+          messages: [
+            {
+              role: 'user' as const,
+              content: [
+                {
+                  type: 'text' as const,
+                  text: lagRapportInstruksjoner(mal),
+                  cache_control: { type: 'ephemeral' },
+                },
+                {
+                  type: 'text' as const,
+                  text: lagRapportData(aktor, oppsamletResearch),
+                },
+              ],
+            },
+          ],
+        },
+      })
+    } catch (e) {
+      console.warn(
+        `Manglende filer for ${aktor.name}, hopper over. (${String(e)})`,
+      )
+    }
+>>>>>>> b9ea85f... WIP
   }
 
   console.log(`[02_end_report] Antall aktører å rapportere: ${requests.length}`)
@@ -259,7 +359,10 @@ export async function endReportPipeline(
     }
 
     const reportPath = path.join(outputDir, actorSlug, 'rapport.md')
+<<<<<<< HEAD
     await fs.mkdir(path.dirname(reportPath), { recursive: true })
+=======
+>>>>>>> b9ea85f... WIP
     await fs.writeFile(reportPath, resultatInnhold, 'utf-8')
     console.log(`Skrev ferdig rapport til ${reportPath}`)
   }
