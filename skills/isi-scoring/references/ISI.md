@@ -1,10 +1,6 @@
 # Individets Suverenitetsindeks (ISI)
 
-### Et rammeverk for å vurdere om samfunnsaktører fremmer eller hemmer individets suverenitet
-
-_Versjon 0.1 — Individets Suverenitet_
-
----
+Et rammeverk for å vurdere om samfunnsaktører fremmer eller hemmer individets suverenitet.
 
 ## Grunnlag og filosofisk forankring
 
@@ -15,7 +11,7 @@ ISI er forankret i selveierskapsprinsippet: ethvert menneske eier seg selv — s
 - En aktør scorer **positivt** ved å fremme frivillig samarbeid, forsvare individuelle rettigheter og begrense statlig tvang.
 - En aktør scorer **negativt** ved å initiere, forsvare eller normalisere tvang mot individer — uavhengig av intensjon.
 
-> _"Makten til å gjøre ting for mennesker er alltid makten til å gjøre ting med dem."_ — Isabel Paterson
+> _"The power to do things for people is also the power to do things to people."_ — Isabel Paterson
 
 **Hva ISI måler:** Enhver navngitt samfunnsaktør — politiker, parti, organisasjon, bevegelse, tankesmie, medieaktør — kan scores på bakgrunn av:
 
@@ -25,9 +21,7 @@ ISI er forankret i selveierskapsprinsippet: ethvert menneske eier seg selv — s
 - Konkrete policy-forslag
 - Partitilhørighet
 
----
-
-## Del II: Filosofiske akser
+## Filosofiske akser
 
 | Tenker                                             | Kjernedimensjon                                                                                       | Primær trussel                                                                                |
 | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
@@ -54,9 +48,7 @@ ISI er forankret i selveierskapsprinsippet: ethvert menneske eier seg selv — s
 5. **Ytringsfrihet** — tanken og ytringen som utenfor statens domene
 6. **Voluntarisme** — frivillig samarbeid som normativ standard for sosial organisering
 
----
-
-## Del III: ISI — Dimensjoner og skåringskriterier
+## ISI — Dimensjoner og skåringskriterier
 
 ### Skala
 
@@ -222,7 +214,7 @@ Alle dimensjoner vektes likt. Begrunnelse: NAP impliserer at alle former for tva
 
 ---
 
-## Del IV: Skåringsveiledning
+## Skåringsveiledning
 
 **Dokumentasjonskrav per underdimensjon:**
 
@@ -239,7 +231,7 @@ Alle dimensjoner vektes likt. Begrunnelse: NAP impliserer at alle former for tva
 
 ---
 
-## Del V: Filosofisk metanote
+## Filosofisk metanote
 
 ISI er ikke politisk nøytral. Den er fundert i en konsistent etisk posisjon: at tvang alltid er et onde som krever begrunnelse, og at frivillig samhandling alltid er normativt overlegent statlig påbud.
 

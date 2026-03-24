@@ -1,0 +1,39 @@
+{
+  "name": "tankesmia",
+  "version": "1.0.0",
+  "description": "Rammeverk for AI-agenter i Individet.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "vitest",
+    "isi-rangering": "tsx pipelines/isi-rangering/run-isi-pipeline.ts",
+    "isi-rangering:cold": "tsx pipelines/isi-rangering/run-isi-pipeline.ts --cold-run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Individet/tankesmia.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Individet/tankesmia/issues"
+  },
+  "homepage": "https://github.com/Individet/tankesmia#readme",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.80.0",
+    "@octokit/rest": "^22.0.1",
+    "tsx": "^4.21.0",
+    "vitest": "^4.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0"
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true
+  }
+}

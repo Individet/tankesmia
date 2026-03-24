@@ -2,3 +2,8 @@
 Thumbs.db
 *.log
 .env
+
+
+node_modules/
+*.txt
+pipelines/isi-rangering/actors.json
