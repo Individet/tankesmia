@@ -61,7 +61,7 @@ For hver underdimensjon: identifiser kilde → vurder konsistens over tid → sk
 - `confidenceLevel`: "høy" / "middels" / "lav" — basert på primærkildetilgang
 - `dataGaps`: underdimensjoner uten primærkilder (indikatorverdi settes til 0)
 - `primarySources`: alle primærkilder brukt i Rapport 1
-- - `secondarySources`: alle sekundærkilder brukt i Rapport 1
+- `secondarySources`: alle sekundærkilder brukt i Rapport 1
 
 **Ingresssetningen:** Én ubetinget setning — kjerneprofil og viktigste funn. Ingen forbehold.
 
