@@ -162,69 +162,80 @@ export async function endReportPipeline(
     const actorSlug = slug(aktor.name)
     const actorDir = path.join(outputDir, actorSlug)
 
-    try {
-      // Les inn alle 7 filene (hvis de finnes)
-      const profilData = await fs
-        .readFile(path.join(actorDir, 'profil.md'), 'utf-8')
-        .catch(() => 'Profil ikke funnet')
-      const d1Data = await fs
-        .readFile(path.join(actorDir, 'd1-search.md'), 'utf-8')
-        .catch(() => 'D1 ikke funnet')
-      const d2Data = await fs
-        .readFile(path.join(actorDir, 'd2-search.md'), 'utf-8')
-        .catch(() => 'D2 ikke funnet')
-      const d3Data = await fs
-        .readFile(path.join(actorDir, 'd3-search.md'), 'utf-8')
-        .catch(() => 'D3 ikke funnet')
-      const d4Data = await fs
-        .readFile(path.join(actorDir, 'd4-search.md'), 'utf-8')
-        .catch(() => 'D4 ikke funnet')
-      const d5Data = await fs
-        .readFile(path.join(actorDir, 'd5-search.md'), 'utf-8')
-        .catch(() => 'D5 ikke funnet')
-      const d6Data = await fs
-        .readFile(path.join(actorDir, 'd6-search.md'), 'utf-8')
-        .catch(() => 'D6 ikke funnet')
+    const requiredFiles = [
+      'profil.md',
+      'd1-search.md',
+      'd2-search.md',
+      'd3-search.md',
+      'd4-search.md',
+      'd5-search.md',
+      'd6-search.md',
+    ]
 
-      const oppsamletResearch = [
-        `### Profil\n${profilData}`,
-        `### D1: Kroppslig autonomi\n${d1Data}`,
-        `### D2: Ytringsfrihet\n${d2Data}`,
-        `### D3: Økonomisk frihet\n${d3Data}`,
-        `### D4: Rettsstat\n${d4Data}`,
-        `### D5: Foreningsfrihet\n${d5Data}`,
-        `### D6: Digital autonomi\n${d6Data}`,
-      ].join('\n\n')
+    const fileChecks = await Promise.all(
+      requiredFiles.map(async (file) => {
+        const filePath = path.join(actorDir, file)
+        try {
+          await fs.access(filePath)
+          return { file, exists: true }
+        } catch {
+          return { file, exists: false }
+        }
+      }),
+    )
 
-      requests.push({
-        custom_id: `${actorSlug}-final-report`,
-        params: {
-          model: MODEL,
-          max_tokens: MAX_TOKENS,
-          system: lagSystemPrompt(isiRammeverk),
-          messages: [
-            {
-              role: 'user' as const,
-              content: [
-                {
-                  type: 'text' as const,
-                  text: lagRapportInstruksjoner(mal),
-                  cache_control: { type: 'ephemeral' },
-                },
-                {
-                  type: 'text' as const,
-                  text: lagRapportData(aktor, oppsamletResearch),
-                },
-              ],
-            },
-          ],
-        },
-      })
-    } catch (e) {
+    const mangler = fileChecks
+      .filter((item) => !item.exists)
+      .map((item) => item.file)
+
+    if (mangler.length > 0) {
       console.warn(
-        `Manglende filer for ${aktor.name}, hopper over. (${String(e)})`,
+        `[02_end_report] Hopper over ${aktor.name}: mangler grunnlagsfiler (${mangler.join(', ')}).`,
       )
+      continue
     }
+
+    const [profilData, d1Data, d2Data, d3Data, d4Data, d5Data, d6Data] =
+      await Promise.all(
+        requiredFiles.map((file) =>
+          fs.readFile(path.join(actorDir, file), 'utf-8'),
+        ),
+      )
+
+    const oppsamletResearch = [
+      `### Profil\n${profilData}`,
+      `### D1: Kroppslig autonomi\n${d1Data}`,
+      `### D2: Ytringsfrihet\n${d2Data}`,
+      `### D3: Økonomisk frihet\n${d3Data}`,
+      `### D4: Rettsstat\n${d4Data}`,
+      `### D5: Foreningsfrihet\n${d5Data}`,
+      `### D6: Digital autonomi\n${d6Data}`,
+    ].join('\n\n')
+
+    requests.push({
+      custom_id: `${actorSlug}-final-report`,
+      params: {
+        model: MODEL,
+        max_tokens: MAX_TOKENS,
+        system: lagSystemPrompt(isiRammeverk),
+        messages: [
+          {
+            role: 'user' as const,
+            content: [
+              {
+                type: 'text' as const,
+                text: lagRapportInstruksjoner(mal),
+                cache_control: { type: 'ephemeral' },
+              },
+              {
+                type: 'text' as const,
+                text: lagRapportData(aktor, oppsamletResearch),
+              },
+            ],
+          },
+        ],
+      },
+    })
   }
 
   console.log(`[02_end_report] Antall aktører å rapportere: ${requests.length}`)
@@ -265,6 +276,7 @@ export async function endReportPipeline(
     }
 
     const reportPath = path.join(outputDir, actorSlug, 'rapport.md')
+    await fs.mkdir(path.dirname(reportPath), { recursive: true })
     await fs.writeFile(reportPath, resultatInnhold, 'utf-8')
     console.log(`Skrev ferdig rapport til ${reportPath}`)
   }
