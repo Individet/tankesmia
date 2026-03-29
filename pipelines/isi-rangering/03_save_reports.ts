@@ -1,10 +1,8 @@
 import { promises as fs } from 'fs'
 import path from 'path'
 import { Octokit } from '@octokit/rest'
-
-interface Aktor {
-  name: string
-}
+import { lesJsonFil, slug } from './utils'
+import { Aktor } from './types.ts'
 
 type RepoConfig = {
   owner: string
@@ -39,16 +37,6 @@ function getOctokitClient(): Octokit {
   return octokitClient
 }
 
-function slug(value: string): string {
-  return value
-    .toLowerCase()
-    .replace(/æ/g, 'ae')
-    .replace(/ø/g, 'o')
-    .replace(/å/g, 'a')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
-}
-
 function utcTimestampCompact(): string {
   return new Date()
     .toISOString()
@@ -67,11 +55,6 @@ async function fileExists(filePath: string): Promise<boolean> {
   } catch {
     return false
   }
-}
-
-async function lesJsonFil<T>(filePath: string): Promise<T> {
-  const content = await fs.readFile(filePath, 'utf8')
-  return JSON.parse(content) as T
 }
 
 async function listLocalFilesRecursively(dirPath: string): Promise<string[]> {

@@ -7,29 +7,11 @@ import {
   type BatchRequest,
 } from './anthropic-live.ts'
 import { tolkMarkdownFil, type Innhold } from './01_search_pipeline'
-
-interface Aktor {
-  name: string
-  type: string
-  parti?: string
-  tilhørighet?: string
-  jurisdiksjon?: string
-  periode?: string
-  beskrivelse?: string
-}
+import { lesJsonFil, slug } from './utils.ts'
+import { Aktor } from './types.ts'
 
 const MODEL = 'claude-haiku-4-5'
 const MAX_TOKENS = 2200
-
-export function slug(value: string): string {
-  return value
-    .toLowerCase()
-    .replace(/æ/g, 'ae')
-    .replace(/ø/g, 'o')
-    .replace(/å/g, 'a')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
-}
 
 function lagSystemPrompt(): Array<{
   type: 'text'
@@ -153,11 +135,6 @@ function byggProfilMarkdown(aktor: Aktor, profiltekst: string): string {
   ]
     .filter(Boolean)
     .join('\n\n')
-}
-
-async function lesJsonFil<T>(filePath: string): Promise<T> {
-  const content = await fs.readFile(filePath, 'utf8')
-  return JSON.parse(content) as T
 }
 
 export async function createProfilesPipeline(

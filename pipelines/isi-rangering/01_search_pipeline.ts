@@ -6,16 +6,8 @@ import {
   ventPåBatch,
   type BatchRequest,
 } from './anthropic-live.ts'
-
-export interface Aktor {
-  name: string
-  type: string
-  parti?: string
-  tilhørighet?: string
-  jurisdiksjon?: string
-  periode?: string
-  beskrivelse?: string
-}
+import { lesJsonFil, slug } from './utils.ts'
+import { Aktor } from './types'
 
 interface Dimensjon {
   id: string
@@ -125,16 +117,6 @@ export const DIMENSJONER: Dimensjon[] = [
     ],
   },
 ]
-
-export function slug(value: string): string {
-  return value
-    .toLowerCase()
-    .replace(/æ/g, 'ae')
-    .replace(/ø/g, 'o')
-    .replace(/å/g, 'a')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
-}
 
 function lagSystemPrompt(
   manifest: string,
@@ -366,8 +348,7 @@ export async function outputSearchPipeline(
   outputDir: string,
   dryRun: boolean,
 ): Promise<void> {
-  const content = await fs.readFile(aktorFil, 'utf8')
-  const aktorer = JSON.parse(content) as Aktor[]
+  const aktorer = await lesJsonFil<Aktor[]>(aktorFil)
   const manifest = await fs.readFile(manifestFil, 'utf8')
 
   // Load profiles from the output directory

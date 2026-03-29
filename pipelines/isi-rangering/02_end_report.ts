@@ -6,29 +6,11 @@ import {
   ventPåBatch,
   type BatchRequest,
 } from './anthropic-live.ts'
-
-export interface Aktor {
-  name: string
-  type: string
-  parti?: string
-  tilhørighet?: string
-  jurisdiksjon?: string
-  periode?: string
-  beskrivelse?: string
-}
+import { slug } from './utils.ts'
+import { Aktor } from './types.ts'
 
 const MODEL = 'claude-opus-4-6'
 const MAX_TOKENS = 16000
-
-function slug(value: string): string {
-  return value
-    .toLowerCase()
-    .replace(/æ/g, 'ae')
-    .replace(/ø/g, 'o')
-    .replace(/å/g, 'a')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
-}
 
 function lagSystemPrompt(isiRammeverk: string): Array<{
   type: 'text'
