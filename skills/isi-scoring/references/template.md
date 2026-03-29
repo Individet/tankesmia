@@ -11,8 +11,16 @@ actorCountry: 'NO'
 actorAffiliation: ''
 analysisScope: ''
 isiScore: 0
-primarySources: [{ title, url }, ...]
-secondarySources: [{ title, url }, ...]
+primarySources:
+  - title: ''
+    url: ''
+  - title: ''
+    url: ''
+secondarySources:
+  - title: ''
+    url: ''
+  - title: ''
+    url: ''
 confidenceLevel: ''
 dataGaps: ''
 tags: []

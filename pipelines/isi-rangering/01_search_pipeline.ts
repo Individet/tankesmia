@@ -118,7 +118,7 @@ export const DIMENSJONER: Dimensjon[] = [
       '6.4 Eierskap til egne data',
     ],
     beskrivelser: [
-      'Har aktøren støttet masseover våkning, datalagringspåbud eller statens tilgang til privat kommunikasjon uten domstolskjennelse?',
+      'Har aktøren støttet masseovervåkning, datalagringspåbud eller statens tilgang til privat kommunikasjon uten domstolskjennelse?',
       'Støtter aktøren obligatoriske digitale ID-systemer, CBDC med programmerbar bruk, eller sosiale kredittmekanismer?',
       'Har aktøren støttet tiltak som begrenser kryptering, bakdører i kommunikasjonssystemer, eller statlig kontroll over internettinfrastruktur?',
       'Støtter aktøren individets rett til å eie og kontrollere egne data — eller fremmer aktøren statlig/korporativ datahøsting uten reelt samtykke?',

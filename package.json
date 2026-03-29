@@ -9,7 +9,6 @@
   "scripts": {
     "test": "vitest",
     "isi-rangering": "tsx pipelines/isi-rangering/run-isi-pipeline.ts",
-    "isi-rangering:cold": "tsx pipelines/isi-rangering/run-isi-pipeline.ts --cold-run",
     "search-pipeline:test": "tsx pipelines/search_pipeline_test.ts"
   },
   "repository": {

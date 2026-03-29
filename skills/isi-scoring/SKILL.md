@@ -59,7 +59,7 @@ For hver underdimensjon: identifiser kilde → vurder konsistens over tid → sk
 **YAML frontmatter:**
 
 - `confidenceLevel`: "høy" / "middels" / "lav" — basert på primærkildetilgang
-- `dataGaps`: underdimensjoner uten primærkilder (indikatorverdi settes til 0)
+- `dataGaps`: underdimensjoner uten noen kilder eller indikasjoner (indikatorverdi settes til null)
 - `primarySources`: alle primærkilder brukt i Rapport 1
 - `secondarySources`: alle sekundærkilder brukt i Rapport 1
 
