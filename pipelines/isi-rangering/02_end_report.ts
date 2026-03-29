@@ -147,7 +147,7 @@ export async function endReportPipeline(
   aktorFil: string,
   templateFil: string,
   manifestFil: string,
-  isiRammeverk: string,
+  isiRammeverkFil: string,
   outputDir: string,
   dryRun: boolean,
 ): Promise<void> {
@@ -155,6 +155,7 @@ export async function endReportPipeline(
   const aktorer = JSON.parse(aktorContent) as Aktor[]
   const mal = await fs.readFile(templateFil, 'utf8')
   const manifest = await fs.readFile(manifestFil, 'utf8')
+  const isiRammeverk = await fs.readFile(isiRammeverkFil, 'utf8')
 
   const requests: BatchRequest[] = []
 
@@ -225,7 +226,7 @@ export async function endReportPipeline(
               {
                 type: 'text' as const,
                 text: lagRapportInstruksjoner(mal),
-                cache_control: { type: 'ephemeral' },
+                cache_control: { type: 'ephemeral' as const },
               },
               {
                 type: 'text' as const,
