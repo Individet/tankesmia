@@ -5,7 +5,7 @@ import {
   sendBatch,
   ventPåBatch,
   type BatchRequest,
-} from './anthropic-live'
+} from './anthropic-live.ts'
 
 export interface Aktor {
   name: string

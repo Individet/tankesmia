@@ -5,7 +5,7 @@ import {
   sendBatch,
   ventPåBatch,
   type BatchRequest,
-} from './anthropic-live'
+} from './anthropic-live.ts'
 import { tolkMarkdownFil, type Innhold } from './01_search_pipeline'
 
 interface Aktor {
