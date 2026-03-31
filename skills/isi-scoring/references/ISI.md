@@ -1,10 +1,6 @@
 # Individets Suverenitetsindeks (ISI)
 
-### Et rammeverk for å vurdere om samfunnsaktører fremmer eller hemmer individets suverenitet
-
-_Versjon 0.1 — Individets Suverenitet_
-
----
+Et rammeverk for å vurdere om samfunnsaktører fremmer eller hemmer individets suverenitet.
 
 ## Grunnlag og filosofisk forankring
 
@@ -12,12 +8,12 @@ ISI er forankret i selveierskapsprinsippet: ethvert menneske eier seg selv — s
 
 **Ikke-aggresjonsprinsippet (NAP)** fungerer som den operative testen:
 
-- En aktør scorer **positivt** ved å fremme frivillig samarbeid, forsvare individuelle rettigheter og begrense statlig tvang.
-- En aktør scorer **negativt** ved å initiere, forsvare eller normalisere tvang mot individer — uavhengig av intensjon.
+- En aktør får **positiv indikatorverdi** ved å fremme frivillig samarbeid, forsvare individuelle rettigheter og begrense statlig tvang.
+- En aktør får **negativ indikatorverdi** ved å initiere, forsvare eller normalisere tvang mot individer — uavhengig av intensjon.
 
-> _"Makten til å gjøre ting for mennesker er alltid makten til å gjøre ting med dem."_ — Isabel Paterson
+> _"The power to do things for people is also the power to do things to people."_ — Isabel Paterson
 
-**Hva ISI måler:** Enhver navngitt samfunnsaktør — politiker, parti, organisasjon, bevegelse, tankesmie, medieaktør — kan scores på bakgrunn av:
+**Hva ISI måler:** Enhver navngitt samfunnsaktør — politiker, parti, organisasjon, bevegelse, tankesmie, medieaktør — kan vurderes på bakgrunn av:
 
 - Offentlige uttalelser og retorikk
 - Stemmegivning og vedtatte politiske posisjoner
@@ -25,9 +21,7 @@ ISI er forankret i selveierskapsprinsippet: ethvert menneske eier seg selv — s
 - Konkrete policy-forslag
 - Partitilhørighet
 
----
-
-## Del II: Filosofiske akser
+## Filosofiske akser
 
 | Tenker                                             | Kjernedimensjon                                                                                       | Primær trussel                                                                                |
 | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
@@ -54,23 +48,21 @@ ISI er forankret i selveierskapsprinsippet: ethvert menneske eier seg selv — s
 5. **Ytringsfrihet** — tanken og ytringen som utenfor statens domene
 6. **Voluntarisme** — frivillig samarbeid som normativ standard for sosial organisering
 
----
-
-## Del III: ISI — Dimensjoner og skåringskriterier
+## ISI — Dimensjoner og verdikriterier
 
 ### Skala
 
-Hver underdimensjon scores på en **skala fra −2 til +2**:
+Hver underdimensjon får en **indikatorverdi på skalaen −2 til +2**:
 
-| Score  | Betydning                                                                        |
-| ------ | -------------------------------------------------------------------------------- |
-| **+2** | Aktøren fremmer aktivt og konsekvent denne friheten                              |
-| **+1** | Aktøren støtter denne friheten, men med viktige forbehold eller inkonsekvent     |
-| **0**  | Nøytral, uklar posisjon eller ingen dokumentert standpunkt                       |
-| **−1** | Aktøren støtter tiltak som begrenser denne friheten, men ikke som eksplisitt mål |
-| **−2** | Aktøren fremmer aktivt politikk eller retorikk som krenker denne friheten        |
+| Indikatorverdi | Betydning                                                                        |
+| -------------- | -------------------------------------------------------------------------------- |
+| **+2**         | Aktøren fremmer aktivt og konsekvent denne friheten                              |
+| **+1**         | Aktøren støtter denne friheten, men med viktige forbehold eller inkonsekvent     |
+| **0**          | Nøytral, uklar posisjon eller ingen dokumentert standpunkt                       |
+| **−1**         | Aktøren støtter tiltak som begrenser denne friheten, men ikke som eksplisitt mål |
+| **−2**         | Aktøren fremmer aktivt politikk eller retorikk som krenker denne friheten        |
 
-**Totalskår:** Summer av alle underdimensjoner.
+**Totalverdi:** Summen av alle underdimensjoner.
 
 ---
 
@@ -222,14 +214,14 @@ Alle dimensjoner vektes likt. Begrunnelse: NAP impliserer at alle former for tva
 
 ---
 
-## Del IV: Skåringsveiledning
+## Verdiveiledning
 
 **Dokumentasjonskrav per underdimensjon:**
 
 1. Identifiser primærkilder (stemmegivning, partiprogram, uttalelse, kronikk)
 2. Vurder konsistens over tid (ett enkelttilfelle vs. mønster)
 3. Skill mellom _eksplisitt posisjon_ (høyere vekt) og _implisitt posisjon_ (lavere vekt)
-4. Noter selvmotsigelser — inkonsistente aktører scores på det overveiende mønsteret
+4. Noter selvmotsigelser — inkonsistente aktører vurderes etter det overveiende mønsteret
 
 **Eksempel — Politiker som støtter hatytringslover men motarbeider digital overvåkning:**
 
@@ -239,10 +231,10 @@ Alle dimensjoner vektes likt. Begrunnelse: NAP impliserer at alle former for tva
 
 ---
 
-## Del V: Filosofisk metanote
+## Filosofisk metanote
 
 ISI er ikke politisk nøytral. Den er fundert i en konsistent etisk posisjon: at tvang alltid er et onde som krever begrunnelse, og at frivillig samhandling alltid er normativt overlegent statlig påbud.
 
-- **ISI skiller mellom frihet og resultat.** En aktør som ønsker god helse for befolkningen, men oppnår det gjennom tvang, scores negativt.
+- **ISI skiller mellom frihet og resultat.** En aktør som ønsker god helse for befolkningen, men oppnår det gjennom tvang, får negativ indikatorverdi.
 - **ISI er immun mot intensjonsargumentet.** Gode intensjoner endrer ikke den moralske karakteren av tvang.
 - **ISI er asymmetrisk.** De fleste politiske aktører i moderne stater opererer innenfor et paradigme som forutsetter statlig intervensjon som standard. En konsekvent suverenitetsforkjemper er unntaket, ikke regelen.
