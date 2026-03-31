@@ -1,12 +1,27 @@
 import { promises as fs } from 'fs'
 import path from 'path'
-import { GoogleGenAI, type GroundingChunk, type GroundingMetadata } from '@google/genai'
+import {
+  GoogleGenAI,
+  JobState,
+  type BatchJob,
+  type GroundingChunk,
+  type GroundingMetadata,
+  type InlinedRequest,
+} from '@google/genai'
 import { lesJsonFil, slug } from './utils.ts'
 import { Aktor } from './types'
 import { DIMENSJONER } from './01_search_pipeline.ts'
 
 const MODEL = 'gemini-2.5-flash-preview-04-17'
 const MAX_OUTPUT_TOKENS = 5000
+const BATCH_TIMEOUT_MS = 30 * 60 * 1000 // 30 minutes
+const POLL_INTERVAL_MS = 10_000 // 10 seconds
+
+const TERMINAL_STATES: JobState[] = [
+  JobState.JOB_STATE_SUCCEEDED,
+  JobState.JOB_STATE_FAILED,
+  JobState.JOB_STATE_CANCELLED,
+]
 
 function lagSystemPrompt(manifest: string): string {
   return [
@@ -89,7 +104,10 @@ function hentProfilPromptForAktor(
   ].join('\n')
 }
 
-function tolkGeminiSvar(text: string, groundingChunks: GroundingChunk[]): string {
+function tolkGeminiSvar(
+  text: string,
+  groundingChunks: GroundingChunk[],
+): string {
   if (!text) {
     return '_Ingen tekst generert._'
   }
@@ -112,6 +130,34 @@ function tolkGeminiSvar(text: string, groundingChunks: GroundingChunk[]): string
   }
 
   return `${text}\n\n## Kilder\n\n${footnotes.join('\n')}`
+}
+
+async function ventPåBatch(
+  ai: GoogleGenAI,
+  batchName: string,
+): Promise<BatchJob> {
+  const deadline = Date.now() + BATCH_TIMEOUT_MS
+  let job = await ai.batches.get({ name: batchName })
+
+  while (!TERMINAL_STATES.includes(job.state as JobState)) {
+    if (Date.now() >= deadline) {
+      console.warn(
+        `[01_search_pipeline_gemini] Batch ${batchName} nådde 30-minutters grense — avbryter.`,
+      )
+      await ai.batches.cancel({ name: batchName })
+      throw new Error(
+        `Gemini batch-jobb ${batchName} tidsavbrutt etter 30 minutter`,
+      )
+    }
+
+    console.log(
+      `[01_search_pipeline_gemini] Batch tilstand: ${job.state} — venter ${POLL_INTERVAL_MS / 1000}s ...`,
+    )
+    await new Promise((r) => setTimeout(r, POLL_INTERVAL_MS))
+    job = await ai.batches.get({ name: batchName })
+  }
+
+  return job
 }
 
 export async function outputSearchPipeline(
@@ -140,21 +186,46 @@ export async function outputSearchPipeline(
     console.warn(`Feil under lasting av profiler: ${String(error)}`)
   }
 
-  // Build list of (aktor, dimensjon) pairs
-  const pairs: Array<{ aktor: Aktor; dim: (typeof DIMENSJONER)[number] }> = []
+  // Build list of (customId, aktor, dimensjon) pairs and InlinedRequest[]
+  const systemPrompt = lagSystemPrompt(manifest)
+
+  const pairs: Array<{
+    customId: string
+    aktor: Aktor
+    dim: (typeof DIMENSJONER)[number]
+  }> = []
+
+  const inlinedRequests: InlinedRequest[] = []
+
   for (const dim of DIMENSJONER) {
     for (const aktor of aktorer) {
-      pairs.push({ aktor, dim })
+      const customId = `${slug(aktor.name)}-${dim.id.toLowerCase()}-search`
+      const oppgavePrompt = lagOppgavePrompt(dim)
+      const profilPrompt = hentProfilPromptForAktor(aktor, profiler)
+      const userContent = [oppgavePrompt, profilPrompt].join('\n\n')
+
+      pairs.push({ customId, aktor, dim })
+      inlinedRequests.push({
+        contents: [{ role: 'user', parts: [{ text: userContent }] }],
+        metadata: { customId },
+        config: {
+          systemInstruction: systemPrompt,
+          tools: [{ googleSearch: {} }],
+          maxOutputTokens: MAX_OUTPUT_TOKENS,
+        },
+      })
     }
   }
 
   console.log(`[01_search_pipeline_gemini] Antall aktører: ${aktorer.length}`)
-  console.log(`[01_search_pipeline_gemini] Antall requests: ${pairs.length}`)
+  console.log(
+    `[01_search_pipeline_gemini] Antall requests: ${inlinedRequests.length}`,
+  )
 
   if (dryRun) {
     await fs.mkdir(outputDir, { recursive: true })
-    const dryRunData = pairs.map(({ aktor, dim }) => ({
-      custom_id: `${slug(aktor.name)}-${dim.id.toLowerCase()}-search`,
+    const dryRunData = pairs.map(({ customId, aktor, dim }) => ({
+      custom_id: customId,
       model: MODEL,
       aktor: aktor.name,
       dimensjon: dim.id,
@@ -173,55 +244,82 @@ export async function outputSearchPipeline(
   }
 
   const ai = new GoogleGenAI({ apiKey })
-  const systemPrompt = lagSystemPrompt(manifest)
 
-  for (const { aktor, dim } of pairs) {
-    const customId = `${slug(aktor.name)}-${dim.id.toLowerCase()}-search`
+  console.log('[01_search_pipeline_gemini] Sender Gemini batch-jobb ...')
+  let batchJob = await ai.batches.create({
+    model: MODEL,
+    src: inlinedRequests,
+    config: { displayName: 'isi-search-pipeline' },
+  })
 
-    const oppgavePrompt = lagOppgavePrompt(dim)
-    const profilPrompt = hentProfilPromptForAktor(aktor, profiler)
+  console.log(
+    `[01_search_pipeline_gemini] Batch opprettet: ${batchJob.name} (tilstand: ${batchJob.state})`,
+  )
 
-    const userContent = [oppgavePrompt, profilPrompt].join('\n\n')
+  if (!batchJob.name) {
+    throw new Error(
+      'Gemini batch-jobb ble opprettet uten et navn — kan ikke polle status',
+    )
+  }
 
-    try {
-      const response = await ai.models.generateContent({
-        model: MODEL,
-        contents: [{ role: 'user', parts: [{ text: userContent }] }],
-        config: {
-          systemInstruction: systemPrompt,
-          tools: [{ googleSearch: {} }],
-          maxOutputTokens: MAX_OUTPUT_TOKENS,
-        },
-      })
+  batchJob = await ventPåBatch(ai, batchJob.name)
 
-      const text = response.text ?? ''
-      const groundingMeta: GroundingMetadata | undefined =
-        response.candidates?.[0]?.groundingMetadata
-      const groundingChunks: GroundingChunk[] = groundingMeta?.groundingChunks ?? []
+  if (batchJob.state !== JobState.JOB_STATE_SUCCEEDED) {
+    throw new Error(
+      `Gemini batch-jobb endte med tilstand ${batchJob.state}: ${batchJob.error?.message ?? 'ukjent feil'}`,
+    )
+  }
 
-      const markdown = tolkGeminiSvar(text, groundingChunks)
+  const inlinedResponses = batchJob.dest?.inlinedResponses ?? []
+  console.log(
+    `[01_search_pipeline_gemini] Mottok ${inlinedResponses.length} svar fra batch.`,
+  )
 
-      // custom_id format: "bjornar-moxnes-d1-search"
-      // Store in outputDir/bjornar-moxnes/d1-search.md
-      const parts = customId.split('-')
-      const dimIndex = parts.findIndex((p) => /^d[1-6]$/.test(p))
+  for (let i = 0; i < inlinedResponses.length; i++) {
+    const inlinedResponse = inlinedResponses[i]
+    // Match by metadata.customId; fall back to positional index with a warning
+    const customId = inlinedResponse.metadata?.customId ?? (() => {
+      const positional = pairs[i]?.customId ?? `item-${i}`
+      console.warn(
+        `[01_search_pipeline_gemini] metadata.customId mangler for svar ${i} — bruker posisjonsbasert nøkkel "${positional}"`,
+      )
+      return positional
+    })()
 
-      let actorDirName = customId
-      let fileName = `${customId}.md`
-
-      if (dimIndex !== -1) {
-        actorDirName = parts.slice(0, dimIndex).join('-')
-        fileName = parts.slice(dimIndex).join('-') + '.md'
-      }
-
-      const actorDirPath = path.join(outputDir, actorDirName)
-      await fs.mkdir(actorDirPath, { recursive: true })
-
-      const filePath = path.join(actorDirPath, fileName)
-      await fs.writeFile(filePath, markdown, 'utf-8')
-      console.log(`Skrev søkerapport til ${filePath}`)
-    } catch (err) {
-      console.error(`Feil for ${customId}: ${String(err)}`)
+    if (inlinedResponse.error) {
+      console.error(
+        `Feil for ${customId}: ${inlinedResponse.error.message ?? 'ukjent feil'}`,
+      )
+      continue
     }
+
+    const response = inlinedResponse.response
+    const text = response?.text ?? ''
+    const groundingMeta: GroundingMetadata | undefined =
+      response?.candidates?.[0]?.groundingMetadata
+    const groundingChunks: GroundingChunk[] =
+      groundingMeta?.groundingChunks ?? []
+
+    const markdown = tolkGeminiSvar(text, groundingChunks)
+
+    // custom_id format: "bjornar-moxnes-d1-search"
+    // Store in outputDir/bjornar-moxnes/d1-search.md
+    const parts = customId.split('-')
+    const dimIndex = parts.findIndex((p) => /^d[1-6]$/.test(p))
+
+    let actorDirName = customId
+    let fileName = `${customId}.md`
+
+    if (dimIndex !== -1) {
+      actorDirName = parts.slice(0, dimIndex).join('-')
+      fileName = parts.slice(dimIndex).join('-') + '.md'
+    }
+
+    const actorDirPath = path.join(outputDir, actorDirName)
+    await fs.mkdir(actorDirPath, { recursive: true })
+
+    const filePath = path.join(actorDirPath, fileName)
+    await fs.writeFile(filePath, markdown, 'utf-8')
+    console.log(`Skrev søkerapport til ${filePath}`)
   }
 }
