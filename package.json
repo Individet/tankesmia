@@ -27,6 +27,7 @@
   "homepage": "https://github.com/Individet/tankesmia#readme",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.80.0",
+    "@google/genai": "^1.47.0",
     "@octokit/rest": "^22.0.1",
     "gray-matter": "^4.0.3",
     "tsx": "^4.21.0",
