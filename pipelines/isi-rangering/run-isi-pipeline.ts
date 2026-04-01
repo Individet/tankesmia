@@ -1,5 +1,6 @@
 import path from 'path'
-import { createProfilesPipeline } from './00_create_profile'
+import { createProfilesPipeline as createProfilesPipelineAnthropic } from './00_create_profile'
+import { createProfilesPipeline as createProfilesPipelineGemini } from './00_create_profile_gemini'
 import { outputSearchPipeline as outputSearchPipelineAnthropic } from './01_search_pipeline'
 import { outputSearchPipeline as outputSearchPipelineGemini } from './01_search_pipeline_gemini'
 import { endReportPipeline } from './02_end_report'
@@ -39,6 +40,9 @@ async function runFullPipeline() {
 
   try {
     console.log('>>> [STEG 1/4] Kjører profil-analyse (00_create_profile)...')
+    const createProfilesPipeline = useGeminiStepOne
+      ? createProfilesPipelineGemini
+      : createProfilesPipelineAnthropic
     await createProfilesPipeline(aktorFil, outputDir, dryRun)
     console.log('✓ Steg 1 fullført.\n')
 
