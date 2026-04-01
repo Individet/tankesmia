@@ -9,3 +9,4 @@ node_modules/
 pipelines/isi-rangering/actors.json
 output/
 logerrors.ts
+dry-run-output/
