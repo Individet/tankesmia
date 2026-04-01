@@ -76,7 +76,7 @@ Men her er den avgjørende skillelinjen som historien har tegnet i blod:
 
 _Det er en uendelig forskjell mellom samarbeid og tvang._
 
-Når to mennesker møtes og sier «jeg vil hjelpe deg, og du vil hjelpe meg» — da skapes noe som aldri har eksistert før. Handel, vitenskaper, kunst, medisin, teknologi — alt menneskeheten har skapt av varig verdi, er skapt av frivillig samarbeid mellom individer som så en fordel i å virke sammen. Økonomen Friedrich Hayek observerte at prissystemet koordinerer millioner av menneskers kunnskap og planer uten at noen enkeltperson behøver å forstå helheten. Det er ikke kaos — det er spontan orden, emergent fra individers frie valg.
+Når to mennesker møtes og sier «jeg kan hjelpe deg, om du vil hjelpe meg» — da skapes noe som aldri har eksistert før. Handel, vitenskaper, kunst, medisin, teknologi — alt menneskeheten har skapt av varig verdi, er skapt av frivillig samarbeid mellom individer som så en fordel i å virke sammen. Økonomen Friedrich Hayek observerte at prissystemet koordinerer millioner av menneskers kunnskap og planer uten at noen enkeltperson behøver å forstå helheten. Det er ikke kaos — det er spontan orden, emergent fra individers frie valg.
 
 Leonard Read viste det med en liten ting: en blyant. For å lage én enkelt blyant trengs sedertre fra Oregon, grafitt fra Sri Lanka, messing fra Zimbabwe, lakk fra kassiatreet i Kina. Ingen enkelt person på jorden vet hvordan det gjøres fra bunnen av — og likevel produseres hundrevis av millioner blyanter hvert år, koordinert av ingen, planlagt av ingen, bestilt av ingen. Bare av frivillige individers fri samhandling, bundet sammen av priser og kontrakter.
 
