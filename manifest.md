@@ -14,11 +14,11 @@ Bak alle politiske stridigheter, alle revolusjoner, alle imperienes fremvekst og
 
 _Hvem eier deg?_
 
-Ikke nasjonalstaten. Ikke folket. Ikke flertallet. Ikke partiet, kollektivet, algoritmen eller velferdsbyrokratiet.
+Ikke nasjonalstaten. Ikke folket. Ikke flertallet. Ikke partiet, kollektivet, algoritmen eller velferdsbyråkratiet.
 
-Du eier deg selv.
+**Du eier deg selv.**
 
-Dette er ikke en politisk påstand. Det er ikke en ideologi eller en partilinje. Det er en observasjon av virkeligheten — like sann og like uunngåelig som tyngdekraften. Du tenker med din hjerne. Du handler med dine hender. Du bærer konsekvensene av dine valg i din kropp, ditt liv, din skjebne. Ingen kan tenke for deg. Ingen kan leve for deg. Og ingen — uansett hvilken tittel de bærer eller hvilken uniform de ikler seg — har moralsk rett til å herske over deg uten ditt samtykke.
+Dette er ikke en politisk påstand. Det er ikke en ideologi eller en partilinje. Det er en observasjon av virkeligheten — like sann og like uunngåelig som tyngdekraften. Du tenker med din hjerne. Du handler med dine hender. Du bærer konsekvensene av dine valg i din kropp, ditt liv, din skjebne. Ingen kan tenke for deg. Ingen kan leve for deg. Og ingen — uansett hvilken tittel de bærer, uansett hvilken uniform de ikler seg eller uansett hvor stor mobb de har bak seg — har moralsk rett til å herske over deg uten ditt samtykke.
 
 Dette er individets suverenitet. Den høyeste myndighet over eget liv. Og dette manifestet er dens forsvar.
 
@@ -32,15 +32,15 @@ Ikke stammen. Ikke klassen. Ikke staten.
 
 _Mennesket._
 
-Det individuelle, levende, tenkende, vurderende mennesket — som han kalte et _«logikon zôon»_: et vesen med fornuft og tale. Og siden fornuft er udelelig — siden ingen kan dele din tanke, eie din forståelse eller overføre din innsikt til noen annen — er all intellektuell aktivitet fundamentalt individuell. Det er ikke en tilfeldighet. Det er menneskets natur.
+Det individuelle, levende, tenkende, vurderende mennesket — som han kalte et _«logikon zôon»_: et vesen med fornuft og tale. Og siden fornuft er udelelig — ingen kan dele din tanke, eie din forståelse eller overføre din innsikt til noen annen — er all intellektuell aktivitet fundamentalt individuell. Det er ikke en tilfeldighet. Det er menneskets natur.
 
-Stoikerne tok denne flammen og lot den lyse over hele verden. Der Aristoteles tenkte innenfor bymurene, erklærte stoikerne noe som fortsatt er radikalt: naturloven gjelder alle mennesker, i alle nasjoner, til alle tider. Cicero — romer, advokat, senator — satte det i ord som har ringt gjennom to tusen år: «Sann lov er fornuft i overensstemmelse med naturen. Den er universell, uforanderlig og evig.» Seneca, Romas mest leste filosof, nøyde seg med få ord: _«Homo res sacra homini.»_ Mennesket er noe hellig for mennesket.
+Stoikerne tok denne flammen og lot den lyse over hele verden. Der Aristoteles tenkte innenfor bymurene, erklærte stoikerne noe som fortsatt er radikalt: naturloven gjelder alle mennesker, i alle nasjoner, til alle tider. Cicero — romer, advokat, senator — satte det i ord som har ringt gjennom to tusen år: «Sann lov er rett fornuft i overensstemmelse med naturen. Den er universell, uforanderlig og evig.»[^cicero] Seneca, Romas mest leste filosof, nøyde seg med få ord: _«homo, sacra res homini»_[^seneca] Mennesket er noe hellig for mennesket.
 
-Tråden ble rukket videre — av romerske jurister som kodifiserte eiendomsretten, av middelalderske kanonister som innså at en urettferdig lov ikke er en lov, av Hugo Grotius som grunnla den moderne naturretten på et prinsipp som sprengte alle teologiske grenser: rettigheter tilhører individet, ikke kongen — ikke engang Gud kan endre dem.
+Tråden ble rukket videre — av romerske jurister som kodifiserte eiendomsretten, av middelalderske kanonister som innså at en urettferdig lov ikke er en lov, av Hugo Grotius som grunnla den moderne naturretten på et prinsipp som sprengte alle teologiske grenser: Rettigheter tilhører individet. Ikke kongen, ikke engang Gud, kan endre dem.
 
 Og så kom John Locke.
 
-I 1689, i en setning så skarp at den fortsatt brenner ved berøring, formulerte han det som ikke var sagt klart nok siden Aristoteles: «Ethvert menneske har en eiendomsrett i sin egen person: denne har ingen annen rett til enn ham selv.» Fra dette prinsippet — forankret i fornuft, natur og den observerte virkeligheten av hva arbeid og skapelse faktisk er — utleder han alt: Din tanke er din, ditt arbeid er ditt, fruktene av ditt arbeid er dine — og staten eksisterer for å beskytte dette. Ikke for å beordre det, omfordele det eller konfiskere det. _Beskytte_ det. Og den øyeblikk staten bryter denne tilliten, mister den sin legitimitet.
+I 1689, i en setning så skarp at den fortsatt brenner ved berøring, formulerte han det som ikke var sagt klart nok siden Aristoteles: «Ethvert menneske har en eiendomsrett i sin egen person: denne har ingen annen rett til enn ham selv.»[^locke] Fra dette prinsippet — forankret i fornuft, natur og den observerte virkeligheten av hva arbeid og skapelse faktisk er — utleder han alt: Din tanke er din, ditt arbeid er ditt, fruktene av ditt arbeid er dine — og staten eksisterer for å beskytte dette. Ikke for å beordre det, omfordele det eller konfiskere det. _Beskytte_ det. Og den øyeblikk staten bryter denne tilliten, mister den sin legitimitet.
 
 Tretten kolonier hørte etter. I 1776 ble Lockes prinsipp til handling.
 
@@ -58,9 +58,9 @@ For hvert eneste sekund av hvert eneste liv er det et individ som bærer ansvare
 
 Dette er ikke kald filosofi. Det er en oppfordring til storhet.
 
-Den franske økonomen Frédéric Bastiat, som skrev i 1850 med en klarhet som skammer vår tids politikere, sa det slik: «Liv, frihet, eiendom — dette er mennesket. Disse gavene fra naturen går forut for all menneskelig lovgivning og er overlegne den.» Du er ikke statens råvare. Du er ikke historiens brikke. Du er et formål i deg selv — skapende, tenkende, ansvarlig, _levende_.
+Den franske økonomen Frédéric Bastiat, som skrev i 1850 med en klarhet som setter skam på vår tids politikere, sa det slik: «Eksistens, evner, assimilasjon — med andre ord personlighet, frihet, eiendom — det er mennesket. Om disse tre tingene kan man si, uten noen demagogisk omsvøp, at de er forut for all menneskelig lovgivning og overlegne den.»[^bastiat] Du er ikke statens råvare. Du er ikke historiens brikke. Du er et formål i deg selv — skapende, tenkende, ansvarlig, _levende_.
 
-Se på menneskene som har bevist dette med sine egne liv. Epiktet ble født som slave i Romerriket, eid som en ting av en annen manns vilje — og likevel nektet hans sinn å være eid. «Det finnes bare ett sted der ingen kan røre deg,» sa han. «Dine egne tanker.» Slaveriet gikk ikke inn i ham. Han ble stoikernes store filosof. Lysander Spooner, den amerikanske juristen, avviste med knusende logikk enhver stats krav på å representere ham: «En persons naturlige rettigheter er hans egne mot hele verden.» Aleksandr Solzjenitsyn overlevde elleve år i Gulag, mistet alt — og valgte å fortelle sannheten om det sovjetiske leirsystemet til en verden som helst ville lukke øynene. «Linjen som skiller godt fra ondt,» skrev han, «går ikke gjennom stater eller klasser. Den går tvers gjennom ethvert menneskelig hjerte.»
+Se på menneskene som har bevist dette med sine egne liv. Epiktet ble født som slave i Romerriket, eid som en ting av en annen manns vilje — og likevel nektet hans sinn å være eid. «Beinet mitt kan du lenke, men min vilje kan ikke engang Zeus  beseire.»[^epiktet] Slaveriet gikk ikke inn i ham. Han ble stoikernes store filosof. Lysander Spooner, den amerikanske juristen, avviste med knusende logikk enhver stats krav på å representere ham: «Et menneskes naturlige rettigheter er hans egne mot hele verden; og ethvert inngrep i dem er like fullt en forbrytelse — enten det begås av én mann, eller av millioner; enten det begås av én mann som kaller seg røver, eller av millioner som kaller seg en regjering.»[^spooner] Aleksandr Solzjenitsyn overlevde elleve år i Gulag, mistet alt — og valgte å fortelle sannheten om det sovjetiske leirsystemet til en verden som helst ville lukke øynene. «Linjen som skiller godt fra ondt,» skrev han, «går ikke gjennom stater, ikke mellom klasser, ikke mellom politiske partier heller — men tvers gjennom ethvert menneskelig hjerte — og gjennom alle menneskelige hjerter.»[^solzjenitsyn]
 
 De eide seg selv. Ingen klarte å ta det fra dem.
 
@@ -181,3 +181,18 @@ _Lev ditt liv. Det er det eneste du har. Og det er nok._
 ---
 
 _Dette manifestet gjelder absolutt alle individer — til absolutt alle tider._
+
+
+[^cicero] Cicero, De Re Publica III.xxii.33. Overs. til norsk fra Keyes (LCL 213, 1928, s. 211) ved Claude Sonnet 4.6 (Anthropic, 2025).
+
+[^seneca] Seneca, Epistulae morales ad Lucilium, XCV.33 (ca. 63–65 e.Kr.). 
+
+[^locke] Locke, John. Two Treatises of Government (1689). Second Treatise, kap. V («Of Property»), § 27. Norsk oversettelse ved Claude Sonnet 4.6 (Anthropic, 2026).
+
+[^bastiat] Bastiat, Frédéric. La Loi. Mugron, 1850. Engelsk oversettelse: Dean Russell, The Law (Irvington-on-Hudson, NY: Foundation for Economic Education, 1950). Norsk oversettelse ved Claude Sonnet 4.6 (Anthropic, 2026).
+
+[^epiktet] Epiktet, Diskursene (Discourses), Bok I, kapittel 1, §§ 22–25 (ca. 108 e.Kr., nedskrevet av Arrian). Engelsk oversettelse: W.A. Oldfather, Loeb Classical Library nr. 131 (Cambridge, MA: Harvard University Press, 1925). Norsk oversettelse ved Claude Sonnet 4.6 (Anthropic, 2026).
+
+[^spooner] Spooner, Lysander. No Treason, No. 1 (Boston: Lysander Spooner, 1867), s. 7. Norsk oversettelse ved Claude Sonnet 4.6 (Anthropic, 2026).
+
+[^solzjenitsyn] Solzjenitsyn, Aleksandr. Gulag-skjærgården (Архипелаг ГУЛАГ), bind II, del IV, kapittel 1: «Opstigningen» («The Ascent»). Første utgave: Paris: YMCA-Press, 1973. Engelsk oversettelse: Thomas P. Whitney, The Gulag Archipelago 1918–1956 (New York: Harper & Row, 1975). Norsk oversettelse ved Claude Sonnet 4.6 (Anthropic, 2026).
