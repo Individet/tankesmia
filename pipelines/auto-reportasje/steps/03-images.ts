@@ -48,9 +48,7 @@ async function searchWikimedia(query: string): Promise<WikiSearchResult[]> {
   return data.query?.search ?? []
 }
 
-async function fetchImageInfo(
-  filename: string,
-): Promise<WikiImageInfo | null> {
+async function fetchImageInfo(filename: string): Promise<WikiImageInfo | null> {
   const params = new URLSearchParams({
     action: 'query',
     titles: `File:${filename}`,
@@ -63,10 +61,7 @@ async function fetchImageInfo(
   const res = await fetch(`${WIKIMEDIA_API}?${params}`)
   const data = (await res.json()) as {
     query?: {
-      pages?: Record<
-        string,
-        { imageinfo?: WikiImageInfo[] }
-      >
+      pages?: Record<string, { imageinfo?: WikiImageInfo[] }>
     }
   }
 
@@ -136,11 +131,21 @@ async function scoreRelevance(
   return text.includes('ja')
 }
 
+export interface ImageSearchEntry {
+  filename: string
+  query: string
+  accepted: boolean
+  reason: string
+  url?: string
+  license?: string
+}
+
 async function findImages(
   client: Anthropic,
   query: string,
   idPrefix: string,
   maxImages: number,
+  searchLog: ImageSearchEntry[],
 ): Promise<ImageMeta[]> {
   const searchResults = await searchWikimedia(query)
   const images: ImageMeta[] = []
@@ -150,10 +155,28 @@ async function findImages(
 
     const filename = result.title.replace(/^File:/, '')
     const info = await fetchImageInfo(filename)
-    if (!info) continue
+    if (!info) {
+      searchLog.push({
+        filename,
+        query,
+        accepted: false,
+        reason: 'no-image-info',
+      })
+      continue
+    }
 
     const license = info.extmetadata?.LicenseShortName?.value
-    if (!isAcceptableLicense(license)) continue
+    if (!isAcceptableLicense(license)) {
+      searchLog.push({
+        filename,
+        query,
+        accepted: false,
+        reason: `bad-license: ${license ?? 'none'}`,
+        url: info.url,
+        license: license ?? undefined,
+      })
+      continue
+    }
 
     const description =
       info.extmetadata?.ImageDescription?.value != null
@@ -161,7 +184,17 @@ async function findImages(
         : filename
 
     const relevant = await scoreRelevance(client, query, description)
-    if (!relevant) continue
+    if (!relevant) {
+      searchLog.push({
+        filename,
+        query,
+        accepted: false,
+        reason: 'not-relevant',
+        url: info.url,
+        license,
+      })
+      continue
+    }
 
     const id =
       images.length === 0 && idPrefix === 'hero'
@@ -175,23 +208,44 @@ async function findImages(
       attribution: buildAttribution(info, filename),
       alt: buildAlt(info, filename),
     })
+    searchLog.push({
+      filename,
+      query,
+      accepted: true,
+      reason: 'ok',
+      url: info.url,
+      license,
+    })
   }
 
   return images
 }
 
-export async function findArticleImages(
-  topic: { slug: string; title: string },
-): Promise<ArticleImages> {
+export interface ImageSearchResult {
+  images: ArticleImages
+  searchLog: ImageSearchEntry[]
+}
+
+export async function findArticleImages(topic: {
+  slug: string
+  title: string
+}): Promise<ImageSearchResult> {
   if (!process.env.ANTHROPIC_API_KEY) {
     throw new Error('ANTHROPIC_API_KEY mangler')
   }
 
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+  const searchLog: ImageSearchEntry[] = []
 
   console.log(`[03-images] Søker etter bilder for "${topic.title}"...`)
 
-  const heroResults = await findImages(client, topic.title, 'hero', 1)
+  const heroResults = await findImages(
+    client,
+    topic.title,
+    'hero',
+    1,
+    searchLog,
+  )
 
   let hero: ImageMeta
   if (heroResults.length > 0) {
@@ -215,8 +269,12 @@ export async function findArticleImages(
     topic.slug.replace(/-/g, ' '),
     topic.slug,
     MAX_INLINE_IMAGES,
+    searchLog,
   )
   console.log(`[03-images] Fant ${inlineImages.length} inline-bilder`)
+  console.log(
+    `[03-images] Bildesøk-logg: ${searchLog.filter((e) => e.accepted).length} akseptert, ${searchLog.filter((e) => !e.accepted).length} avvist`,
+  )
 
-  return { hero, inline: inlineImages }
+  return { images: { hero, inline: inlineImages }, searchLog }
 }

@@ -14,11 +14,11 @@ export async function createPR(
   images: ArticleImages,
   date: string,
 ): Promise<string> {
-  if (!process.env.GH_PAT) {
-    throw new Error('GH_PAT mangler')
+  if (!process.env.GITHUB_TOKEN) {
+    throw new Error('GITHUB_TOKEN mangler')
   }
 
-  const octokit = new Octokit({ auth: process.env.GH_PAT })
+  const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN })
 
   const { slug, title } = article.frontmatter
   const branchName = `article/${slug}`
@@ -75,7 +75,9 @@ export async function createPR(
 
   const prBody = buildPrBody(title, slug, date, article)
 
-  console.log(`[06-create-pr] Oppretter PR fra "${branchName}" til "${BASE_BRANCH}"...`)
+  console.log(
+    `[06-create-pr] Oppretter PR fra "${branchName}" til "${BASE_BRANCH}"...`,
+  )
 
   const { data: pr } = await octokit.pulls.create({
     owner: WEBSITE_REPO.owner,

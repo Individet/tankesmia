@@ -23,6 +23,11 @@ export interface Article {
   sources: string
   publishableMarkdown: string
   raw: string
+  apiMeta: {
+    model: string
+    stopReason: string | null
+    usage: { input_tokens: number; output_tokens: number }
+  }
 }
 
 const MODEL = 'claude-opus-4-6'
@@ -236,7 +241,15 @@ export async function writeArticle(
     .map((b) => (b as Anthropic.Messages.TextBlock).text)
     .join('\n')
 
-  console.log(`[04-write-article] Opus returnerte ${rawText.length} tegn`)
+  const apiMeta = {
+    model: response.model,
+    stopReason: response.stop_reason,
+    usage: response.usage,
+  }
+
+  console.log(
+    `[04-write-article] Opus returnerte ${rawText.length} tegn (${apiMeta.usage.input_tokens} in / ${apiMeta.usage.output_tokens} out, stop: ${apiMeta.stopReason})`,
+  )
 
   // ── Parse frontmatter ─────────────────────────────────────────────────────
   const parsed = matter(rawText)
@@ -296,5 +309,6 @@ export async function writeArticle(
     sources,
     publishableMarkdown,
     raw: rawText,
+    apiMeta,
   }
 }

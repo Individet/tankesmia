@@ -170,9 +170,7 @@ function extractTextWithCitations(message: Anthropic.Messages.Message): string {
 
         const next = footnotes.length + 1
         footnoteIndexByKey.set(key, next)
-        footnotes.push(
-          `[^${next}]: "${c.cited_text}" – [${c.title}](${c.url})`,
-        )
+        footnotes.push(`[^${next}]: "${c.cited_text}" – [${c.title}](${c.url})`)
 
         return `[^${next}]`
       })
@@ -227,7 +225,9 @@ export async function doResearch(topic: Topic): Promise<{
   for await (const result of await client.messages.batches.results(batch.id)) {
     rawResults.push(result)
     if (result.result.type === 'succeeded') {
-      results[result.custom_id] = extractTextWithCitations(result.result.message)
+      results[result.custom_id] = extractTextWithCitations(
+        result.result.message,
+      )
     } else {
       console.warn(
         `[02-research] Request ${result.custom_id} feilet: ${result.result.type}`,

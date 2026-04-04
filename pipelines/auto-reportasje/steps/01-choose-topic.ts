@@ -50,11 +50,17 @@ Svar med gyldig JSON på dette formatet:
 }`
 }
 
+interface CandidateAttempt {
+  attempt: number
+  response: unknown
+  candidates: Topic[]
+}
+
 async function hentKandidater(
   client: Anthropic,
   usedSlugs: string[],
   attempt: number,
-): Promise<Topic[]> {
+): Promise<{ candidates: Topic[]; raw: CandidateAttempt }> {
   const response = await client.messages.create({
     model: MODEL,
     max_tokens: 1024,
@@ -74,14 +80,24 @@ async function hentKandidater(
 
   const jsonMatch = textBlock.text.match(/\{[\s\S]*\}/)
   if (!jsonMatch) {
-    throw new Error(`Kunne ikke parse JSON fra Haiku-respons: ${textBlock.text}`)
+    throw new Error(
+      `Kunne ikke parse JSON fra Haiku-respons: ${textBlock.text}`,
+    )
   }
 
   const parsed = JSON.parse(jsonMatch[0]) as HaikuCandidates
-  return parsed.candidates
+  return {
+    candidates: parsed.candidates,
+    raw: { attempt, response, candidates: parsed.candidates },
+  }
 }
 
-export async function chooseTopic(): Promise<Topic> {
+export interface ChooseTopicResult {
+  topic: Topic
+  candidateLog: CandidateAttempt[]
+}
+
+export async function chooseTopic(): Promise<ChooseTopicResult> {
   if (!process.env.ANTHROPIC_API_KEY) {
     throw new Error('ANTHROPIC_API_KEY mangler')
   }
@@ -90,12 +106,18 @@ export async function chooseTopic(): Promise<Topic> {
 
   const raw = await fs.readFile(TOPICS_USED_PATH, 'utf8')
   const usedSlugs: string[] = JSON.parse(raw)
+  const candidateLog: CandidateAttempt[] = []
 
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
     console.log(
       `[01-choose-topic] Forsøk ${attempt}/${MAX_ATTEMPTS} — henter kandidater fra Haiku...`,
     )
-    const candidates = await hentKandidater(client, usedSlugs, attempt)
+    const { candidates, raw: attemptLog } = await hentKandidater(
+      client,
+      usedSlugs,
+      attempt,
+    )
+    candidateLog.push(attemptLog)
     console.log(
       `[01-choose-topic] Fikk ${candidates.length} kandidater: ${candidates.map((c) => c.slug).join(', ')}`,
     )
@@ -106,7 +128,7 @@ export async function chooseTopic(): Promise<Topic> {
       console.log(
         `[01-choose-topic] Valgte emne: ${chosen.slug} — "${chosen.title}"`,
       )
-      return chosen
+      return { topic: chosen, candidateLog }
     }
 
     console.log(

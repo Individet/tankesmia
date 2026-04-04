@@ -10,11 +10,11 @@ export async function saveRawdata(
   date: string,
   rawBatch: unknown,
 ): Promise<void> {
-  if (!process.env.GH_PAT) {
-    throw new Error('GH_PAT mangler')
+  if (!process.env.GITHUB_TOKEN) {
+    throw new Error('GITHUB_TOKEN mangler')
   }
 
-  const octokit = new Octokit({ auth: process.env.GH_PAT })
+  const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN })
 
   const filename = `${date}-${slug}-research.json`
   const filePath = `raw/articles/${filename}`
