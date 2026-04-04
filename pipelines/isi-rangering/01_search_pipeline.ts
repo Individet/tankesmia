@@ -5,23 +5,9 @@ import {
   sendBatch,
   ventPåBatch,
   type BatchRequest,
-<<<<<<< HEAD
 } from './anthropic-live.ts'
 import { lesJsonFil, slug } from './utils.ts'
 import { Aktor } from './types'
-=======
-} from './anthropic-live'
-
-export interface Aktor {
-  name: string
-  type: string
-  parti?: string
-  tilhørighet?: string
-  jurisdiksjon?: string
-  periode?: string
-  beskrivelse?: string
-}
->>>>>>> b9ea85f... WIP
 
 interface Dimensjon {
   id: string
@@ -124,11 +110,7 @@ export const DIMENSJONER: Dimensjon[] = [
       '6.4 Eierskap til egne data',
     ],
     beskrivelser: [
-<<<<<<< HEAD
       'Har aktøren støttet masseovervåkning, datalagringspåbud eller statens tilgang til privat kommunikasjon uten domstolskjennelse?',
-=======
-      'Har aktøren støttet masseover våkning, datalagringspåbud eller statens tilgang til privat kommunikasjon uten domstolskjennelse?',
->>>>>>> b9ea85f... WIP
       'Støtter aktøren obligatoriske digitale ID-systemer, CBDC med programmerbar bruk, eller sosiale kredittmekanismer?',
       'Har aktøren støttet tiltak som begrenser kryptering, bakdører i kommunikasjonssystemer, eller statlig kontroll over internettinfrastruktur?',
       'Støtter aktøren individets rett til å eie og kontrollere egne data — eller fremmer aktøren statlig/korporativ datahøsting uten reelt samtykke?',
@@ -136,19 +118,6 @@ export const DIMENSJONER: Dimensjon[] = [
   },
 ]
 
-<<<<<<< HEAD
-=======
-export function slug(value: string): string {
-  return value
-    .toLowerCase()
-    .replace(/æ/g, 'ae')
-    .replace(/ø/g, 'o')
-    .replace(/å/g, 'a')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
-}
-
->>>>>>> b9ea85f... WIP
 function lagSystemPrompt(
   manifest: string,
 ): Array<{ type: 'text'; text: string; cache_control: { type: 'ephemeral' } }> {
@@ -379,12 +348,7 @@ export async function outputSearchPipeline(
   outputDir: string,
   dryRun: boolean,
 ): Promise<void> {
-<<<<<<< HEAD
   const aktorer = await lesJsonFil<Aktor[]>(aktorFil)
-=======
-  const content = await fs.readFile(aktorFil, 'utf8')
-  const aktorer = JSON.parse(content) as Aktor[]
->>>>>>> b9ea85f... WIP
   const manifest = await fs.readFile(manifestFil, 'utf8')
 
   // Load profiles from the output directory

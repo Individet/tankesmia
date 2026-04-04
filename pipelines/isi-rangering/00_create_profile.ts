@@ -5,42 +5,14 @@ import {
   sendBatch,
   ventPåBatch,
   type BatchRequest,
-<<<<<<< HEAD
 } from './anthropic-live.ts'
 import { tolkMarkdownFil, type Innhold } from './01_search_pipeline'
 import { lesJsonFil, slug } from './utils.ts'
 import { Aktor } from './types.ts'
-=======
-} from './anthropic-live'
-import { tolkMarkdownFil, type Innhold } from './01_search_pipeline'
-
-interface Aktor {
-  name: string
-  type: string
-  parti?: string
-  tilhørighet?: string
-  jurisdiksjon?: string
-  periode?: string
-  beskrivelse?: string
-}
->>>>>>> b9ea85f... WIP
 
 const MODEL = 'claude-haiku-4-5'
 const MAX_TOKENS = 2200
 
-<<<<<<< HEAD
-=======
-export function slug(value: string): string {
-  return value
-    .toLowerCase()
-    .replace(/æ/g, 'ae')
-    .replace(/ø/g, 'o')
-    .replace(/å/g, 'a')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
-}
-
->>>>>>> b9ea85f... WIP
 function lagSystemPrompt(): Array<{
   type: 'text'
   text: string
@@ -165,14 +137,6 @@ function byggProfilMarkdown(aktor: Aktor, profiltekst: string): string {
     .join('\n\n')
 }
 
-<<<<<<< HEAD
-=======
-async function lesJsonFil<T>(filePath: string): Promise<T> {
-  const content = await fs.readFile(filePath, 'utf8')
-  return JSON.parse(content) as T
-}
-
->>>>>>> b9ea85f... WIP
 export async function createProfilesPipeline(
   aktorFil: string,
   outputDir: string,
