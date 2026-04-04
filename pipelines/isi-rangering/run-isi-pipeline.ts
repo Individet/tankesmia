@@ -1,6 +1,8 @@
 import path from 'path'
-import { createProfilesPipeline } from './00_create_profile'
-import { outputSearchPipeline } from './01_search_pipeline'
+import { createProfilesPipeline as createProfilesPipelineAnthropic } from './00_create_profile'
+import { createProfilesPipeline as createProfilesPipelineGemini } from './00_create_profile_gemini'
+import { outputSearchPipeline as outputSearchPipelineAnthropic } from './01_search_pipeline'
+import { outputSearchPipeline as outputSearchPipelineGemini } from './01_search_pipeline_gemini'
 import { endReportPipeline } from './02_end_report'
 import { saveReportsPipeline } from './03_save_reports'
 
@@ -22,6 +24,7 @@ const STANDARD_ISI_RAMMVERK = path.join(
 async function runFullPipeline() {
   const args = process.argv.slice(2)
   const dryRun = args.includes('--dry-run')
+  const useGeminiStepOne = args.includes('--use-gemini-step-one')
   const aktorFil = args.find((arg) => !arg.startsWith('-')) ?? STANDARD_AKTORFIL
 
   const outputDir = path.join('output', 'isi-rangering')
@@ -37,10 +40,16 @@ async function runFullPipeline() {
 
   try {
     console.log('>>> [STEG 1/4] Kjører profil-analyse (00_create_profile)...')
+    const createProfilesPipeline = useGeminiStepOne
+      ? createProfilesPipelineGemini
+      : createProfilesPipelineAnthropic
     await createProfilesPipeline(aktorFil, outputDir, dryRun)
     console.log('✓ Steg 1 fullført.\n')
 
     console.log('>>> [STEG 2/4] Kjører dimensjons-søk (01_search_pipeline)...')
+    const outputSearchPipeline = useGeminiStepOne
+      ? outputSearchPipelineGemini
+      : outputSearchPipelineAnthropic
     await outputSearchPipeline(
       aktorFil,
       STANDARD_MANIFESTFIL,
