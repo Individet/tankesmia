@@ -46,7 +46,7 @@ export async function createPR(
   const mdPath = `content/articles/${slug}.md`
   const jsonPath = `src/assets/articles/${slug}.json`
 
-  const mdContent = article.raw
+  const mdContent = article.publishableMarkdown
   const jsonContent = JSON.stringify(
     { hero: images.hero, inline: images.inline },
     null,
@@ -120,8 +120,13 @@ function buildPrBody(
     `**Dato:** ${date}`,
     `**Generert:** ${timestamp}`,
     '',
-    'Denne PR-en er automatisk generert av auto-reportasje-pipeline.',
-    'Den merges automatisk etter 7 dager hvis ingen endringer er gjort.',
+    '### Pitch til redaktør',
+    '',
+    article.pitch,
+    '',
+    '### Hook til sosiale medier',
+    '',
+    article.socialHook,
     '',
     '### Tags',
     article.frontmatter.tags.map((t) => `- ${t}`).join('\n'),
