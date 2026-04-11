@@ -214,6 +214,8 @@ export interface BatchOtherBlock {
 export interface BatchSucceededResult {
   type: 'succeeded'
   model?: string
+  /** 'end_turn' | 'max_tokens' | 'stop_sequence' | 'tool_use' */
+  stopReason?: string
   usage: BatchUsage
   content: Array<BatchTextBlock | BatchOtherBlock>
 }

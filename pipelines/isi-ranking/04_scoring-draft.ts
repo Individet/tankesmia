@@ -39,29 +39,35 @@ export function buildScoringDraftRequests(
 ): PipelineBatchRequest<ScoringDraftMeta>[] {
   const dossiersBySlug = new Map(dossiers.map((item) => [item.actorSlug, item]))
 
-  return Array.from(matrices.values()).map((matrix) => ({
-    custom_id: makeCustomId(matrix.actorSlug, 'scoring'),
-    meta: { actorSlug: matrix.actorSlug },
-    params: {
-      model: MODELS.scoringDraft,
-      max_tokens: 4500,
-      system: buildScoringSystemPrompt(),
-      messages: [
-          {
-            role: 'user',
-            content: [
-              {
-                type: 'text',
-                text: buildScoringUserPrompt(
-                  dossiersBySlug.get(matrix.actorSlug) as ActorDossier,
-                  matrix,
-                ),
-              },
-            ],
-          },
-        ],
-    },
-  }))
+  return Array.from(matrices.values()).map((matrix) => {
+    const dossier = dossiersBySlug.get(matrix.actorSlug)
+    if (!dossier) {
+      throw new Error(
+        `Mangler dossier for aktør '${matrix.actorSlug}' i scoringssteget. Tilgjengelige slugs: ${[...dossiersBySlug.keys()].join(', ')}`,
+      )
+    }
+
+    return {
+      custom_id: makeCustomId(matrix.actorSlug, 'scoring'),
+      meta: { actorSlug: matrix.actorSlug },
+      params: {
+        model: MODELS.scoringDraft,
+        max_tokens: 4500,
+        system: buildScoringSystemPrompt(),
+        messages: [
+            {
+              role: 'user',
+              content: [
+                {
+                  type: 'text',
+                  text: buildScoringUserPrompt(dossier, matrix),
+                },
+              ],
+            },
+          ],
+      },
+    }
+  })
 }
 
 export function parseScoringDraftResults(

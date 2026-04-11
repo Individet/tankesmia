@@ -2,6 +2,7 @@ import { promises as fs } from 'fs'
 import path from 'path'
 import type {
   BatchSucceededResult,
+  BatchUsage,
   CitationRecord,
   PipelinePaths,
   PipelineBatchResult,
@@ -82,7 +83,12 @@ export function parseJsonFromText<T>(text: string): T {
       ) as T
     }
 
-    throw new Error('Klarte ikke aa parse JSON fra modellsvaret.')
+    throw new Error(
+      `Klarte ikke å parse JSON fra modellsvaret.\n` +
+      `Lengde: ${text.length} tegn\n` +
+      `Start: ${text.slice(0, 120)}\n` +
+      `Slutt: ${text.slice(-120)}`,
+    )
   }
 }
 
@@ -90,8 +96,23 @@ export function requireSucceededResult(
   result: PipelineBatchResult | undefined,
   customId: string,
 ): BatchSucceededResult {
-  if (!result || result.type !== 'succeeded') {
-    throw new Error(`Batch-resultat mangler eller feilet for ${customId}.`)
+  if (!result) {
+    throw new Error(`Batch-resultat mangler for ${customId}: ingen resultat registrert.`)
+  }
+
+  if (result.type !== 'succeeded') {
+    const errorDetail = 'error' in result && result.error != null
+      ? JSON.stringify(result.error)
+      : 'ukjent feil'
+    throw new Error(
+      `Batch-resultat feilet for ${customId} (type=${result.type}): ${errorDetail}`,
+    )
+  }
+
+  if (result.stopReason === 'max_tokens') {
+    console.warn(
+      `[advarsel] ${customId}: modellen nådde max_tokens-grensen — JSON kan være avkuttet!`,
+    )
   }
 
   return result
@@ -150,4 +171,40 @@ export function buildPipelinePaths(
 
 export function subdimensionFileStem(subdimensionId: string): string {
   return subdimensionId.replace(/[^a-z0-9_]+/gi, '-')
+}
+
+export function emptyUsage(): BatchUsage {
+  return { inputTokens: 0, outputTokens: 0, cacheReadTokens: 0, cacheCreationTokens: 0, webSearchRequests: 0 }
+}
+
+export function sumBatchUsage(results: Map<string, PipelineBatchResult>): BatchUsage {
+  const total = emptyUsage()
+  for (const result of results.values()) {
+    if (result.type === 'succeeded') {
+      total.inputTokens += result.usage.inputTokens
+      total.outputTokens += result.usage.outputTokens
+      total.cacheReadTokens += result.usage.cacheReadTokens
+      total.cacheCreationTokens += result.usage.cacheCreationTokens
+      total.webSearchRequests += result.usage.webSearchRequests
+    }
+  }
+  return total
+}
+
+export function addUsage(a: BatchUsage, b: BatchUsage): BatchUsage {
+  return {
+    inputTokens: a.inputTokens + b.inputTokens,
+    outputTokens: a.outputTokens + b.outputTokens,
+    cacheReadTokens: a.cacheReadTokens + b.cacheReadTokens,
+    cacheCreationTokens: a.cacheCreationTokens + b.cacheCreationTokens,
+    webSearchRequests: a.webSearchRequests + b.webSearchRequests,
+  }
+}
+
+export function formatUsage(usage: BatchUsage): string {
+  const parts = [`inn=${usage.inputTokens}`, `ut=${usage.outputTokens}`]
+  if (usage.cacheReadTokens > 0) parts.push(`cache-lest=${usage.cacheReadTokens}`)
+  if (usage.cacheCreationTokens > 0) parts.push(`cache-skrevet=${usage.cacheCreationTokens}`)
+  if (usage.webSearchRequests > 0) parts.push(`websøk=${usage.webSearchRequests}`)
+  return parts.join(', ')
 }

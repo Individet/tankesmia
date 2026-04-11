@@ -25,7 +25,16 @@ function parseArgs(argv: string[]) {
 async function main() {
   const options = parseArgs(process.argv)
   const summary = await runIsiRankingPipeline(options)
-  console.log(summary.outputDir)
+  console.log('\n=== Pipeline ferdig ===')
+  console.log(`Aktører behandlet : ${summary.actorCount}`)
+  console.log(`Rapporter generert: ${summary.reportsGenerated}`)
+  if (summary.gapResearchRequests > 0) {
+    console.log(`Gap-søk utført    : ${summary.gapResearchRequests}`)
+  }
+  console.log(`Utdata            : ${summary.outputDir}`)
+  if (summary.prUrl) {
+    console.log(`Pull request      : ${summary.prUrl}`)
+  }
 }
 
 main().catch((error) => {

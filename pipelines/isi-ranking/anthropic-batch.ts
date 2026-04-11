@@ -33,28 +33,29 @@ export class LiveAnthropicBatchTransport implements BatchTransport {
 
   async createBatch(
     requests: PipelineBatchRequest[],
-    _label: string,
+    label: string,
   ): Promise<string> {
     const batch = await this.client.messages.batches.create({
       requests: requests.map(({ meta: _meta, ...request }) => request),
     })
+    console.log(`[batch] Opprettet ${label}: ${batch.id} (${requests.length} kall)`)
     return batch.id
   }
 
   async waitForBatch(batchId: string, label: string): Promise<void> {
-    console.log(`  Venter pa batch ${batchId} (${label})...`)
+    console.log(`[batch] Venter på ${batchId} (${label})...`)
 
     for (;;) {
       const batch = await this.client.messages.batches.retrieve(batchId)
       if (batch.processing_status === 'ended') {
         console.log(
-          `  Batch ${batchId} ferdig. Succeeded: ${batch.request_counts.succeeded}, Errored: ${batch.request_counts.errored}`,
+          `[batch] ${batchId} ferdig — ok=${batch.request_counts.succeeded}, feil=${batch.request_counts.errored}`,
         )
         return
       }
 
       console.log(
-        `  Batch ${batchId} status: ${batch.processing_status}. Succeeded: ${batch.request_counts.succeeded}, Errored: ${batch.request_counts.errored}`,
+        `[batch] ${batchId} status=${batch.processing_status} — ok=${batch.request_counts.succeeded}, feil=${batch.request_counts.errored}`,
       )
 
       await new Promise((resolve) => setTimeout(resolve, POLLING_INTERVAL_MS))
@@ -69,6 +70,7 @@ export class LiveAnthropicBatchTransport implements BatchTransport {
         results.set(result.custom_id, {
           type: 'succeeded',
           model: result.result.message.model,
+          stopReason: result.result.message.stop_reason,
           usage: getUsage(result.result.message),
           content: result.result.message.content.map((block) => {
             if (block.type === 'text') {
