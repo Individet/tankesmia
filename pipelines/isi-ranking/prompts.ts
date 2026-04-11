@@ -57,7 +57,7 @@ export function buildResearchPlanSystemPrompt(framework: string) {
       type: 'text' as const,
       text: [
         'Du er en research-planlegger for Individets Suverenitetsindeks.',
-        'Lag en kostnadseffektiv researchplan som maksimerer primaerkilder og kutter svake søk.',
+        'Lag en kostnadseffektiv researchplan som maksimerer primærkilder og kutter svake søk.',
         scoringRulesText(),
         'Bruk web search aktivt og filtrer bort irrelevante treff.',
         'Returner kun JSON.',
@@ -84,7 +84,7 @@ export function buildResearchPlanUserPrompt(dossier: ActorDossier): string {
     `Mulige publiseringskanaler: ${dossier.likelyPublishingChannels.join(', ')}`,
     `Kjente domener: ${dossier.likelyDomains.join(', ')}`,
     '',
-    'Svar med JSON paa denne formen:',
+    'Svar med JSON på denne formen:',
     JSON.stringify(
       {
         actorSlug: dossier.actorSlug,
@@ -116,10 +116,10 @@ export function buildEvidenceHarvestSystemPrompt(framework: string) {
     {
       type: 'text' as const,
       text: [
-        'Du er en maalrettet research-agent for ISI.',
-        'Oppgaven er aa finne fa, sterke evidenspunkter for en enkelt underdimensjon.',
+        'Du er en målrettet research-agent for ISI.',
+        'Oppgaven er å finne få, sterke evidenspunkter for en enkelt underdimensjon.',
         scoringRulesText(),
-        'Ikke bruk plass paa aa gjenta URL-er i fritekst hvis de allerede finnes i sitatmetadata.',
+        'Ikke bruk plass på å gjenta URL-er i fritekst hvis de allerede finnes i sitatmetadata.',
         'Returner kun JSON.',
         framework,
       ].join('\n\n'),
@@ -140,12 +140,12 @@ export function buildEvidenceHarvestUserPrompt(
     `Underdimensjon: ${subdimension.number} ${subdimension.name}`,
     `Beskrivelse: ${subdimension.description}`,
     `Prioritet: ${planEntry?.priority ?? 'medium'}`,
-    `Planlagte soek: ${(planEntry?.searchQueries ?? []).join(' | ')}`,
-    `Negative soek: ${(planEntry?.negativeQueries ?? []).join(' | ')}`,
+    `Planlagte søk: ${(planEntry?.searchQueries ?? []).join(' | ')}`,
+    `Negative søk: ${(planEntry?.negativeQueries ?? []).join(' | ')}`,
     `Foretrukne domener: ${(planEntry?.preferredDomains ?? []).join(' | ')}`,
-    `Soekehints: ${subdimension.searchHints.join(' | ')}`,
+    `Søkehints: ${subdimension.searchHints.join(' | ')}`,
     '',
-    'Returner JSON paa denne formen:',
+    'Returner JSON på denne formen:',
     JSON.stringify(
       {
         actorSlug: dossier.actorSlug,
@@ -182,7 +182,7 @@ export function buildEvidenceReviewSystemPrompt() {
     {
       type: 'text' as const,
       text: [
-        'Du er en evidensredaktoer for ISI.',
+        'Du er en evidensredaktør for ISI.',
         'Dedupliser, ranger og komprimer eksisterende research uten aa miste sporbarhet.',
         scoringRulesText(),
         'Returner kun JSON.',
@@ -211,7 +211,7 @@ export function buildScoringSystemPrompt() {
       type: 'text' as const,
       text: [
         'Du er en ISI-scorer.',
-        'Tildel observed underdimensjonsscorer. Ikke regn ut totalscore; det gjores i kode etterpaa.',
+        'Tildel observed underdimensjonsscorer. Ikke regn ut totalscore; det gjøres i kode etterpå.',
         scoringRulesText(),
         'Hvis observed score er null, kan du i tillegg foreslaa en svak imputationCandidate basert paa partitilhørighet, organisasjonstilhørighet, samme dimensjon eller samlet profil.',
         'Bruk aldri sterkere imputering enn -1, 0 eller 1.',
@@ -245,7 +245,7 @@ export function buildGapResearchSystemPrompt(framework: string) {
       type: 'text' as const,
       text: [
         'Du er en gap research-agent for ISI.',
-        'Dette er en oppfoelgingsrunde som kun skal lukke konkrete kunnskapshull.',
+        'Dette er en oppfølgingsrunde som kun skal lukke konkrete kunnskapshull.',
         scoringRulesText(),
         'Returner kun JSON med samme skjema som evidence harvest.',
         framework,
@@ -264,7 +264,7 @@ export function buildGapResearchUserPrompt(
     `Aktor: ${dossier.actor.name}`,
     `Underdimensjon: ${subdimension.number} ${subdimension.name}`,
     `Beskrivelse: ${subdimension.description}`,
-    'Kjoer kun oppfoelgingsresearch paa disse hullene:',
+    'Kjør kun oppfølgingsresearch på disse hullene:',
     ...reasonLines.map((line) => `- ${line}`),
     '',
     'Svar med samme JSON-format som evidence harvest.',
@@ -281,10 +281,10 @@ export function buildFinalReportSystemPrompt(
         'Du er en analytisk agent for tankesmien Individet.',
         'Skriv den endelige rapporten utelukkende fra det kuraterte grunnlaget du faar.',
         scoringRulesText(),
-        'ObservedScore og EstimatedScore er allerede regnet ut av pipelinen. Ikke regn dem ut paa nytt.',
+        'ObservedScore og EstimatedScore er allerede regnet ut av pipelinen. Ikke regn dem ut på nytt.',
         'ObservedScore er den direkte observerte scoren. EstimatedScore inkluderer transparent imputering for null-verdier.',
         'Du vil faa en mal som allerede er preutfylt programmatisk med YAML frontmatter, scorer, datagap og kilder.',
-        'Behold de preutfylte YAML-verdiene og kildelistene med mindre det er en aapenbar intern selvmotsigelse i inputen.',
+        'Behold de preutfylte YAML-verdiene og kildelistene med mindre det er en åpenbar intern selvmotsigelse i inputen.',
         'Skriv resten av rapporten ved aa fylle ut malen slavisk, og returner kun markdown med YAML frontmatter.',
         'ISI-rammeverk:',
         framework,

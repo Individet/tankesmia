@@ -1,6 +1,6 @@
 import type { DimensionDefinition, SubdimensionDefinition } from './types.ts'
 
-export const DEFAULT_ACTOR_FILE = 'pipelines\\isi-rangering\\actors.json'
+export const DEFAULT_ACTOR_FILE = 'data\\actors.json'
 export const DEFAULT_OUTPUT_DIR = 'output\\isi-ranking'
 export const DEFAULT_MANIFEST_FILE = 'manifest-kondensert.md'
 export const DEFAULT_FRAMEWORK_FILE = 'skills\\isi-scoring\\references\\ISI.md'
@@ -10,7 +10,6 @@ export const MODELS = {
   researchPlan: 'claude-sonnet-4-6',
   evidenceHarvest: 'claude-sonnet-4-6',
   evidenceReview: 'claude-haiku-4-5',
-  evidenceReviewEscalation: 'claude-sonnet-4-6',
   scoringDraft: 'claude-sonnet-4-6',
   gapResearch: 'claude-sonnet-4-6',
   finalReport: 'claude-opus-4-6',
@@ -80,7 +79,7 @@ export const SUBDIMENSIONS: SubdimensionDefinition[] = [
   {
     id: 'd1_2',
     number: '1.2',
-    name: 'Sosial frihet og livsstilsautonomi',
+    name: 'Sosial frihet/Livsstilsautonomi',
     dimensionId: 'd1',
     description:
       'Fremmer aktøren retten til å velge livsstil uten statlig innblanding når ingen tredjepart skades?',
@@ -170,11 +169,11 @@ export const SUBDIMENSIONS: SubdimensionDefinition[] = [
   {
     id: 'd3_4',
     number: '3.4',
-    name: 'Monetaer frihet',
+    name: 'Monetær frihet',
     dimensionId: 'd3',
     description:
-      'Støtter aktøren prisregulering, statlig pengemonopol eller digitale sentralbankpenger med kontrollformaal?',
-    searchHints: ['CBDC', 'prisregulering', 'sentralbankpenger', 'monetaer politikk'],
+      'Støtter aktøren prisregulering, statlig pengemonopol eller digitale sentralbankpenger med kontrollformål?',
+    searchHints: ['CBDC', 'prisregulering', 'sentralbankpenger', 'monetær politikk'],
   },
   {
     id: 'd4_1',
@@ -182,7 +181,7 @@ export const SUBDIMENSIONS: SubdimensionDefinition[] = [
     name: 'Lik anvendelse av loven',
     dimensionId: 'd4',
     description:
-      'Støtter aktøren saerbehandling som bryter med likebehandlingsprinsippet?',
+      'Støtter aktøren særbehandling som bryter med likebehandlingsprinsippet?',
     searchHints: ['kvotering', 'positiv diskriminering', 'likebehandling'],
   },
   {
@@ -191,7 +190,7 @@ export const SUBDIMENSIONS: SubdimensionDefinition[] = [
     name: 'Rettslig uavhengighet',
     dimensionId: 'd4',
     description:
-      'Har aktøren forsøkt aa paavirke domstolsavgjoerelser eller politisere juridiske prosesser?',
+      'Har aktøren forsøkt å påvirke domstolsavgjørelser eller politisere juridiske prosesser?',
     searchHints: ['domstol', 'rettsvesen', 'rettslig uavhengighet'],
   },
   {
@@ -200,7 +199,7 @@ export const SUBDIMENSIONS: SubdimensionDefinition[] = [
     name: 'Rettssikkerhet og uskyldspresumpsjon',
     dimensionId: 'd4',
     description:
-      'Støtter aktøren administrative sanksjoner eller tiltak som omgaer rettsprosessen?',
+      'Støtter aktøren administrative sanksjoner eller tiltak som omgår rettsprosessen?',
     searchHints: ['administrative sanksjoner', 'bevisbyrde', 'rettssikkerhet'],
   },
   {
@@ -209,8 +208,8 @@ export const SUBDIMENSIONS: SubdimensionDefinition[] = [
     name: 'Begrenset statsmakt',
     dimensionId: 'd4',
     description:
-      'Støtter aktøren konstitusjonelle begrensninger paa statsmakten eller fullmaktslover og noedrett?',
-    searchHints: ['fullmaktslov', 'noedrett', 'statsmakt', 'maktbegrensning'],
+      'Støtter aktøren konstitusjonelle begrensninger på statsmakten eller fullmaktslover og nødrett?',
+    searchHints: ['fullmaktslov', 'nødrett', 'statsmakt', 'maktbegrensning'],
   },
   {
     id: 'd5_1',
@@ -227,17 +226,17 @@ export const SUBDIMENSIONS: SubdimensionDefinition[] = [
     name: 'Politisk foreningsfrihet',
     dimensionId: 'd5',
     description:
-      'Støtter aktøren forbud eller regulering av politiske bevegelser basert paa ideologisk innhold?',
+      'Støtter aktøren forbud eller regulering av politiske bevegelser basert på ideologisk innhold?',
     searchHints: ['partiforbud', 'organisasjonsfrihet', 'politisk forening'],
   },
   {
     id: 'd5_3',
     number: '5.3',
-    name: 'Sivilsamfunn versus statlig substitusjon',
+    name: 'Sivilsamfunn vs. statlig substitusjon',
     dimensionId: 'd5',
     description:
       'Fremmer aktøren statlige løsninger der frivillig sivilsamfunn historisk har fylt behovet?',
-    searchHints: ['frivillig sektor', 'sivilsamfunn', 'statlige loesninger'],
+    searchHints: ['frivillig sektor', 'sivilsamfunn', 'statlige løsninger'],
   },
   {
     id: 'd5_4',
@@ -245,17 +244,17 @@ export const SUBDIMENSIONS: SubdimensionDefinition[] = [
     name: 'Forsamlingsfrihet',
     dimensionId: 'd5',
     description:
-      'Har aktøren støttet tiltak som begrenser retten til aa møtes, demonstrere eller samles?',
-    searchHints: ['demonstrasjon', 'forsamlingsfrihet', 'overvaakning av demonstranter'],
+      'Har aktøren støttet tiltak som begrenser retten til å møtes, demonstrere eller samles?',
+    searchHints: ['demonstrasjon', 'forsamlingsfrihet', 'overvåkning av demonstranter'],
   },
   {
     id: 'd6_1',
     number: '6.1',
-    name: 'Overvaakning og personvern',
+    name: 'Overvåkning og personvern',
     dimensionId: 'd6',
     description:
-      'Har aktøren støttet masseovervaakning, datalagringspaabud eller tilgang til privat kommunikasjon uten domstolskjennelse?',
-    searchHints: ['datalagring', 'PST', 'overvaakning', 'personvern'],
+      'Har aktøren støttet masseovervåkning, datalagringspåbud eller tilgang til privat kommunikasjon uten domstolskjennelse?',
+    searchHints: ['datalagring', 'PST', 'overvåkning', 'personvern'],
   },
   {
     id: 'd6_2',
@@ -272,8 +271,8 @@ export const SUBDIMENSIONS: SubdimensionDefinition[] = [
     name: 'Internettfrihet og kryptering',
     dimensionId: 'd6',
     description:
-      'Har aktøren støttet tiltak som begrenser kryptering, bakdoerer eller statlig kontroll over internettinfrastruktur?',
-    searchHints: ['kryptering', 'bakdoer', 'internettkontroll'],
+      'Har aktøren støttet tiltak som begrenser kryptering, bakdører eller statlig kontroll over internettinfrastruktur?',
+    searchHints: ['kryptering', 'bakdør', 'internettkontroll'],
   },
   {
     id: 'd6_4',
@@ -281,7 +280,7 @@ export const SUBDIMENSIONS: SubdimensionDefinition[] = [
     name: 'Eierskap til egne data',
     dimensionId: 'd6',
     description:
-      'Støtter aktøren individets rett til aa eie og kontrollere egne data?',
+      'Støtter aktøren individets rett til å eie og kontrollere egne data?',
     searchHints: ['dataeierskap', 'datadeling', 'samtykke', 'GDPR'],
   },
 ]

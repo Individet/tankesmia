@@ -31,6 +31,7 @@ import {
   buildFinalReportRequests,
   parseFinalReportResults,
 } from './06_final-report.ts'
+import { publishReports } from './07_github-publish.ts'
 import { LiveAnthropicBatchTransport } from './anthropic-batch.ts'
 import {
   DEFAULT_ACTOR_FILE,
@@ -42,6 +43,7 @@ import {
 import type {
   ActorInput,
   EvidenceArtifact,
+  EvidenceMatrix,
   ResearchPlan,
   RunPipelineOptions,
   RunPipelineSummary,
@@ -107,7 +109,7 @@ async function writeEvidenceArtifacts(
 
 async function writeMatrices(
   outputDir: string,
-  matrices: Map<string, any>,
+  matrices: Map<string, EvidenceMatrix>,
 ): Promise<void> {
   for (const [actorSlug, matrix] of matrices) {
     const paths = buildPipelinePaths(outputDir, actorSlug)
@@ -146,26 +148,6 @@ async function writeReports(
   }
 }
 
-async function executeBatchStep<T>(
-  transport: LiveAnthropicBatchTransport | RunPipelineOptions['transport'],
-  label: string,
-  requests: T[],
-  outputDir: string,
-  dryRunFileName: string,
-  run: () => Promise<void>,
-): Promise<boolean> {
-  if (requests.length === 0) {
-    return false
-  }
-
-  if (!transport) {
-    throw new Error(`Mangler transport for steg ${label}`)
-  }
-
-  await run()
-  return true
-}
-
 export async function runIsiRankingPipeline(
   options: Partial<RunPipelineOptions> = {},
 ): Promise<RunPipelineSummary> {
@@ -181,7 +163,6 @@ export async function runIsiRankingPipeline(
   await ensureDir(outputDir)
 
   const actors = await readJsonFile<ActorInput[]>(actorFile)
-  const _manifest = await readTextFile(manifestFile)
   const framework = await readTextFile(frameworkFile)
   const template = await readTextFile(templateFile)
 
@@ -338,10 +319,14 @@ export async function runIsiRankingPipeline(
   const reports = parseFinalReportResults(finalReportRequests, finalReportResults)
   await writeReports(outputDir, reports)
 
+  const actorSlugs = dossiers.map((dossier) => dossier.actorSlug)
+  const { prUrl } = await publishReports(actorSlugs, outputDir, dryRun)
+
   return {
     outputDir,
     actorCount: dossiers.length,
     reportsGenerated: reports.size,
     gapResearchRequests: gapResearchRequestsCount,
+    prUrl,
   }
 }

@@ -247,4 +247,5 @@ export interface RunPipelineSummary {
   actorCount: number
   reportsGenerated: number
   gapResearchRequests: number
+  prUrl?: string
 }

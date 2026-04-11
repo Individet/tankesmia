@@ -23,10 +23,13 @@ type PartialScoreDraft = Omit<
   ScoreDraft,
   | 'generatedAt'
   | 'dimensionSummaries'
-  | 'evaluatedCount'
+  | 'observedCount'
+  | 'estimatedCount'
   | 'dataGapCount'
-  | 'rawSum'
-  | 'normalizedScore'
+  | 'observedRawSum'
+  | 'estimatedRawSum'
+  | 'observedScore'
+  | 'estimatedScore'
   | 'confidenceLevel'
 >
 

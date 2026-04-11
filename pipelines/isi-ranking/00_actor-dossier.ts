@@ -51,7 +51,7 @@ export function createActorDossier(actor: ActorInput): ActorDossier {
     searchAliases: deriveAliases(actor),
     likelyPublishingChannels: deriveLikelyChannels(actor),
     likelyDomains: deriveLikelyDomains(actor),
-    period: actor.periode ?? 'Siste 3-5 ar',
+    period: actor.periode ?? 'Siste 3-5 år',
     jurisdiction: actor.jurisdiksjon ?? 'Norge',
     generatedAt: nowIso(),
   }

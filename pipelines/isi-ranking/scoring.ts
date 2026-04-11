@@ -19,7 +19,7 @@ export function normalizeSubdimensionScore(score: unknown): number | null {
 
   const rounded = Math.round(score)
   if (rounded < -2 || rounded > 2) {
-    throw new Error(`Score maa vaere mellom -2 og 2 eller null. Fikk ${score}`)
+    throw new Error(`Score må være mellom -2 og 2 eller null. Fikk ${score}`)
   }
 
   return rounded
@@ -81,7 +81,7 @@ function inferEstimatedScore(item: SubdimensionScoreDraft, all: SubdimensionScor
       imputationBasis: item.imputationBasis,
       imputationRationale:
         item.imputationRationale ??
-        'Imputert fra tilhorighet eller overordnet profil i scoringssteget.',
+        'Imputert fra tilhørighet eller overordnet profil i scoringssteget.',
     }
   }
 
@@ -112,10 +112,10 @@ function inferEstimatedScore(item: SubdimensionScoreDraft, all: SubdimensionScor
   }
 
   return {
-    estimatedScore: null,
+    estimatedScore: 0,
     imputationBasis: 'none' as const,
     imputationRationale:
-      item.imputationRationale ?? 'For lite grunnlag til å estimere underdimensjonen.',
+      item.imputationRationale ?? 'For lite grunnlag — bruker nøytralt prior (0).',
   }
 }
 
