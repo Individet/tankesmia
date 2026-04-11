@@ -211,8 +211,12 @@ export function buildScoringSystemPrompt() {
       type: 'text' as const,
       text: [
         'Du er en ISI-scorer.',
-        'Tildel kun underdimensjonsscorer. Ikke regn ut totalscore; det gjores i kode etterpaa.',
+        'Tildel observed underdimensjonsscorer. Ikke regn ut totalscore; det gjores i kode etterpaa.',
         scoringRulesText(),
+        'Hvis observed score er null, kan du i tillegg foreslaa en svak imputationCandidate basert paa partitilhørighet, organisasjonstilhørighet, samme dimensjon eller samlet profil.',
+        'Bruk aldri sterkere imputering enn -1, 0 eller 1.',
+        'Sett imputationBasis til party-alignment, organization-alignment, dimension-profile, overall-profile eller none.',
+        'Observed score skal forbli null selv om du foreslaar imputering.',
         'Returner kun JSON.',
       ].join('\n\n'),
       cache_control: { type: 'ephemeral' as const },
@@ -220,12 +224,18 @@ export function buildScoringSystemPrompt() {
   ]
 }
 
-export function buildScoringUserPrompt(matrix: EvidenceMatrix): string {
+export function buildScoringUserPrompt(
+  dossier: ActorDossier,
+  matrix: EvidenceMatrix,
+): string {
   return [
     `Scor aktoren ${matrix.actorName} ut fra denne evidence matrix-en.`,
+    'Ta hensyn til actor dossier for mulig partilinje eller organisasjonstilhørighet ved imputering av null-verdier.',
+    JSON.stringify(dossier, null, 2),
     JSON.stringify(matrix, null, 2),
     '',
     'Returner JSON med subdimensions, keyStrengths, keyRisks og crossDimensionNotes.',
+    'Hver subdimension kan inneholde: score, rationale, confidence, conflictingEvidence, imputationCandidate, imputationBasis, imputationRationale.',
   ].join('\n')
 }
 
@@ -263,7 +273,6 @@ export function buildGapResearchUserPrompt(
 
 export function buildFinalReportSystemPrompt(
   framework: string,
-  template: string,
 ) {
   return [
     {
@@ -272,12 +281,13 @@ export function buildFinalReportSystemPrompt(
         'Du er en analytisk agent for tankesmien Individet.',
         'Skriv den endelige rapporten utelukkende fra det kuraterte grunnlaget du faar.',
         scoringRulesText(),
-        'NormalizedScore er allerede regnet ut av pipelinen. Ikke regn den ut paa nytt.',
-        'Bruk template slavisk og returner kun markdown med YAML frontmatter.',
+        'ObservedScore og EstimatedScore er allerede regnet ut av pipelinen. Ikke regn dem ut paa nytt.',
+        'ObservedScore er den direkte observerte scoren. EstimatedScore inkluderer transparent imputering for null-verdier.',
+        'Du vil faa en mal som allerede er preutfylt programmatisk med YAML frontmatter, scorer, datagap og kilder.',
+        'Behold de preutfylte YAML-verdiene og kildelistene med mindre det er en aapenbar intern selvmotsigelse i inputen.',
+        'Skriv resten av rapporten ved aa fylle ut malen slavisk, og returner kun markdown med YAML frontmatter.',
         'ISI-rammeverk:',
         framework,
-        'Template:',
-        template,
       ].join('\n\n'),
       cache_control: { type: 'ephemeral' as const },
     },
@@ -288,10 +298,15 @@ export function buildFinalReportUserPrompt(
   dossier: ActorDossier,
   matrix: EvidenceMatrix,
   scoreDraft: ScoreDraft,
+  prefilledTemplate: string,
 ): string {
   return [
     `Skriv ferdig ISI-rapport for ${dossier.actor.name}.`,
-    'Bruk normalizedScore og alle underdimensjonsscorer nøyaktig slik de er oppgitt her.',
+    'Bruk observedScore, estimatedScore, kildelister og alle underdimensjonsscorer nøyaktig slik de er oppgitt her.',
+    'Her er den preutfylte malen du skal ferdigstille:',
+    prefilledTemplate,
+    '',
+    'Her er det strukturerte grunnlaget:',
     JSON.stringify(
       {
         dossier,

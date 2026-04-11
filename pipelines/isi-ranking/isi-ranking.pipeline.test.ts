@@ -153,6 +153,10 @@ class MockBatchTransport implements BatchTransport {
               rationale: `Scoring rationale for ${item.id}`,
               confidence: item.id === 'd6_4' ? 'low' : 'high',
               conflictingEvidence: item.id === 'd6_4',
+              imputationCandidate: item.id === 'd6_4' ? 1 : null,
+              imputationBasis: item.id === 'd6_4' ? 'party-alignment' : 'none',
+              imputationRationale:
+                item.id === 'd6_4' ? 'Actor aligns with party line on data autonomy.' : '',
             })),
             keyStrengths: ['Consistent civil-liberty profile'],
             keyRisks: ['Thin data on d6_4'],
@@ -278,12 +282,25 @@ describe('isi-ranking pipeline', () => {
 
     await fs.writeFile(
       actorsPath,
-      JSON.stringify([{ name: 'Test Person', type: 'person', periode: 'Siste 3-5 ar' }]),
+      JSON.stringify([
+        {
+          name: 'Test Person',
+          type: 'person',
+          periode: 'Siste 3-5 ar',
+          jurisdiksjon: 'Norge',
+          parti: 'Frihetspartiet',
+        },
+      ]),
       'utf8',
     )
     await fs.writeFile(manifestPath, '# Manifest', 'utf8')
     await fs.writeFile(frameworkPath, '# Framework', 'utf8')
-    await fs.writeFile(templatePath, '# Template', 'utf8')
+    await fs.writeFile(
+      templatePath,
+      ['---', 'actorName: ""', 'observedScore: 0', 'estimatedScore: 0', '---', '', '# Template']
+        .join('\n'),
+      'utf8',
+    )
 
     const transport = new MockBatchTransport()
 
@@ -305,7 +322,13 @@ describe('isi-ranking pipeline', () => {
     const scoreDraftPath = path.join(actorDir, 'score-draft.json')
     const reportPath = path.join(actorDir, 'rapport.md')
 
-    expect(JSON.parse(await fs.readFile(scoreDraftPath, 'utf8')).normalizedScore).toBe(75)
+    const scoreDraft = JSON.parse(await fs.readFile(scoreDraftPath, 'utf8'))
+    expect(scoreDraft.observedScore).toBe(75)
+    expect(scoreDraft.estimatedScore).toBe(75)
+    expect(
+      scoreDraft.subdimensions.find((item: any) => item.subdimensionId === 'd6_4')
+        ?.estimatedScore,
+    ).toBe(1)
     expect(await fs.readFile(reportPath, 'utf8')).toContain('Endelig rapport.')
 
     const evidenceFiles = await fs.readdir(evidenceDir)
@@ -323,6 +346,11 @@ describe('isi-ranking pipeline', () => {
         ? String(firstBlock.text)
         : ''
 
-    expect(finalReportPrompt).toContain('"normalizedScore": 75')
+    expect(finalReportPrompt).toContain('"observedScore": 75')
+    expect(finalReportPrompt).toContain('"estimatedScore": 75')
+    expect(finalReportPrompt).toContain('actorName: Test Person')
+    expect(finalReportPrompt).toContain('actorSlug: test-person')
+    expect(finalReportPrompt).toContain('primarySources:')
+    expect(finalReportPrompt).toContain('https://example.test/d1_1')
   })
 })

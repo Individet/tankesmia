@@ -254,7 +254,7 @@ export async function runIsiRankingPipeline(
   let evidenceMatrices = parseEvidenceReviewResults(reviewRequests, reviewResults)
   await writeMatrices(outputDir, evidenceMatrices)
 
-  const scoringRequests = buildScoringDraftRequests(evidenceMatrices)
+  const scoringRequests = buildScoringDraftRequests(dossiers, evidenceMatrices)
   const scoringBatchId = await transport!.createBatch(scoringRequests, 'isi-ranking-scoring')
   await transport!.waitForBatch(scoringBatchId, 'isi-ranking-scoring')
   const scoringResults = await transport!.getBatchResults(scoringBatchId)
@@ -298,7 +298,10 @@ export async function runIsiRankingPipeline(
       )
       await writeMatrices(outputDir, evidenceMatrices)
 
-      const refreshedScoringRequests = buildScoringDraftRequests(evidenceMatrices)
+      const refreshedScoringRequests = buildScoringDraftRequests(
+        dossiers,
+        evidenceMatrices,
+      )
       const refreshedScoringBatchId = await transport!.createBatch(
         refreshedScoringRequests,
         'isi-ranking-scoring-refresh',
@@ -322,6 +325,7 @@ export async function runIsiRankingPipeline(
     dossiers,
     evidenceMatrices,
     scoreDrafts,
+    evidenceArtifacts,
     framework,
     template,
   )

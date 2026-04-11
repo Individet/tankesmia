@@ -120,13 +120,23 @@ export interface SubdimensionScoreDraft {
   rationale: string
   confidence: 'high' | 'medium' | 'low'
   conflictingEvidence: boolean
+  imputationCandidate?: number | null
+  imputationBasis?:
+    | 'party-alignment'
+    | 'organization-alignment'
+    | 'dimension-profile'
+    | 'overall-profile'
+    | 'none'
+  imputationRationale?: string
+  estimatedScore?: number | null
 }
 
 export interface DimensionScoreSummary {
   dimensionId: string
   dimensionName: string
-  rawSum: number
-  evaluatedCount: number
+  observedRawSum: number
+  estimatedRawSum: number
+  observedCount: number
   dataGapCount: number
 }
 
@@ -136,10 +146,13 @@ export interface ScoreDraft {
   generatedAt: string
   subdimensions: SubdimensionScoreDraft[]
   dimensionSummaries: DimensionScoreSummary[]
-  evaluatedCount: number
+  observedCount: number
+  estimatedCount: number
   dataGapCount: number
-  rawSum: number
-  normalizedScore: number
+  observedRawSum: number
+  estimatedRawSum: number
+  observedScore: number
+  estimatedScore: number
   confidenceLevel: 'høy' | 'middels' | 'lav'
   keyStrengths: string[]
   keyRisks: string[]

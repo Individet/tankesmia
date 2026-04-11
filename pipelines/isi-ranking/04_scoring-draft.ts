@@ -2,6 +2,7 @@ import { MODELS, SUBDIMENSIONS } from './constants.ts'
 import { buildScoringSystemPrompt, buildScoringUserPrompt } from './prompts.ts'
 import { finalizeScoreDraft } from './scoring.ts'
 import type {
+  ActorDossier,
   EvidenceMatrix,
   PipelineBatchRequest,
   ScoreDraft,
@@ -30,8 +31,11 @@ type PartialScoreDraft = Omit<
 >
 
 export function buildScoringDraftRequests(
+  dossiers: ActorDossier[],
   matrices: Map<string, EvidenceMatrix>,
 ): PipelineBatchRequest<ScoringDraftMeta>[] {
+  const dossiersBySlug = new Map(dossiers.map((item) => [item.actorSlug, item]))
+
   return Array.from(matrices.values()).map((matrix) => ({
     custom_id: makeCustomId(matrix.actorSlug, 'scoring'),
     meta: { actorSlug: matrix.actorSlug },
@@ -40,16 +44,19 @@ export function buildScoringDraftRequests(
       max_tokens: 4500,
       system: buildScoringSystemPrompt(),
       messages: [
-        {
-          role: 'user',
-          content: [
-            {
-              type: 'text',
-              text: buildScoringUserPrompt(matrix),
-            },
-          ],
-        },
-      ],
+          {
+            role: 'user',
+            content: [
+              {
+                type: 'text',
+                text: buildScoringUserPrompt(
+                  dossiersBySlug.get(matrix.actorSlug) as ActorDossier,
+                  matrix,
+                ),
+              },
+            ],
+          },
+        ],
     },
   }))
 }
@@ -109,9 +116,12 @@ export function scoreDraftMarkdown(draft: ScoreDraft): string {
   return [
     `# Score draft: ${draft.actorName}`,
     '',
-    `- Normalized score: ${draft.normalizedScore}`,
-    `- Raw sum: ${draft.rawSum}`,
-    `- Evaluated count: ${draft.evaluatedCount}`,
+    `- Observed score: ${draft.observedScore}`,
+    `- Estimated score: ${draft.estimatedScore}`,
+    `- Observed raw sum: ${draft.observedRawSum}`,
+    `- Estimated raw sum: ${draft.estimatedRawSum}`,
+    `- Observed count: ${draft.observedCount}`,
+    `- Estimated count: ${draft.estimatedCount}`,
     `- Data gap count: ${draft.dataGapCount}`,
     `- Confidence level: ${draft.confidenceLevel}`,
     '',
@@ -126,8 +136,15 @@ export function scoreDraftMarkdown(draft: ScoreDraft): string {
     '',
     '## Subdimensions',
     ...draft.subdimensions.map(
-      (item) =>
-        `- ${item.subdimensionId}: ${item.score === null ? 'null' : item.score} (${item.confidence}) - ${item.rationale}`,
+      (item) => {
+        const observed = item.score === null ? 'null' : item.score
+        const estimated = item.estimatedScore === null ? 'null' : item.estimatedScore
+        const imputation =
+          item.score === null
+            ? ` | imputed=${estimated} via ${item.imputationBasis ?? 'none'}`
+            : ''
+        return `- ${item.subdimensionId}: observed=${observed}, estimated=${estimated} (${item.confidence}) - ${item.rationale}${imputation}`
+      },
     ),
   ].join('\n')
 }

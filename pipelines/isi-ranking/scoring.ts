@@ -31,11 +31,92 @@ export function computeRawSum(
   return subdimensions.reduce((sum, item) => sum + (item.score ?? 0), 0)
 }
 
+export function computeNormalizedScoreFromRawSum(rawSum: number): number {
+  return Math.round(((rawSum - MIN_RAW_SUM) / (MAX_RAW_SUM - MIN_RAW_SUM)) * 100)
+}
+
 export function computeNormalizedScore(
   subdimensions: Array<Pick<SubdimensionScoreDraft, 'score'>>,
 ): number {
   const rawSum = computeRawSum(subdimensions)
-  return Math.round(((rawSum - MIN_RAW_SUM) / (MAX_RAW_SUM - MIN_RAW_SUM)) * 100)
+  return computeNormalizedScoreFromRawSum(rawSum)
+}
+
+function roundTowardReasonablePrior(value: number): number {
+  if (value >= 1.25) return 1
+  if (value <= -1.25) return -1
+  if (value > 0.25) return 1
+  if (value < -0.25) return -1
+  return 0
+}
+
+function inferEstimatedScore(item: SubdimensionScoreDraft, all: SubdimensionScoreDraft[]) {
+  if (item.score !== null) {
+    return {
+      estimatedScore: item.score,
+      imputationBasis: item.imputationBasis ?? 'none',
+      imputationRationale: item.imputationRationale,
+    }
+  }
+
+  const dimensionPrefix = item.subdimensionId.slice(0, 2)
+  const sameDimension = all.filter(
+    (candidate) =>
+      candidate.subdimensionId.startsWith(dimensionPrefix) && candidate.score !== null,
+  )
+  const globalObserved = all.filter((candidate) => candidate.score !== null)
+
+  const validCandidate =
+    item.imputationCandidate === null || item.imputationCandidate === undefined
+      ? null
+      : normalizeSubdimensionScore(item.imputationCandidate)
+
+  if (
+    validCandidate !== null &&
+    item.imputationBasis &&
+    item.imputationBasis !== 'none'
+  ) {
+    return {
+      estimatedScore: validCandidate,
+      imputationBasis: item.imputationBasis,
+      imputationRationale:
+        item.imputationRationale ??
+        'Imputert fra tilhorighet eller overordnet profil i scoringssteget.',
+    }
+  }
+
+  if (sameDimension.length >= 2) {
+    const dimensionAverage =
+      sameDimension.reduce((sum, candidate) => sum + (candidate.score ?? 0), 0) /
+      sameDimension.length
+    return {
+      estimatedScore: roundTowardReasonablePrior(dimensionAverage),
+      imputationBasis: 'dimension-profile' as const,
+      imputationRationale:
+        item.imputationRationale ??
+        'Imputert svakt fra observert profil i samme dimensjon.',
+    }
+  }
+
+  if (globalObserved.length >= 8) {
+    const globalAverage =
+      globalObserved.reduce((sum, candidate) => sum + (candidate.score ?? 0), 0) /
+      globalObserved.length
+    return {
+      estimatedScore: roundTowardReasonablePrior(globalAverage),
+      imputationBasis: 'overall-profile' as const,
+      imputationRationale:
+        item.imputationRationale ??
+        'Imputert svakt fra samlet observert ISI-profil.',
+    }
+  }
+
+  return {
+    estimatedScore: null,
+    imputationBasis: 'none' as const,
+    imputationRationale:
+      item.imputationRationale ?? 'For lite grunnlag til å estimere underdimensjonen.',
+  }
 }
 
 export function buildDimensionSummaries(
@@ -49,8 +130,12 @@ export function buildDimensionSummaries(
     return {
       dimensionId: dimension.id,
       dimensionName: dimension.name,
-      rawSum: dimensionScores.reduce((sum, item) => sum + (item.score ?? 0), 0),
-      evaluatedCount: dimensionScores.filter((item) => item.score !== null).length,
+      observedRawSum: dimensionScores.reduce((sum, item) => sum + (item.score ?? 0), 0),
+      estimatedRawSum: dimensionScores.reduce(
+        (sum, item) => sum + (item.estimatedScore ?? 0),
+        0,
+      ),
+      observedCount: dimensionScores.filter((item) => item.score !== null).length,
       dataGapCount: dimensionScores.filter((item) => item.score === null).length,
     }
   })
@@ -85,10 +170,13 @@ export function finalizeScoreDraft(
     ScoreDraft,
     | 'generatedAt'
     | 'dimensionSummaries'
-    | 'evaluatedCount'
+    | 'observedCount'
+    | 'estimatedCount'
     | 'dataGapCount'
-    | 'rawSum'
-    | 'normalizedScore'
+    | 'observedRawSum'
+    | 'estimatedRawSum'
+    | 'observedScore'
+    | 'estimatedScore'
     | 'confidenceLevel'
   > & { generatedAt?: string },
   generatedAt: string,
@@ -96,24 +184,46 @@ export function finalizeScoreDraft(
   const normalizedSubdimensions = partial.subdimensions.map((item) => ({
     ...item,
     score: normalizeSubdimensionScore(item.score),
+    imputationCandidate: normalizeSubdimensionScore(item.imputationCandidate),
   }))
 
-  const evaluatedCount = normalizedSubdimensions.filter(
+  const estimatedSubdimensions = normalizedSubdimensions.map((item) => {
+    const inferred = inferEstimatedScore(item, normalizedSubdimensions)
+    return {
+      ...item,
+      estimatedScore: inferred.estimatedScore,
+      imputationBasis: inferred.imputationBasis,
+      imputationRationale: inferred.imputationRationale,
+    }
+  })
+
+  const observedCount = estimatedSubdimensions.filter(
     (item) => item.score !== null,
   ).length
-  const dataGapCount = normalizedSubdimensions.length - evaluatedCount
-  const rawSum = computeRawSum(normalizedSubdimensions)
-  const normalizedScore = computeNormalizedScore(normalizedSubdimensions)
+  const estimatedCount = estimatedSubdimensions.filter(
+    (item) => item.estimatedScore !== null,
+  ).length
+  const dataGapCount = estimatedSubdimensions.length - observedCount
+  const observedRawSum = computeRawSum(estimatedSubdimensions)
+  const estimatedRawSum = estimatedSubdimensions.reduce(
+    (sum, item) => sum + (item.estimatedScore ?? 0),
+    0,
+  )
+  const observedScore = computeNormalizedScoreFromRawSum(observedRawSum)
+  const estimatedScore = computeNormalizedScoreFromRawSum(estimatedRawSum)
 
   return {
     ...partial,
     generatedAt,
-    subdimensions: normalizedSubdimensions,
-    dimensionSummaries: buildDimensionSummaries(normalizedSubdimensions),
-    evaluatedCount,
+    subdimensions: estimatedSubdimensions,
+    dimensionSummaries: buildDimensionSummaries(estimatedSubdimensions),
+    observedCount,
+    estimatedCount,
     dataGapCount,
-    rawSum,
-    normalizedScore,
-    confidenceLevel: deriveConfidenceLevel(normalizedSubdimensions),
+    observedRawSum,
+    estimatedRawSum,
+    observedScore,
+    estimatedScore,
+    confidenceLevel: deriveConfidenceLevel(estimatedSubdimensions),
   }
 }

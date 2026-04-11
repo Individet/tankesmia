@@ -41,6 +41,9 @@ describe('isi-ranking scoring', () => {
           rationale: 'Test rationale',
           confidence: index === 0 ? ('high' as const) : ('low' as const),
           conflictingEvidence: false,
+          imputationCandidate: index === 1 ? -1 : null,
+          imputationBasis: index === 1 ? ('party-alignment' as const) : ('none' as const),
+          imputationRationale: index === 1 ? 'Party prior' : 'No basis',
         })),
         keyStrengths: ['Strong on one issue'],
         keyRisks: ['Many data gaps'],
@@ -50,9 +53,42 @@ describe('isi-ranking scoring', () => {
     )
 
     expect(partial.dataGapCount).toBe(23)
-    expect(partial.evaluatedCount).toBe(1)
-    expect(partial.rawSum).toBe(2)
-    expect(partial.normalizedScore).toBe(52)
+    expect(partial.observedCount).toBe(1)
+    expect(partial.observedRawSum).toBe(2)
+    expect(partial.observedScore).toBe(52)
     expect(partial.subdimensions[1]?.score).toBeNull()
+    expect(partial.subdimensions[1]?.estimatedScore).toBe(-1)
+    expect(partial.subdimensions[1]?.imputationBasis).toBe('party-alignment')
+    expect(partial.estimatedCount).toBeGreaterThanOrEqual(2)
+    expect(partial.estimatedScore).not.toBe(partial.observedScore)
+  })
+
+  it('falls back to dimension or overall profile when null lacks explicit imputering', () => {
+    const partial = finalizeScoreDraft(
+      {
+        actorSlug: 'test-person',
+        actorName: 'Test Person',
+        subdimensions: SUBDIMENSIONS.map((item, index) => ({
+          subdimensionId: item.id,
+          subdimensionName: item.name,
+          score: index < 4 ? 1 : index === 4 ? null : 1,
+          rationale: 'Test rationale',
+          confidence: 'high' as const,
+          conflictingEvidence: false,
+          imputationBasis: 'none' as const,
+        })),
+        keyStrengths: ['Mostly positive'],
+        keyRisks: [],
+        crossDimensionNotes: [],
+      },
+      '2026-04-11T00:00:00.000Z',
+    )
+
+    expect(partial.subdimensions[4]?.score).toBeNull()
+    expect(partial.subdimensions[4]?.estimatedScore).toBe(1)
+    expect(['dimension-profile', 'overall-profile']).toContain(
+      partial.subdimensions[4]?.imputationBasis,
+    )
+    expect(partial.estimatedScore).toBeGreaterThan(partial.observedScore)
   })
 })

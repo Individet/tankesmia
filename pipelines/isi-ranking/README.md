@@ -6,9 +6,9 @@ Denne mappen inneholder en ny, flertrinns ISI-pipeline som er designet for aa va
 2. `01_research-plan.ts` lager researchplan per aktor med Sonnet 4.6.
 3. `02_evidence-harvest.ts` henter evidens per underdimensjon med batch + web search.
 4. `03_evidence-review.ts` dedupliserer og lager en evidence matrix.
-5. `04_scoring-draft.ts` lager underdimensjonsscorer og pipelinen regner ut normalized score 0-100 i kode.
+5. `04_scoring-draft.ts` lager underdimensjonsscorer og pipelinen regner ut baade `ObservedScore` og `EstimatedScore` i kode.
 6. `05_gap-research.ts` kjoerer ekstra research kun der scoreutkastet er svakt eller mangelfullt.
-7. `06_final-report.ts` bruker Opus 4.6 kun til den endelige rapporten.
+7. `06_final-report.ts` bruker Opus 4.6 kun til den endelige rapporten, etter at templaten er preutfylt programmatisk med metadata, scorer, datagap og kilder.
 
 ## Kjoring
 
