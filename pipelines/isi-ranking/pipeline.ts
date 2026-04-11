@@ -32,6 +32,7 @@ import {
   parseFinalReportResults,
 } from './06_final-report.ts'
 import { publishReports } from './07_github-publish.ts'
+import { assertAuth, verifyAuth } from './00_verify-auth.ts'
 import { LiveAnthropicBatchTransport } from './anthropic-batch.ts'
 import {
   DEFAULT_ACTOR_FILE,
@@ -161,6 +162,11 @@ export async function runIsiRankingPipeline(
   const transport = options.transport ?? (dryRun ? undefined : new LiveAnthropicBatchTransport())
 
   await ensureDir(outputDir)
+
+  if (!dryRun && !options.transport) {
+    const authResult = await verifyAuth()
+    assertAuth(authResult)
+  }
 
   const actors = await readJsonFile<ActorInput[]>(actorFile)
   const framework = await readTextFile(frameworkFile)
