@@ -27,6 +27,7 @@ export function buildEvidenceHarvestRequests(
   dossiers: ActorDossier[],
   researchPlans: Map<string, ResearchPlan>,
   framework: string,
+  manifest: string,
 ): PipelineBatchRequest<EvidenceHarvestMeta>[] {
   return dossiers.flatMap((dossier) => {
     const plan = researchPlans.get(dossier.actorSlug)
@@ -43,7 +44,7 @@ export function buildEvidenceHarvestRequests(
       params: {
         model: MODELS.evidenceHarvest,
         max_tokens: 3500,
-        system: buildEvidenceHarvestSystemPrompt(framework),
+        system: buildEvidenceHarvestSystemPrompt(framework, manifest),
         tools: buildResearchTools(),
         messages: [
           {

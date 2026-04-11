@@ -3,6 +3,8 @@ import type { DimensionDefinition, SubdimensionDefinition } from './types.ts'
 export const DEFAULT_ACTOR_FILE = 'data\\actors.json'
 export const DEFAULT_OUTPUT_DIR = 'output\\isi-ranking'
 export const DEFAULT_MANIFEST_FILE = 'manifest-kondensert.md'
+export const DEFAULT_MANIFEST_KORT_FILE = 'manifest-kort.md'
+export const DEFAULT_MANIFEST_FULL_FILE = 'manifest.md'
 export const DEFAULT_FRAMEWORK_FILE = 'skills\\isi-scoring\\references\\ISI.md'
 export const DEFAULT_TEMPLATE_FILE = 'skills\\isi-scoring\\references\\template.md'
 

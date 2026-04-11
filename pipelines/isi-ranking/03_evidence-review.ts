@@ -18,6 +18,8 @@ interface EvidenceReviewMeta {
 export function buildEvidenceReviewRequests(
   dossiers: ActorDossier[],
   evidenceArtifacts: Map<string, EvidenceArtifact>,
+  framework: string,
+  manifest: string,
 ): PipelineBatchRequest<EvidenceReviewMeta>[] {
   return dossiers.map((dossier) => {
     const actorEvidence = Array.from(evidenceArtifacts.values()).filter(
@@ -30,7 +32,7 @@ export function buildEvidenceReviewRequests(
       params: {
         model: MODELS.evidenceReview,
         max_tokens: 5000,
-        system: buildEvidenceReviewSystemPrompt(),
+        system: buildEvidenceReviewSystemPrompt(framework, manifest),
         messages: [
           {
             role: 'user',

@@ -60,6 +60,8 @@ export function buildGapResearchRequests(
   dossiers: ActorDossier[],
   plans: GapResearchPlan[],
   framework: string,
+  manifest: string,
+  evidenceArtifacts: Map<string, EvidenceArtifact>,
 ): PipelineBatchRequest<GapResearchMeta>[] {
   const dossiersBySlug = new Map(dossiers.map((item) => [item.actorSlug, item]))
 
@@ -69,7 +71,7 @@ export function buildGapResearchRequests(
       const subdimension = SUBDIMENSIONS.find((item) => item.id === target.subdimensionId)
 
       if (!dossier || !subdimension) {
-        throw new Error(`Klarte ikke aa bygge gap research request for ${target.subdimensionId}`)
+        throw new Error(`Klarte ikke å bygge gap research request for ${target.subdimensionId}`)
       }
 
       return {
@@ -81,7 +83,7 @@ export function buildGapResearchRequests(
         params: {
           model: MODELS.gapResearch,
           max_tokens: 2500,
-          system: buildGapResearchSystemPrompt(framework),
+          system: buildGapResearchSystemPrompt(framework, manifest),
           tools: buildResearchTools(),
           messages: [
             {
@@ -93,6 +95,7 @@ export function buildGapResearchRequests(
                     dossier,
                     subdimension,
                     target.queryReasons,
+                    evidenceArtifacts.get(`${plan.actorSlug}:${target.subdimensionId}`),
                   ),
                 },
               ],

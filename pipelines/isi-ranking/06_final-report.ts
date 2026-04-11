@@ -142,6 +142,7 @@ export function buildFinalReportRequests(
   scoreDrafts: Map<string, ScoreDraft>,
   evidenceArtifacts: Map<string, EvidenceArtifact>,
   framework: string,
+  manifest: string,
   template: string,
 ): PipelineBatchRequest<FinalReportMeta>[] {
   return dossiers.map((dossier) => {
@@ -168,7 +169,7 @@ export function buildFinalReportRequests(
       params: {
         model: MODELS.finalReport,
         max_tokens: 12000,
-        system: buildFinalReportSystemPrompt(framework),
+        system: buildFinalReportSystemPrompt(framework, manifest),
         messages: [
           {
             role: 'user',

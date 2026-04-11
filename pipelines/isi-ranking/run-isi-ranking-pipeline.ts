@@ -2,6 +2,8 @@ import {
   DEFAULT_ACTOR_FILE,
   DEFAULT_FRAMEWORK_FILE,
   DEFAULT_MANIFEST_FILE,
+  DEFAULT_MANIFEST_FULL_FILE,
+  DEFAULT_MANIFEST_KORT_FILE,
   DEFAULT_OUTPUT_DIR,
   DEFAULT_TEMPLATE_FILE,
 } from './constants.ts'
@@ -17,6 +19,8 @@ function parseArgs(argv: string[]) {
       args.find((arg) => arg.startsWith('--output-dir='))?.split('=')[1] ??
       DEFAULT_OUTPUT_DIR,
     manifestFile: DEFAULT_MANIFEST_FILE,
+    manifestKortFile: DEFAULT_MANIFEST_KORT_FILE,
+    manifestFullFile: DEFAULT_MANIFEST_FULL_FILE,
     frameworkFile: DEFAULT_FRAMEWORK_FILE,
     templateFile: DEFAULT_TEMPLATE_FILE,
   }

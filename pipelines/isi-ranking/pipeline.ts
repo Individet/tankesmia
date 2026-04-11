@@ -38,6 +38,8 @@ import {
   DEFAULT_ACTOR_FILE,
   DEFAULT_FRAMEWORK_FILE,
   DEFAULT_MANIFEST_FILE,
+  DEFAULT_MANIFEST_FULL_FILE,
+  DEFAULT_MANIFEST_KORT_FILE,
   DEFAULT_OUTPUT_DIR,
   DEFAULT_TEMPLATE_FILE,
 } from './constants.ts'
@@ -160,6 +162,8 @@ export async function runIsiRankingPipeline(
   const actorFile = options.actorFile ?? DEFAULT_ACTOR_FILE
   const outputDir = options.outputDir ?? DEFAULT_OUTPUT_DIR
   const manifestFile = options.manifestFile ?? DEFAULT_MANIFEST_FILE
+  const manifestKortFile = options.manifestKortFile ?? DEFAULT_MANIFEST_KORT_FILE
+  const manifestFullFile = options.manifestFullFile ?? DEFAULT_MANIFEST_FULL_FILE
   const frameworkFile = options.frameworkFile ?? DEFAULT_FRAMEWORK_FILE
   const templateFile = options.templateFile ?? DEFAULT_TEMPLATE_FILE
   const dryRun = options.dryRun ?? false
@@ -176,6 +180,9 @@ export async function runIsiRankingPipeline(
   const actors = await readJsonFile<ActorInput[]>(actorFile)
   const framework = await readTextFile(frameworkFile)
   const template = await readTextFile(templateFile)
+  const manifest = await readTextFile(manifestFile)
+  const manifestKort = await readTextFile(manifestKortFile)
+  const manifestFull = await readTextFile(manifestFullFile)
 
   const dossiers = await writeDossiers(outputDir, actors)
   const actorCount = dossiers.length
@@ -187,7 +194,7 @@ export async function runIsiRankingPipeline(
     await writeJsonFile(stateFile, { startedAt: new Date().toISOString(), batches: pipelineState })
   }
 
-  const researchPlanRequests = buildResearchPlanRequests(dossiers, framework)
+  const researchPlanRequests = buildResearchPlanRequests(dossiers, framework, manifest)
   if (dryRun) {
     await saveDryRunRequests(outputDir, '01_research-plan.requests.json', researchPlanRequests)
     await saveDryRunRequests(
@@ -211,6 +218,7 @@ export async function runIsiRankingPipeline(
           ]),
         ),
         framework,
+        manifestKort,
       ),
     )
     return {
@@ -236,7 +244,7 @@ export async function runIsiRankingPipeline(
   console.log(`[steg 1] Ferdig (${formatUsage(planUsage)})`)
 
   // Steg 2: Bevisinnsamling
-  const evidenceHarvestRequests = buildEvidenceHarvestRequests(dossiers, researchPlans, framework)
+  const evidenceHarvestRequests = buildEvidenceHarvestRequests(dossiers, researchPlans, framework, manifestKort)
   console.log(`\n[steg 2] Bevisinnsamling — ${actorCount} aktør(er), ${evidenceHarvestRequests.length} kall`)
   const evidenceBatchId = await transport!.createBatch(evidenceHarvestRequests, 'isi-ranking-evidence')
   await recordBatch('isi-ranking-evidence', evidenceBatchId)
@@ -249,7 +257,7 @@ export async function runIsiRankingPipeline(
   console.log(`[steg 2] Ferdig (${formatUsage(evidenceUsage)})`)
 
   // Steg 3: Evidensmatrise
-  const reviewRequests = buildEvidenceReviewRequests(dossiers, evidenceArtifacts)
+  const reviewRequests = buildEvidenceReviewRequests(dossiers, evidenceArtifacts, framework, manifestKort)
   console.log(`\n[steg 3] Evidensmatrise — ${actorCount} aktør(er), ${reviewRequests.length} kall`)
   const reviewBatchId = await transport!.createBatch(reviewRequests, 'isi-ranking-matrix')
   await recordBatch('isi-ranking-matrix', reviewBatchId)
@@ -262,7 +270,7 @@ export async function runIsiRankingPipeline(
   console.log(`[steg 3] Ferdig (${formatUsage(reviewUsage)})`)
 
   // Steg 4: Scoring-utkast
-  const scoringRequests = buildScoringDraftRequests(dossiers, evidenceMatrices)
+  const scoringRequests = buildScoringDraftRequests(dossiers, evidenceMatrices, framework, manifest)
   console.log(`\n[steg 4] Scoring-utkast — ${actorCount} aktør(er), ${scoringRequests.length} kall`)
   const scoringBatchId = await transport!.createBatch(scoringRequests, 'isi-ranking-scoring')
   await recordBatch('isi-ranking-scoring', scoringBatchId)
@@ -278,7 +286,7 @@ export async function runIsiRankingPipeline(
 
   if (!skipGapResearch) {
     const gapPlans = buildGapResearchPlans(dossiers, scoreDrafts)
-    const gapRequests = buildGapResearchRequests(dossiers, gapPlans, framework)
+    const gapRequests = buildGapResearchRequests(dossiers, gapPlans, framework, manifestKort, evidenceArtifacts)
     gapResearchRequestsCount = gapRequests.length
 
     if (gapRequests.length > 0) {
@@ -300,7 +308,7 @@ export async function runIsiRankingPipeline(
       }
 
       // Steg 6: Evidensmatrise (oppdatert)
-      const refreshedReviewRequests = buildEvidenceReviewRequests(dossiers, evidenceArtifacts)
+      const refreshedReviewRequests = buildEvidenceReviewRequests(dossiers, evidenceArtifacts, framework, manifestKort)
       console.log(`\n[steg 6] Evidensmatrise (oppdatert) — ${refreshedReviewRequests.length} kall`)
       const refreshedReviewBatchId = await transport!.createBatch(
         refreshedReviewRequests,
@@ -316,7 +324,7 @@ export async function runIsiRankingPipeline(
       console.log(`[steg 6] Ferdig (${formatUsage(refreshedReviewUsage)})`)
 
       // Steg 7: Scoring-utkast (oppdatert)
-      const refreshedScoringRequests = buildScoringDraftRequests(dossiers, evidenceMatrices)
+      const refreshedScoringRequests = buildScoringDraftRequests(dossiers, evidenceMatrices, framework, manifest)
       console.log(`\n[steg 7] Scoring-utkast (oppdatert) — ${refreshedScoringRequests.length} kall`)
       const refreshedScoringBatchId = await transport!.createBatch(
         refreshedScoringRequests,
@@ -340,6 +348,7 @@ export async function runIsiRankingPipeline(
     scoreDrafts,
     evidenceArtifacts,
     framework,
+    manifestFull,
     template,
   )
   console.log(`\n[steg slutt] Sluttrapporter — ${actorCount} aktør(er), ${finalReportRequests.length} kall`)

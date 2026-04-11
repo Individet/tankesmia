@@ -276,6 +276,8 @@ describe('isi-ranking pipeline', () => {
   it('runs end-to-end with mocked Anthropic batches and writes pipeline artifacts', async () => {
     const actorsPath = path.join(tempDir, 'actors.json')
     const manifestPath = path.join(tempDir, 'manifest.md')
+    const manifestKortPath = path.join(tempDir, 'manifest-kort.md')
+    const manifestFullPath = path.join(tempDir, 'manifest-full.md')
     const frameworkPath = path.join(tempDir, 'framework.md')
     const templatePath = path.join(tempDir, 'template.md')
     const outputDir = path.join(tempDir, 'output')
@@ -294,6 +296,8 @@ describe('isi-ranking pipeline', () => {
       'utf8',
     )
     await fs.writeFile(manifestPath, '# Manifest', 'utf8')
+    await fs.writeFile(manifestKortPath, '# Kort manifest', 'utf8')
+    await fs.writeFile(manifestFullPath, '# Fullt manifest', 'utf8')
     await fs.writeFile(frameworkPath, '# Framework', 'utf8')
     await fs.writeFile(
       templatePath,
@@ -308,6 +312,8 @@ describe('isi-ranking pipeline', () => {
       actorFile: actorsPath,
       outputDir,
       manifestFile: manifestPath,
+      manifestKortFile: manifestKortPath,
+      manifestFullFile: manifestFullPath,
       frameworkFile: frameworkPath,
       templateFile: templatePath,
       transport,

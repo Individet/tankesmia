@@ -237,6 +237,8 @@ export interface RunPipelineOptions {
   actorFile: string
   outputDir: string
   manifestFile: string
+  manifestKortFile: string
+  manifestFullFile: string
   frameworkFile: string
   templateFile: string
   dryRun?: boolean

@@ -36,6 +36,8 @@ type PartialScoreDraft = Omit<
 export function buildScoringDraftRequests(
   dossiers: ActorDossier[],
   matrices: Map<string, EvidenceMatrix>,
+  framework: string,
+  manifest: string,
 ): PipelineBatchRequest<ScoringDraftMeta>[] {
   const dossiersBySlug = new Map(dossiers.map((item) => [item.actorSlug, item]))
 
@@ -53,7 +55,7 @@ export function buildScoringDraftRequests(
       params: {
         model: MODELS.scoringDraft,
         max_tokens: 4500,
-        system: buildScoringSystemPrompt(),
+        system: buildScoringSystemPrompt(framework, manifest),
         messages: [
             {
               role: 'user',

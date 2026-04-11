@@ -10,6 +10,7 @@ interface ResearchPlanRequestMeta {
 export function buildResearchPlanRequests(
   dossiers: ActorDossier[],
   framework: string,
+  manifest: string,
 ): PipelineBatchRequest<ResearchPlanRequestMeta>[] {
   return dossiers.map((dossier) => ({
     custom_id: makeCustomId(dossier.actorSlug, 'plan'),
@@ -17,7 +18,7 @@ export function buildResearchPlanRequests(
     params: {
       model: MODELS.researchPlan,
       max_tokens: 5000,
-      system: buildResearchPlanSystemPrompt(framework),
+      system: buildResearchPlanSystemPrompt(framework, manifest),
       tools: buildResearchTools(),
       messages: [
         {
