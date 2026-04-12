@@ -4,6 +4,7 @@ import {
   buildGapResearchUserPrompt,
   buildResearchTools,
 } from './prompts.ts'
+import { EVIDENCE_ARTIFACT_OUTPUT_CONFIG } from './schemas.ts'
 import type {
   ActorDossier,
   EvidenceArtifact,
@@ -15,7 +16,6 @@ import {
   extractText,
   extractUniqueCitations,
   makeCustomId,
-  parseJsonFromText,
   requireSucceededResult,
 } from './utils.ts'
 
@@ -34,17 +34,28 @@ export function buildGapResearchPlans(
       return { actorSlug: dossier.actorSlug, targets: [] }
     }
 
+    const gapPriority = (
+      item: (typeof draft.subdimensions)[number],
+    ): number => {
+      if (item.score === null) return 0
+      if (item.conflictingEvidence) return 1
+      return 2
+    }
+
     const targets = draft.subdimensions
-      .filter(
-        (item) => item.score === null || item.confidence === 'low' || item.conflictingEvidence,
-      )
-      .slice(0, 6)
+      .filter((item) => item.score === null || item.conflictingEvidence)
+      .sort((a, b) => gapPriority(a) - gapPriority(b))
+      .slice(0, 4)
       .map((item) => ({
         actorSlug: dossier.actorSlug,
         subdimensionId: item.subdimensionId,
         queryReasons: [
-          item.score === null ? 'Underdimensjonen mangler score.' : 'Scoren er skjør.',
-          item.conflictingEvidence ? 'Det finnes motstridende evidens.' : 'Confidence er lav.',
+          item.score === null
+            ? 'Underdimensjonen mangler score.'
+            : 'Scoren er skjør.',
+          item.conflictingEvidence
+            ? 'Det finnes motstridende evidens.'
+            : 'Confidence er lav.',
           item.rationale,
         ],
       }))
@@ -68,10 +79,14 @@ export function buildGapResearchRequests(
   return plans.flatMap((plan) =>
     plan.targets.map((target) => {
       const dossier = dossiersBySlug.get(plan.actorSlug)
-      const subdimension = SUBDIMENSIONS.find((item) => item.id === target.subdimensionId)
+      const subdimension = SUBDIMENSIONS.find(
+        (item) => item.id === target.subdimensionId,
+      )
 
       if (!dossier || !subdimension) {
-        throw new Error(`Klarte ikke å bygge gap research request for ${target.subdimensionId}`)
+        throw new Error(
+          `Klarte ikke å bygge gap research request for ${target.subdimensionId}`,
+        )
       }
 
       return {
@@ -82,7 +97,8 @@ export function buildGapResearchRequests(
         },
         params: {
           model: MODELS.gapResearch,
-          max_tokens: 2500,
+          max_tokens: 8000,
+          output_config: EVIDENCE_ARTIFACT_OUTPUT_CONFIG,
           system: buildGapResearchSystemPrompt(framework, manifest),
           tools: buildResearchTools(),
           messages: [
@@ -95,7 +111,9 @@ export function buildGapResearchRequests(
                     dossier,
                     subdimension,
                     target.queryReasons,
-                    evidenceArtifacts.get(`${plan.actorSlug}:${target.subdimensionId}`),
+                    evidenceArtifacts.get(
+                      `${plan.actorSlug}:${target.subdimensionId}`,
+                    ),
                   ),
                 },
               ],
@@ -118,12 +136,32 @@ export function parseGapResearchResults(
       results.get(request.custom_id),
       request.custom_id,
     )
-    const parsed = parseJsonFromText<EvidenceArtifact>(extractText(succeeded))
     const actorSlug = request.meta?.actorSlug
     const subdimensionId = request.meta?.subdimensionId
 
     if (!actorSlug || !subdimensionId) {
       throw new Error(`Mangler gap research meta for ${request.custom_id}`)
+    }
+
+    const rawText = extractText(succeeded)
+    if (!rawText.trim()) {
+      // Model finished after web searches without producing a JSON output block.
+      // Skip — the existing base artifact from step 2 is retained during merge.
+      console.warn(
+        `[gap] ${request.custom_id}: ingen tekstblokk i svaret — gap-artifact hoppes over.`,
+      )
+      continue
+    }
+
+    const parsed = JSON.parse(rawText) as EvidenceArtifact
+
+    if (!Array.isArray(parsed.findings)) {
+      // Model returned a stub without findings (gave up after search).
+      // Skip — the existing base artifact from step 2 is retained during merge.
+      console.warn(
+        `[gap] ${request.custom_id}: findings mangler i svaret — gap-artifact hoppes over.`,
+      )
+      continue
     }
 
     artifacts.set(`${actorSlug}:${subdimensionId}`, {
@@ -152,10 +190,19 @@ export function mergeEvidenceArtifacts(
 
     merged.set(key, {
       ...artifact,
-      findings: [...existing.findings, ...artifact.findings],
-      citations: [...existing.citations, ...artifact.citations],
+      findings: [
+        ...(Array.isArray(existing.findings) ? existing.findings : []),
+        ...(Array.isArray(artifact.findings) ? artifact.findings : []),
+      ],
+      citations: [
+        ...(Array.isArray(existing.citations) ? existing.citations : []),
+        ...(Array.isArray(artifact.citations) ? artifact.citations : []),
+      ],
       unresolvedQuestions: Array.from(
-        new Set([...existing.unresolvedQuestions, ...artifact.unresolvedQuestions]),
+        new Set([
+          ...(Array.isArray(existing.unresolvedQuestions) ? existing.unresolvedQuestions : []),
+          ...(Array.isArray(artifact.unresolvedQuestions) ? artifact.unresolvedQuestions : []),
+        ]),
       ),
     })
   }

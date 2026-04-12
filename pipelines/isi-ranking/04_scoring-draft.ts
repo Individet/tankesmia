@@ -1,5 +1,6 @@
 import { MODELS, SUBDIMENSIONS } from './constants.ts'
 import { buildScoringSystemPrompt, buildScoringUserPrompt } from './prompts.ts'
+import { SCORE_DRAFT_OUTPUT_CONFIG } from './schemas.ts'
 import { finalizeScoreDraft } from './scoring.ts'
 import type {
   ActorDossier,
@@ -11,7 +12,6 @@ import {
   extractText,
   makeCustomId,
   nowIso,
-  parseJsonFromText,
   requireSucceededResult,
 } from './utils.ts'
 
@@ -54,19 +54,20 @@ export function buildScoringDraftRequests(
       meta: { actorSlug: matrix.actorSlug },
       params: {
         model: MODELS.scoringDraft,
-        max_tokens: 4500,
+        max_tokens: 12000,
+        output_config: SCORE_DRAFT_OUTPUT_CONFIG,
         system: buildScoringSystemPrompt(framework, manifest),
         messages: [
-            {
-              role: 'user',
-              content: [
-                {
-                  type: 'text',
-                  text: buildScoringUserPrompt(dossier, matrix),
-                },
-              ],
-            },
-          ],
+          {
+            role: 'user',
+            content: [
+              {
+                type: 'text',
+                text: buildScoringUserPrompt(dossier, matrix),
+              },
+            ],
+          },
+        ],
       },
     }
   })
@@ -83,7 +84,7 @@ export function parseScoringDraftResults(
       results.get(request.custom_id),
       request.custom_id,
     )
-    const partial = parseJsonFromText<PartialScoreDraft>(extractText(succeeded))
+    const partial = JSON.parse(extractText(succeeded)) as PartialScoreDraft
     const actorSlug = request.meta?.actorSlug
     if (!actorSlug) {
       throw new Error(`Mangler actorSlug-meta for ${request.custom_id}`)
@@ -146,16 +147,15 @@ export function scoreDraftMarkdown(draft: ScoreDraft): string {
     ...draft.crossDimensionNotes.map((item) => `- ${item}`),
     '',
     '## Subdimensions',
-    ...draft.subdimensions.map(
-      (item) => {
-        const observed = item.score === null ? 'null' : item.score
-        const estimated = item.estimatedScore === null ? 'null' : item.estimatedScore
-        const imputation =
-          item.score === null
-            ? ` | imputed=${estimated} via ${item.imputationBasis ?? 'none'}`
-            : ''
-        return `- ${item.subdimensionId}: observed=${observed}, estimated=${estimated} (${item.confidence}) - ${item.rationale}${imputation}`
-      },
-    ),
+    ...draft.subdimensions.map((item) => {
+      const observed = item.score === null ? 'null' : item.score
+      const estimated =
+        item.estimatedScore === null ? 'null' : item.estimatedScore
+      const imputation =
+        item.score === null
+          ? ` | imputed=${estimated} via ${item.imputationBasis ?? 'none'}`
+          : ''
+      return `- ${item.subdimensionId}: observed=${observed}, estimated=${estimated} (${item.confidence}) - ${item.rationale}${imputation}`
+    }),
   ].join('\n')
 }

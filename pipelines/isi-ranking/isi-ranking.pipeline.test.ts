@@ -64,7 +64,6 @@ class MockBatchTransport implements BatchTransport {
               rationale: `Plan for ${item.id}`,
               searchQueries: [`${item.name} Test Person`],
               negativeQueries: ['irrelevant'],
-              preferredDomains: ['stortinget.no'],
               stopConditions: ['To primaerkilder eller ett eksplisitt vedtak.'],
             })),
           }),

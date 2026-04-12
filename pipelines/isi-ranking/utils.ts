@@ -70,24 +70,24 @@ export function parseJsonFromText<T>(text: string): T {
     const firstBrace = withoutFence.indexOf('{')
     const lastBrace = withoutFence.lastIndexOf('}')
     if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
-      return JSON.parse(
-        withoutFence.slice(firstBrace, lastBrace + 1),
-      ) as T
+      return JSON.parse(withoutFence.slice(firstBrace, lastBrace + 1)) as T
     }
 
     const firstBracket = withoutFence.indexOf('[')
     const lastBracket = withoutFence.lastIndexOf(']')
-    if (firstBracket !== -1 && lastBracket !== -1 && lastBracket > firstBracket) {
-      return JSON.parse(
-        withoutFence.slice(firstBracket, lastBracket + 1),
-      ) as T
+    if (
+      firstBracket !== -1 &&
+      lastBracket !== -1 &&
+      lastBracket > firstBracket
+    ) {
+      return JSON.parse(withoutFence.slice(firstBracket, lastBracket + 1)) as T
     }
 
     throw new Error(
       `Klarte ikke å parse JSON fra modellsvaret.\n` +
-      `Lengde: ${text.length} tegn\n` +
-      `Start: ${text.slice(0, 120)}\n` +
-      `Slutt: ${text.slice(-120)}`,
+        `Lengde: ${text.length} tegn\n` +
+        `Start: ${text.slice(0, 120)}\n` +
+        `Slutt: ${text.slice(-120)}`,
     )
   }
 }
@@ -97,21 +97,25 @@ export function requireSucceededResult(
   customId: string,
 ): BatchSucceededResult {
   if (!result) {
-    throw new Error(`Batch-resultat mangler for ${customId}: ingen resultat registrert.`)
+    throw new Error(
+      `Batch-resultat mangler for ${customId}: ingen resultat registrert.`,
+    )
   }
 
   if (result.type !== 'succeeded') {
-    const errorDetail = 'error' in result && result.error != null
-      ? JSON.stringify(result.error)
-      : 'ukjent feil'
+    const errorDetail =
+      'error' in result && result.error != null
+        ? JSON.stringify(result.error)
+        : 'ukjent feil'
     throw new Error(
       `Batch-resultat feilet for ${customId} (type=${result.type}): ${errorDetail}`,
     )
   }
 
   if (result.stopReason === 'max_tokens') {
-    console.warn(
-      `[advarsel] ${customId}: modellen nådde max_tokens-grensen — JSON kan være avkuttet!`,
+    throw new Error(
+      `[${customId}] Modellen nådde max_tokens-grensen — output er avkuttet og kan ikke brukes. ` +
+        `Øk max_tokens for dette steget.`,
     )
   }
 
@@ -119,10 +123,10 @@ export function requireSucceededResult(
 }
 
 export function extractText(result: BatchSucceededResult): string {
-  return result.content
-    .filter((block) => block.type === 'text')
-    .map((block) => ('text' in block ? block.text : ''))
-    .join('')
+  const textBlocks = result.content.filter((block) => block.type === 'text')
+  if (textBlocks.length === 0) return ''
+  const last = textBlocks[textBlocks.length - 1]
+  return 'text' in last ? last.text : ''
 }
 
 export function extractUniqueCitations(
@@ -174,10 +178,18 @@ export function subdimensionFileStem(subdimensionId: string): string {
 }
 
 export function emptyUsage(): BatchUsage {
-  return { inputTokens: 0, outputTokens: 0, cacheReadTokens: 0, cacheCreationTokens: 0, webSearchRequests: 0 }
+  return {
+    inputTokens: 0,
+    outputTokens: 0,
+    cacheReadTokens: 0,
+    cacheCreationTokens: 0,
+    webSearchRequests: 0,
+  }
 }
 
-export function sumBatchUsage(results: Map<string, PipelineBatchResult>): BatchUsage {
+export function sumBatchUsage(
+  results: Map<string, PipelineBatchResult>,
+): BatchUsage {
   const total = emptyUsage()
   for (const result of results.values()) {
     if (result.type === 'succeeded') {
@@ -203,8 +215,11 @@ export function addUsage(a: BatchUsage, b: BatchUsage): BatchUsage {
 
 export function formatUsage(usage: BatchUsage): string {
   const parts = [`inn=${usage.inputTokens}`, `ut=${usage.outputTokens}`]
-  if (usage.cacheReadTokens > 0) parts.push(`cache-lest=${usage.cacheReadTokens}`)
-  if (usage.cacheCreationTokens > 0) parts.push(`cache-skrevet=${usage.cacheCreationTokens}`)
-  if (usage.webSearchRequests > 0) parts.push(`websøk=${usage.webSearchRequests}`)
+  if (usage.cacheReadTokens > 0)
+    parts.push(`cache-lest=${usage.cacheReadTokens}`)
+  if (usage.cacheCreationTokens > 0)
+    parts.push(`cache-skrevet=${usage.cacheCreationTokens}`)
+  if (usage.webSearchRequests > 0)
+    parts.push(`websøk=${usage.webSearchRequests}`)
   return parts.join(', ')
 }

@@ -6,7 +6,8 @@ export const DEFAULT_MANIFEST_FILE = 'manifest-kondensert.md'
 export const DEFAULT_MANIFEST_KORT_FILE = 'manifest-kort.md'
 export const DEFAULT_MANIFEST_FULL_FILE = 'manifest.md'
 export const DEFAULT_FRAMEWORK_FILE = 'skills\\isi-scoring\\references\\ISI.md'
-export const DEFAULT_TEMPLATE_FILE = 'skills\\isi-scoring\\references\\template.md'
+export const DEFAULT_TEMPLATE_FILE =
+  'skills\\isi-scoring\\references\\template.md'
 
 export const MODELS = {
   researchPlan: 'claude-sonnet-4-6',
@@ -24,7 +25,8 @@ export const DIMENSIONS: DimensionDefinition[] = [
     name: 'Kroppslig autonomi og selvbestemmelse',
     philosophicalBasis:
       'Locke (selveierskapet), Rothbard (selveierskapsaksiomet), Mill (skadeprinsippet)',
-    description: 'Vurderer kontroll over egen kropp, livsstil, bevegelse og livets slutt.',
+    description:
+      'Vurderer kontroll over egen kropp, livsstil, bevegelse og livets slutt.',
   },
   {
     id: 'd2',
@@ -32,7 +34,8 @@ export const DIMENSIONS: DimensionDefinition[] = [
     name: 'Ytringsfrihet og intellektuell autonomi',
     philosophicalBasis:
       'Mill (On Liberty), Hayek (spontan orden i ideer), Spooner (naturlig rett til ytring)',
-    description: 'Vurderer innholdsregulering, pressefrihet, akademisk frihet og digitale ytringsrom.',
+    description:
+      'Vurderer innholdsregulering, pressefrihet, akademisk frihet og digitale ytringsrom.',
   },
   {
     id: 'd3',
@@ -40,7 +43,8 @@ export const DIMENSIONS: DimensionDefinition[] = [
     name: 'Eiendomsrett og økonomisk frihet',
     philosophicalBasis:
       'Locke (arbeidsteori for eiendom), Bastiat (eiendom som pre-politisk), Nozick (berettigelsesteorien)',
-    description: 'Vurderer skatt, ekspropriering, regulering, handel og monetær frihet.',
+    description:
+      'Vurderer skatt, ekspropriering, regulering, handel og monetær frihet.',
   },
   {
     id: 'd4',
@@ -48,7 +52,8 @@ export const DIMENSIONS: DimensionDefinition[] = [
     name: 'Rettsstat og likebehandling',
     philosophicalBasis:
       'Cicero (lex naturalis), Hayek (upersonlige regler), Bastiat (loven som vern, ikke plyndring)',
-    description: 'Vurderer likebehandling, domstolsuavhengighet, rettssikkerhet og begrenset statsmakt.',
+    description:
+      'Vurderer likebehandling, domstolsuavhengighet, rettssikkerhet og begrenset statsmakt.',
   },
   {
     id: 'd5',
@@ -56,7 +61,8 @@ export const DIMENSIONS: DimensionDefinition[] = [
     name: 'Forenings-, forsamlings- og religionsfrihet',
     philosophicalBasis:
       'Hayek (spontan orden i sivilsamfunnet), Lane/Paterson (sivilsamfunn som alternativ til staten)',
-    description: 'Vurderer religionsfrihet, politisk foreningsfrihet, sivilsamfunn og forsamlingsfrihet.',
+    description:
+      'Vurderer religionsfrihet, politisk foreningsfrihet, sivilsamfunn og forsamlingsfrihet.',
   },
   {
     id: 'd6',
@@ -64,7 +70,8 @@ export const DIMENSIONS: DimensionDefinition[] = [
     name: 'Digital autonomi og informasjonsfrihet',
     philosophicalBasis:
       'Selveierskapet utvidet til digitalt liv (Locke), Hayek (informasjonsfrihet som forutsetning for spontan orden)',
-    description: 'Vurderer overvåkning, digital kontroll, kryptering og eierskap til egne data.',
+    description:
+      'Vurderer overvåkning, digital kontroll, kryptering og eierskap til egne data.',
   },
 ]
 
@@ -76,7 +83,12 @@ export const SUBDIMENSIONS: SubdimensionDefinition[] = [
     dimensionId: 'd1',
     description:
       'Støtter aktøren individets rett til egne medisinske beslutninger uten statlig tvang?',
-    searchHints: ['vaksineplikt', 'koronarestriksjoner', 'pasientrettigheter', 'medisinsk frihet'],
+    searchHints: [
+      'vaksineplikt',
+      'koronarestriksjoner',
+      'pasientrettigheter',
+      'medisinsk frihet',
+    ],
   },
   {
     id: 'd1_2',
@@ -85,7 +97,12 @@ export const SUBDIMENSIONS: SubdimensionDefinition[] = [
     dimensionId: 'd1',
     description:
       'Fremmer aktøren retten til å velge livsstil uten statlig innblanding når ingen tredjepart skades?',
-    searchHints: ['ruspolitikk', 'seksualitet', 'familieliv', 'livsstilsfrihet'],
+    searchHints: [
+      'ruspolitikk',
+      'seksualitet',
+      'familieliv',
+      'livsstilsfrihet',
+    ],
   },
   {
     id: 'd1_3',
@@ -94,7 +111,12 @@ export const SUBDIMENSIONS: SubdimensionDefinition[] = [
     dimensionId: 'd1',
     description:
       'Støtter aktøren fri bevegelse, inkludert retten til å forlate et land, bosette seg og arbeide?',
-    searchHints: ['innvandring', 'Schengen', 'grensekontroll', 'bevegelsesfrihet'],
+    searchHints: [
+      'innvandring',
+      'Schengen',
+      'grensekontroll',
+      'bevegelsesfrihet',
+    ],
   },
   {
     id: 'd1_4',
@@ -103,7 +125,12 @@ export const SUBDIMENSIONS: SubdimensionDefinition[] = [
     dimensionId: 'd1',
     description:
       'Anerkjenner aktøren individets rett til å bestemme over eget livs avslutning?',
-    searchHints: ['eutanasi', 'assistert død', 'aktiv dødshjelp'],
+    searchHints: [
+      'aktiv dødshjelp',
+      'assistert død',
+      'retten til å dø',
+      'eutanasi',
+    ],
   },
   {
     id: 'd2_1',
@@ -121,7 +148,12 @@ export const SUBDIMENSIONS: SubdimensionDefinition[] = [
     dimensionId: 'd2',
     description:
       'Støtter aktøren ordninger som skaper medieavhengighet eller inngrep i redaksjonelle beslutninger?',
-    searchHints: ['mediestøtte', 'pressefrihet', 'redaksjonell uavhengighet', 'NRK'],
+    searchHints: [
+      'mediestøtte',
+      'pressefrihet',
+      'redaksjonell uavhengighet',
+      'NRK',
+    ],
   },
   {
     id: 'd2_3',
@@ -130,7 +162,12 @@ export const SUBDIMENSIONS: SubdimensionDefinition[] = [
     dimensionId: 'd2',
     description:
       'Har aktøren støttet posisjoner som underlegger forskning eller akademia politisk kontroll?',
-    searchHints: ['akademisk frihet', 'forskning', 'universitet', 'vitenskapelig frihet'],
+    searchHints: [
+      'akademisk frihet',
+      'forskning',
+      'universitet',
+      'vitenskapelig frihet',
+    ],
   },
   {
     id: 'd2_4',
@@ -139,7 +176,12 @@ export const SUBDIMENSIONS: SubdimensionDefinition[] = [
     dimensionId: 'd2',
     description:
       'Støtter aktøren statlig regulering av private plattformers innholdsmoderering eller avplattforming av lovlige ytringer?',
-    searchHints: ['plattformregulering', 'moderering', 'avplattforming', 'sosiale medier'],
+    searchHints: [
+      'plattformregulering',
+      'moderering',
+      'avplattforming',
+      'sosiale medier',
+    ],
   },
   {
     id: 'd3_1',
@@ -148,7 +190,12 @@ export const SUBDIMENSIONS: SubdimensionDefinition[] = [
     dimensionId: 'd3',
     description:
       'Støtter aktøren ekspropriasjon eller skatt som omfordelingsinstrument utover strenge grenser?',
-    searchHints: ['formuesskatt', 'eiendomsskatt', 'ekspropriering', 'skattepolitikk'],
+    searchHints: [
+      'formuesskatt',
+      'eiendomsskatt',
+      'ekspropriering',
+      'skattepolitikk',
+    ],
   },
   {
     id: 'd3_2',
@@ -157,7 +204,12 @@ export const SUBDIMENSIONS: SubdimensionDefinition[] = [
     dimensionId: 'd3',
     description:
       'Støtter aktøren tiltak som gjør det vanskeligere å starte, drive eller avslutte virksomhet?',
-    searchHints: ['arbeidsmiljøloven', 'regulering', 'næringsfrihet', 'kontraktsfrihet'],
+    searchHints: [
+      'arbeidsmiljøloven',
+      'regulering',
+      'næringsfrihet',
+      'kontraktsfrihet',
+    ],
   },
   {
     id: 'd3_3',
@@ -175,7 +227,15 @@ export const SUBDIMENSIONS: SubdimensionDefinition[] = [
     dimensionId: 'd3',
     description:
       'Støtter aktøren prisregulering, statlig pengemonopol eller digitale sentralbankpenger med kontrollformål?',
-    searchHints: ['CBDC', 'prisregulering', 'sentralbankpenger', 'monetær politikk'],
+    searchHints: [
+      'CBDC',
+      'prisregulering',
+      'sentralbankpenger',
+      'monetær politikk',
+      'gullstandard',
+      'stabile penger',
+      'inflasjon',
+    ],
   },
   {
     id: 'd4_1',
@@ -193,7 +253,14 @@ export const SUBDIMENSIONS: SubdimensionDefinition[] = [
     dimensionId: 'd4',
     description:
       'Har aktøren forsøkt å påvirke domstolsavgjørelser eller politisere juridiske prosesser?',
-    searchHints: ['domstol', 'rettsvesen', 'rettslig uavhengighet'],
+    searchHints: [
+      'domstol',
+      'rettsvesen',
+      'rettslig uavhengighet',
+      'politisering rettsvesen',
+      'uavhengige domstoler',
+      'meddommer',
+    ],
   },
   {
     id: 'd4_3',
@@ -202,7 +269,13 @@ export const SUBDIMENSIONS: SubdimensionDefinition[] = [
     dimensionId: 'd4',
     description:
       'Støtter aktøren administrative sanksjoner eller tiltak som omgår rettsprosessen?',
-    searchHints: ['administrative sanksjoner', 'bevisbyrde', 'rettssikkerhet'],
+    searchHints: [
+      'administrative sanksjoner',
+      'bevisbyrde',
+      'rettssikkerhet',
+      'uskyldig til det motsatte er bevist',
+      'rettferdig rettergang',
+    ],
   },
   {
     id: 'd4_4',
@@ -247,7 +320,13 @@ export const SUBDIMENSIONS: SubdimensionDefinition[] = [
     dimensionId: 'd5',
     description:
       'Har aktøren støttet tiltak som begrenser retten til å møtes, demonstrere eller samles?',
-    searchHints: ['demonstrasjon', 'forsamlingsfrihet', 'overvåkning av demonstranter'],
+    searchHints: [
+      'demonstrasjon',
+      'forsamlingsfrihet',
+      'overvåkning av demonstranter',
+      'koronarestriksjoner',
+      'demonstrasjonsrett',
+    ],
   },
   {
     id: 'd6_1',
@@ -265,7 +344,14 @@ export const SUBDIMENSIONS: SubdimensionDefinition[] = [
     dimensionId: 'd6',
     description:
       'Støtter aktøren obligatoriske digitale ID-systemer, programmerbar valuta eller sosiale kredittmekanismer?',
-    searchHints: ['digital ID', 'ID-wallet', 'CBDC', 'sosial kreditt'],
+    searchHints: [
+      'digital ID',
+      'ID-wallet',
+      'CBDC',
+      'sosial kreditt',
+      'digitalt pass',
+      'programmerbare penger',
+    ],
   },
   {
     id: 'd6_3',

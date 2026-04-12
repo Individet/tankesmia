@@ -1,4 +1,5 @@
 import path from 'path'
+import { existsSync, readFileSync } from 'fs'
 import { promises as fs } from 'fs'
 import { createActorDossier, dossierMarkdown } from './00_actor-dossier.ts'
 import {
@@ -42,8 +43,10 @@ import {
   DEFAULT_MANIFEST_KORT_FILE,
   DEFAULT_OUTPUT_DIR,
   DEFAULT_TEMPLATE_FILE,
+  SUBDIMENSIONS,
 } from './constants.ts'
 import type {
+  ActorDossier,
   ActorInput,
   BatchUsage,
   EvidenceArtifact,
@@ -70,6 +73,82 @@ async function readTextFile(filePath: string): Promise<string> {
   return fs.readFile(filePath, 'utf8')
 }
 
+async function loadFromDisk<T>(filePath: string, stepName: string): Promise<T> {
+  try {
+    return await readJsonFile<T>(filePath)
+  } catch (err: any) {
+    if (err.code === 'ENOENT') {
+      throw new Error(
+        `--from-step: Mangler forventet fil fra ${stepName}: ${filePath}\n` +
+          `Kjør pipelinen fra et tidligere steg for å generere filen.`,
+      )
+    }
+    throw err
+  }
+}
+
+async function loadResearchPlans(
+  outputDir: string,
+  dossiers: ActorDossier[],
+): Promise<Map<string, ResearchPlan>> {
+  const plans = new Map<string, ResearchPlan>()
+  for (const dossier of dossiers) {
+    const paths = buildPipelinePaths(outputDir, dossier.actorSlug)
+    plans.set(
+      dossier.actorSlug,
+      await loadFromDisk<ResearchPlan>(paths.researchPlanJson, 'steg 1'),
+    )
+  }
+  return plans
+}
+
+async function loadEvidenceArtifacts(
+  outputDir: string,
+  dossiers: ActorDossier[],
+): Promise<Map<string, EvidenceArtifact>> {
+  const artifacts = new Map<string, EvidenceArtifact>()
+  for (const dossier of dossiers) {
+    const paths = buildPipelinePaths(outputDir, dossier.actorSlug)
+    for (const subdimension of SUBDIMENSIONS) {
+      const fileStem = subdimensionFileStem(subdimension.id)
+      const filePath = path.join(paths.evidenceDir, `${fileStem}.json`)
+      const artifact = await loadFromDisk<EvidenceArtifact>(filePath, 'steg 2')
+      artifacts.set(`${dossier.actorSlug}:${subdimension.id}`, artifact)
+    }
+  }
+  return artifacts
+}
+
+async function loadEvidenceMatrices(
+  outputDir: string,
+  dossiers: ActorDossier[],
+): Promise<Map<string, EvidenceMatrix>> {
+  const matrices = new Map<string, EvidenceMatrix>()
+  for (const dossier of dossiers) {
+    const paths = buildPipelinePaths(outputDir, dossier.actorSlug)
+    matrices.set(
+      dossier.actorSlug,
+      await loadFromDisk<EvidenceMatrix>(paths.evidenceMatrixJson, 'steg 3'),
+    )
+  }
+  return matrices
+}
+
+async function loadScoreDrafts(
+  outputDir: string,
+  dossiers: ActorDossier[],
+): Promise<Map<string, ScoreDraft>> {
+  const drafts = new Map<string, ScoreDraft>()
+  for (const dossier of dossiers) {
+    const paths = buildPipelinePaths(outputDir, dossier.actorSlug)
+    drafts.set(
+      dossier.actorSlug,
+      await loadFromDisk<ScoreDraft>(paths.scoreDraftJson, 'steg 4'),
+    )
+  }
+  return drafts
+}
+
 async function saveDryRunRequests(
   outputDir: string,
   fileName: string,
@@ -83,7 +162,10 @@ async function writeDossiers(outputDir: string, actors: ActorInput[]) {
   for (const dossier of dossiers) {
     const paths = buildPipelinePaths(outputDir, dossier.actorSlug)
     await writeJsonFile(paths.dossierJson, dossier)
-    await writeMarkdownFile(path.join(paths.actorDir, 'actor-dossier.md'), dossierMarkdown(dossier))
+    await writeMarkdownFile(
+      path.join(paths.actorDir, 'actor-dossier.md'),
+      dossierMarkdown(dossier),
+    )
   }
   return dossiers
 }
@@ -95,7 +177,10 @@ async function writeResearchPlans(
   for (const [actorSlug, plan] of plans) {
     const paths = buildPipelinePaths(outputDir, actorSlug)
     await writeJsonFile(paths.researchPlanJson, plan)
-    await writeMarkdownFile(paths.sourcePriorityMarkdown, researchPlanMarkdown(plan))
+    await writeMarkdownFile(
+      paths.sourcePriorityMarkdown,
+      researchPlanMarkdown(plan),
+    )
   }
 }
 
@@ -107,7 +192,10 @@ async function writeEvidenceArtifacts(
     const [actorSlug, subdimensionId] = key.split(':')
     const paths = buildPipelinePaths(outputDir, actorSlug)
     const fileStem = subdimensionFileStem(subdimensionId)
-    await writeJsonFile(path.join(paths.evidenceDir, `${fileStem}.json`), artifact)
+    await writeJsonFile(
+      path.join(paths.evidenceDir, `${fileStem}.json`),
+      artifact,
+    )
     await writeMarkdownFile(
       path.join(paths.evidenceDir, `${fileStem}.md`),
       evidenceArtifactMarkdown(artifact),
@@ -122,7 +210,10 @@ async function writeMatrices(
   for (const [actorSlug, matrix] of matrices) {
     const paths = buildPipelinePaths(outputDir, actorSlug)
     await writeJsonFile(paths.evidenceMatrixJson, matrix)
-    await writeMarkdownFile(paths.evidenceMatrixMarkdown, evidenceMatrixMarkdown(matrix))
+    await writeMarkdownFile(
+      paths.evidenceMatrixMarkdown,
+      evidenceMatrixMarkdown(matrix),
+    )
   }
 }
 
@@ -162,13 +253,18 @@ export async function runIsiRankingPipeline(
   const actorFile = options.actorFile ?? DEFAULT_ACTOR_FILE
   const outputDir = options.outputDir ?? DEFAULT_OUTPUT_DIR
   const manifestFile = options.manifestFile ?? DEFAULT_MANIFEST_FILE
-  const manifestKortFile = options.manifestKortFile ?? DEFAULT_MANIFEST_KORT_FILE
-  const manifestFullFile = options.manifestFullFile ?? DEFAULT_MANIFEST_FULL_FILE
+  const manifestKortFile =
+    options.manifestKortFile ?? DEFAULT_MANIFEST_KORT_FILE
+  const manifestFullFile =
+    options.manifestFullFile ?? DEFAULT_MANIFEST_FULL_FILE
   const frameworkFile = options.frameworkFile ?? DEFAULT_FRAMEWORK_FILE
   const templateFile = options.templateFile ?? DEFAULT_TEMPLATE_FILE
   const dryRun = options.dryRun ?? false
   const skipGapResearch = options.skipGapResearch ?? false
-  const transport = options.transport ?? (dryRun ? undefined : new LiveAnthropicBatchTransport())
+  const fromStep = options.fromStep ?? 1
+  const transport =
+    options.transport ??
+    (dryRun ? undefined : new LiveAnthropicBatchTransport())
 
   await ensureDir(outputDir)
 
@@ -187,16 +283,32 @@ export async function runIsiRankingPipeline(
   const dossiers = await writeDossiers(outputDir, actors)
   const actorCount = dossiers.length
   const stateFile = path.join(outputDir, 'pipeline-state.json')
-  const pipelineState: Record<string, string> = {}
+  const existingState = existsSync(stateFile)
+    ? (JSON.parse(readFileSync(stateFile, 'utf-8')) as {
+        batches?: Record<string, string>
+      })
+    : {}
+  const pipelineState: Record<string, string> = existingState.batches ?? {}
 
   async function recordBatch(label: string, batchId: string): Promise<void> {
     pipelineState[label] = batchId
-    await writeJsonFile(stateFile, { startedAt: new Date().toISOString(), batches: pipelineState })
+    await writeJsonFile(stateFile, {
+      startedAt: new Date().toISOString(),
+      batches: pipelineState,
+    })
   }
 
-  const researchPlanRequests = buildResearchPlanRequests(dossiers, framework, manifest)
+  const researchPlanRequests = buildResearchPlanRequests(
+    dossiers,
+    framework,
+    manifest,
+  )
   if (dryRun) {
-    await saveDryRunRequests(outputDir, '01_research-plan.requests.json', researchPlanRequests)
+    await saveDryRunRequests(
+      outputDir,
+      '01_research-plan.requests.json',
+      researchPlanRequests,
+    )
     await saveDryRunRequests(
       outputDir,
       '02_evidence-harvest.requests.json',
@@ -232,108 +344,238 @@ export async function runIsiRankingPipeline(
   let totalUsage: BatchUsage = emptyUsage()
 
   // Steg 1: Forskningsplaner
-  console.log(`\n[steg 1] Forskningsplaner — ${actorCount} aktør(er), ${researchPlanRequests.length} kall`)
-  const researchPlanBatchId = await transport!.createBatch(researchPlanRequests, 'isi-ranking-research-plan')
-  await recordBatch('isi-ranking-research-plan', researchPlanBatchId)
-  await transport!.waitForBatch(researchPlanBatchId, 'isi-ranking-research-plan')
-  const researchPlanResults = await transport!.getBatchResults(researchPlanBatchId)
-  const researchPlans = parseResearchPlanResults(researchPlanRequests, researchPlanResults)
-  await writeResearchPlans(outputDir, researchPlans)
-  const planUsage = sumBatchUsage(researchPlanResults)
-  totalUsage = addUsage(totalUsage, planUsage)
-  console.log(`[steg 1] Ferdig (${formatUsage(planUsage)})`)
+  let researchPlans: Map<string, ResearchPlan>
+  if (fromStep <= 1) {
+    console.log(
+      `\n[steg 1] Forskningsplaner — ${actorCount} aktør(er), ${researchPlanRequests.length} kall`,
+    )
+    const researchPlanBatchId = await transport!.createBatch(
+      researchPlanRequests,
+      'isi-ranking-research-plan',
+    )
+    await recordBatch('isi-ranking-research-plan', researchPlanBatchId)
+    await transport!.waitForBatch(
+      researchPlanBatchId,
+      'isi-ranking-research-plan',
+    )
+    const researchPlanResults =
+      await transport!.getBatchResults(researchPlanBatchId)
+    researchPlans = parseResearchPlanResults(
+      researchPlanRequests,
+      researchPlanResults,
+    )
+    await writeResearchPlans(outputDir, researchPlans)
+    const planUsage = sumBatchUsage(researchPlanResults)
+    totalUsage = addUsage(totalUsage, planUsage)
+    console.log(`[steg 1] Ferdig (${formatUsage(planUsage)})`)
+  } else {
+    console.log(
+      `\n[steg 1] Hoppet over (--from-step=${fromStep}) — laster fra disk`,
+    )
+    researchPlans = await loadResearchPlans(outputDir, dossiers)
+  }
 
   // Steg 2: Bevisinnsamling
-  const evidenceHarvestRequests = buildEvidenceHarvestRequests(dossiers, researchPlans, framework, manifestKort)
-  console.log(`\n[steg 2] Bevisinnsamling — ${actorCount} aktør(er), ${evidenceHarvestRequests.length} kall`)
-  const evidenceBatchId = await transport!.createBatch(evidenceHarvestRequests, 'isi-ranking-evidence')
-  await recordBatch('isi-ranking-evidence', evidenceBatchId)
-  await transport!.waitForBatch(evidenceBatchId, 'isi-ranking-evidence')
-  const evidenceResults = await transport!.getBatchResults(evidenceBatchId)
-  let evidenceArtifacts = parseEvidenceHarvestResults(evidenceHarvestRequests, evidenceResults)
-  await writeEvidenceArtifacts(outputDir, evidenceArtifacts)
-  const evidenceUsage = sumBatchUsage(evidenceResults)
-  totalUsage = addUsage(totalUsage, evidenceUsage)
-  console.log(`[steg 2] Ferdig (${formatUsage(evidenceUsage)})`)
+  let evidenceArtifacts: Map<string, EvidenceArtifact>
+  if (fromStep <= 2) {
+    const evidenceHarvestRequests = buildEvidenceHarvestRequests(
+      dossiers,
+      researchPlans,
+      framework,
+      manifestKort,
+    )
+    console.log(
+      `\n[steg 2] Bevisinnsamling — ${actorCount} aktør(er), ${evidenceHarvestRequests.length} kall`,
+    )
+    const evidenceBatchId = await transport!.createBatch(
+      evidenceHarvestRequests,
+      'isi-ranking-evidence',
+    )
+    await recordBatch('isi-ranking-evidence', evidenceBatchId)
+    await transport!.waitForBatch(evidenceBatchId, 'isi-ranking-evidence')
+    const evidenceResults = await transport!.getBatchResults(evidenceBatchId)
+    evidenceArtifacts = parseEvidenceHarvestResults(
+      evidenceHarvestRequests,
+      evidenceResults,
+    )
+    await writeEvidenceArtifacts(outputDir, evidenceArtifacts)
+    const evidenceUsage = sumBatchUsage(evidenceResults)
+    totalUsage = addUsage(totalUsage, evidenceUsage)
+    console.log(`[steg 2] Ferdig (${formatUsage(evidenceUsage)})`)
+  } else {
+    console.log(
+      `\n[steg 2] Hoppet over (--from-step=${fromStep}) — laster fra disk`,
+    )
+    evidenceArtifacts = await loadEvidenceArtifacts(outputDir, dossiers)
+  }
 
   // Steg 3: Evidensmatrise
-  const reviewRequests = buildEvidenceReviewRequests(dossiers, evidenceArtifacts, framework, manifestKort)
-  console.log(`\n[steg 3] Evidensmatrise — ${actorCount} aktør(er), ${reviewRequests.length} kall`)
-  const reviewBatchId = await transport!.createBatch(reviewRequests, 'isi-ranking-matrix')
-  await recordBatch('isi-ranking-matrix', reviewBatchId)
-  await transport!.waitForBatch(reviewBatchId, 'isi-ranking-matrix')
-  const reviewResults = await transport!.getBatchResults(reviewBatchId)
-  let evidenceMatrices = parseEvidenceReviewResults(reviewRequests, reviewResults)
-  await writeMatrices(outputDir, evidenceMatrices)
-  const reviewUsage = sumBatchUsage(reviewResults)
-  totalUsage = addUsage(totalUsage, reviewUsage)
-  console.log(`[steg 3] Ferdig (${formatUsage(reviewUsage)})`)
+  let evidenceMatrices: Map<string, EvidenceMatrix>
+  if (fromStep <= 3) {
+    const reviewRequests = buildEvidenceReviewRequests(
+      dossiers,
+      evidenceArtifacts,
+      framework,
+      manifestKort,
+    )
+    console.log(
+      `\n[steg 3] Evidensmatrise — ${actorCount} aktør(er), ${reviewRequests.length} kall`,
+    )
+    const reviewBatchId = await transport!.createBatch(
+      reviewRequests,
+      'isi-ranking-matrix',
+    )
+    await recordBatch('isi-ranking-matrix', reviewBatchId)
+    await transport!.waitForBatch(reviewBatchId, 'isi-ranking-matrix')
+    const reviewResults = await transport!.getBatchResults(reviewBatchId)
+    evidenceMatrices = parseEvidenceReviewResults(reviewRequests, reviewResults)
+    await writeMatrices(outputDir, evidenceMatrices)
+    const reviewUsage = sumBatchUsage(reviewResults)
+    totalUsage = addUsage(totalUsage, reviewUsage)
+    console.log(`[steg 3] Ferdig (${formatUsage(reviewUsage)})`)
+  } else {
+    console.log(
+      `\n[steg 3] Hoppet over (--from-step=${fromStep}) — laster fra disk`,
+    )
+    evidenceMatrices = await loadEvidenceMatrices(outputDir, dossiers)
+  }
 
   // Steg 4: Scoring-utkast
-  const scoringRequests = buildScoringDraftRequests(dossiers, evidenceMatrices, framework, manifest)
-  console.log(`\n[steg 4] Scoring-utkast — ${actorCount} aktør(er), ${scoringRequests.length} kall`)
-  const scoringBatchId = await transport!.createBatch(scoringRequests, 'isi-ranking-scoring')
-  await recordBatch('isi-ranking-scoring', scoringBatchId)
-  await transport!.waitForBatch(scoringBatchId, 'isi-ranking-scoring')
-  const scoringResults = await transport!.getBatchResults(scoringBatchId)
-  let scoreDrafts = parseScoringDraftResults(scoringRequests, scoringResults)
-  await writeScoreDrafts(outputDir, scoreDrafts)
-  const scoringUsage = sumBatchUsage(scoringResults)
-  totalUsage = addUsage(totalUsage, scoringUsage)
-  console.log(`[steg 4] Ferdig (${formatUsage(scoringUsage)})`)
+  let scoreDrafts: Map<string, ScoreDraft>
+  if (fromStep <= 4) {
+    const scoringRequests = buildScoringDraftRequests(
+      dossiers,
+      evidenceMatrices,
+      framework,
+      manifest,
+    )
+    console.log(
+      `\n[steg 4] Scoring-utkast — ${actorCount} aktør(er), ${scoringRequests.length} kall`,
+    )
+    const scoringBatchId = await transport!.createBatch(
+      scoringRequests,
+      'isi-ranking-scoring',
+    )
+    await recordBatch('isi-ranking-scoring', scoringBatchId)
+    await transport!.waitForBatch(scoringBatchId, 'isi-ranking-scoring')
+    const scoringResults = await transport!.getBatchResults(scoringBatchId)
+    scoreDrafts = parseScoringDraftResults(scoringRequests, scoringResults)
+    await writeScoreDrafts(outputDir, scoreDrafts)
+    const scoringUsage = sumBatchUsage(scoringResults)
+    totalUsage = addUsage(totalUsage, scoringUsage)
+    console.log(`[steg 4] Ferdig (${formatUsage(scoringUsage)})`)
+  } else {
+    console.log(
+      `\n[steg 4] Hoppet over (--from-step=${fromStep}) — laster fra disk`,
+    )
+    scoreDrafts = await loadScoreDrafts(outputDir, dossiers)
+  }
 
   let gapResearchRequestsCount = 0
 
   if (!skipGapResearch) {
     const gapPlans = buildGapResearchPlans(dossiers, scoreDrafts)
-    const gapRequests = buildGapResearchRequests(dossiers, gapPlans, framework, manifestKort, evidenceArtifacts)
+    const gapRequests = buildGapResearchRequests(
+      dossiers,
+      gapPlans,
+      framework,
+      manifestKort,
+      evidenceArtifacts,
+    )
     gapResearchRequestsCount = gapRequests.length
 
-    if (gapRequests.length > 0) {
-      // Steg 5: Gap-søk
-      console.log(`\n[steg 5] Gap-søk — ${gapRequests.length} kall for ${actorCount} aktør(er)`)
-      const gapBatchId = await transport!.createBatch(gapRequests, 'isi-ranking-gap')
-      await recordBatch('isi-ranking-gap', gapBatchId)
-      await transport!.waitForBatch(gapBatchId, 'isi-ranking-gap')
-      const gapResults = await transport!.getBatchResults(gapBatchId)
-      const gapArtifacts = parseGapResearchResults(gapRequests, gapResults)
-      evidenceArtifacts = mergeEvidenceArtifacts(evidenceArtifacts, gapArtifacts)
-      await writeEvidenceArtifacts(outputDir, gapArtifacts)
-      const gapUsage = sumBatchUsage(gapResults)
-      totalUsage = addUsage(totalUsage, gapUsage)
-      console.log(`[steg 5] Ferdig (${formatUsage(gapUsage)})`)
+    if (gapRequests.length > 0 || fromStep > 5) {
+      if (fromStep <= 5 && gapRequests.length > 0) {
+        // Steg 5: Gap-søk
+        console.log(
+          `\n[steg 5] Gap-søk — ${gapRequests.length} kall for ${actorCount} aktør(er)`,
+        )
+        const gapBatchId = await transport!.createBatch(
+          gapRequests,
+          'isi-ranking-gap',
+        )
+        await recordBatch('isi-ranking-gap', gapBatchId)
+        await transport!.waitForBatch(gapBatchId, 'isi-ranking-gap')
+        const gapResults = await transport!.getBatchResults(gapBatchId)
+        const gapArtifacts = parseGapResearchResults(gapRequests, gapResults)
+        evidenceArtifacts = mergeEvidenceArtifacts(
+          evidenceArtifacts,
+          gapArtifacts,
+        )
+        await writeEvidenceArtifacts(outputDir, gapArtifacts)
+        const gapUsage = sumBatchUsage(gapResults)
+        totalUsage = addUsage(totalUsage, gapUsage)
+        console.log(`[steg 5] Ferdig (${formatUsage(gapUsage)})`)
 
-      for (const gapPlan of gapPlans) {
-        await writeGapResolution(outputDir, gapPlan.actorSlug, gapPlan)
+        for (const gapPlan of gapPlans) {
+          await writeGapResolution(outputDir, gapPlan.actorSlug, gapPlan)
+        }
+      } else {
+        console.log(
+          `\n[steg 5] Hoppet over (--from-step=${fromStep}) — laster gap-evidens fra disk`,
+        )
+        // Gap artifacts were already written to the evidence dir by replay-gap-batch.
+        // Re-load all evidence so gap findings are included.
+        evidenceArtifacts = await loadEvidenceArtifacts(outputDir, dossiers)
       }
 
       // Steg 6: Evidensmatrise (oppdatert)
-      const refreshedReviewRequests = buildEvidenceReviewRequests(dossiers, evidenceArtifacts, framework, manifestKort)
-      console.log(`\n[steg 6] Evidensmatrise (oppdatert) — ${refreshedReviewRequests.length} kall`)
+      const refreshedReviewRequests = buildEvidenceReviewRequests(
+        dossiers,
+        evidenceArtifacts,
+        framework,
+        manifestKort,
+      )
+      console.log(
+        `\n[steg 6] Evidensmatrise (oppdatert) — ${refreshedReviewRequests.length} kall`,
+      )
       const refreshedReviewBatchId = await transport!.createBatch(
         refreshedReviewRequests,
         'isi-ranking-matrix-refresh',
       )
       await recordBatch('isi-ranking-matrix-refresh', refreshedReviewBatchId)
-      await transport!.waitForBatch(refreshedReviewBatchId, 'isi-ranking-matrix-refresh')
-      const refreshedReviewResults = await transport!.getBatchResults(refreshedReviewBatchId)
-      evidenceMatrices = parseEvidenceReviewResults(refreshedReviewRequests, refreshedReviewResults)
+      await transport!.waitForBatch(
+        refreshedReviewBatchId,
+        'isi-ranking-matrix-refresh',
+      )
+      const refreshedReviewResults = await transport!.getBatchResults(
+        refreshedReviewBatchId,
+      )
+      evidenceMatrices = parseEvidenceReviewResults(
+        refreshedReviewRequests,
+        refreshedReviewResults,
+      )
       await writeMatrices(outputDir, evidenceMatrices)
       const refreshedReviewUsage = sumBatchUsage(refreshedReviewResults)
       totalUsage = addUsage(totalUsage, refreshedReviewUsage)
       console.log(`[steg 6] Ferdig (${formatUsage(refreshedReviewUsage)})`)
 
       // Steg 7: Scoring-utkast (oppdatert)
-      const refreshedScoringRequests = buildScoringDraftRequests(dossiers, evidenceMatrices, framework, manifest)
-      console.log(`\n[steg 7] Scoring-utkast (oppdatert) — ${refreshedScoringRequests.length} kall`)
+      const refreshedScoringRequests = buildScoringDraftRequests(
+        dossiers,
+        evidenceMatrices,
+        framework,
+        manifest,
+      )
+      console.log(
+        `\n[steg 7] Scoring-utkast (oppdatert) — ${refreshedScoringRequests.length} kall`,
+      )
       const refreshedScoringBatchId = await transport!.createBatch(
         refreshedScoringRequests,
         'isi-ranking-scoring-refresh',
       )
       await recordBatch('isi-ranking-scoring-refresh', refreshedScoringBatchId)
-      await transport!.waitForBatch(refreshedScoringBatchId, 'isi-ranking-scoring-refresh')
-      const refreshedScoringResults = await transport!.getBatchResults(refreshedScoringBatchId)
-      scoreDrafts = parseScoringDraftResults(refreshedScoringRequests, refreshedScoringResults)
+      await transport!.waitForBatch(
+        refreshedScoringBatchId,
+        'isi-ranking-scoring-refresh',
+      )
+      const refreshedScoringResults = await transport!.getBatchResults(
+        refreshedScoringBatchId,
+      )
+      scoreDrafts = parseScoringDraftResults(
+        refreshedScoringRequests,
+        refreshedScoringResults,
+      )
       await writeScoreDrafts(outputDir, scoreDrafts)
       const refreshedScoringUsage = sumBatchUsage(refreshedScoringResults)
       totalUsage = addUsage(totalUsage, refreshedScoringUsage)
@@ -351,12 +593,21 @@ export async function runIsiRankingPipeline(
     manifestFull,
     template,
   )
-  console.log(`\n[steg slutt] Sluttrapporter — ${actorCount} aktør(er), ${finalReportRequests.length} kall`)
-  const finalReportBatchId = await transport!.createBatch(finalReportRequests, 'isi-ranking-final-report')
+  console.log(
+    `\n[steg slutt] Sluttrapporter — ${actorCount} aktør(er), ${finalReportRequests.length} kall`,
+  )
+  const finalReportBatchId = await transport!.createBatch(
+    finalReportRequests,
+    'isi-ranking-final-report',
+  )
   await recordBatch('isi-ranking-final-report', finalReportBatchId)
   await transport!.waitForBatch(finalReportBatchId, 'isi-ranking-final-report')
-  const finalReportResults = await transport!.getBatchResults(finalReportBatchId)
-  const reports = parseFinalReportResults(finalReportRequests, finalReportResults)
+  const finalReportResults =
+    await transport!.getBatchResults(finalReportBatchId)
+  const reports = parseFinalReportResults(
+    finalReportRequests,
+    finalReportResults,
+  )
   await writeReports(outputDir, reports)
   const finalUsage = sumBatchUsage(finalReportResults)
   totalUsage = addUsage(totalUsage, finalUsage)

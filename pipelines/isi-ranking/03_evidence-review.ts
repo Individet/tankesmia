@@ -3,13 +3,14 @@ import {
   buildEvidenceReviewSystemPrompt,
   buildEvidenceReviewUserPrompt,
 } from './prompts.ts'
+import { EVIDENCE_MATRIX_OUTPUT_CONFIG } from './schemas.ts'
 import type {
   ActorDossier,
   EvidenceArtifact,
   EvidenceMatrix,
   PipelineBatchRequest,
 } from './types.ts'
-import { extractText, makeCustomId, parseJsonFromText, requireSucceededResult } from './utils.ts'
+import { extractText, makeCustomId, requireSucceededResult } from './utils.ts'
 
 interface EvidenceReviewMeta {
   actorSlug: string
@@ -31,7 +32,8 @@ export function buildEvidenceReviewRequests(
       meta: { actorSlug: dossier.actorSlug },
       params: {
         model: MODELS.evidenceReview,
-        max_tokens: 5000,
+        max_tokens: 30000,
+        output_config: EVIDENCE_MATRIX_OUTPUT_CONFIG,
         system: buildEvidenceReviewSystemPrompt(framework, manifest),
         messages: [
           {
@@ -39,7 +41,10 @@ export function buildEvidenceReviewRequests(
             content: [
               {
                 type: 'text',
-                text: buildEvidenceReviewUserPrompt(dossier.actor.name, actorEvidence),
+                text: buildEvidenceReviewUserPrompt(
+                  dossier.actor.name,
+                  actorEvidence,
+                ),
               },
             ],
           },
@@ -60,7 +65,7 @@ export function parseEvidenceReviewResults(
       results.get(request.custom_id),
       request.custom_id,
     )
-    const parsed = parseJsonFromText<EvidenceMatrix>(extractText(succeeded))
+    const parsed = JSON.parse(extractText(succeeded)) as EvidenceMatrix
     const actorSlug = request.meta?.actorSlug
     if (!actorSlug) {
       throw new Error(`Mangler actorSlug-meta for ${request.custom_id}`)

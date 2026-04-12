@@ -11,9 +11,14 @@ import { runIsiRankingPipeline } from './pipeline.ts'
 
 function parseArgs(argv: string[]) {
   const args = argv.slice(2)
+  // npm intercepter --from-step=N som npm-konfig og sender den ikke videre til scriptet.
+  // Bruk env-variabel som primær kilde: FROM_STEP=3 npm run isi-ranking
+  const fromStepArg = args.find((arg) => arg.startsWith('--from-step='))
+  const fromStepRaw = fromStepArg?.split('=')[1] ?? process.env.FROM_STEP
   return {
     dryRun: args.includes('--dry-run'),
     skipGapResearch: args.includes('--skip-gap-research'),
+    fromStep: fromStepRaw ? parseInt(fromStepRaw, 10) : undefined,
     actorFile: args.find((arg) => !arg.startsWith('-')) ?? DEFAULT_ACTOR_FILE,
     outputDir:
       args.find((arg) => arg.startsWith('--output-dir='))?.split('=')[1] ??

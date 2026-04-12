@@ -28,7 +28,7 @@ function scoringRulesText(): string {
   ].join('\n')
 }
 
-export function buildResearchTools() {
+export function buildResearchTools(maxWebSearches = 10) {
   return [
     {
       type: 'code_execution_20260120' as const,
@@ -39,7 +39,7 @@ export function buildResearchTools() {
       type: 'web_search_20260209' as const,
       name: 'web_search' as const,
       allowed_callers: ['direct', 'code_execution_20260120'] as const,
-      max_uses: 10,
+      max_uses: maxWebSearches,
       user_location: {
         type: 'approximate' as const,
         city: 'Oslo',
@@ -51,7 +51,10 @@ export function buildResearchTools() {
   ]
 }
 
-export function buildResearchPlanSystemPrompt(framework: string, manifest: string) {
+export function buildResearchPlanSystemPrompt(
+  framework: string,
+  manifest: string,
+) {
   return [
     {
       type: 'text' as const,
@@ -60,8 +63,8 @@ export function buildResearchPlanSystemPrompt(framework: string, manifest: strin
         'Lag en kostnadseffektiv researchplan som prioriterer søk som leder til primærkilder.',
         'Ikke foreslå søk du ikke forventer gir relevante treff.',
         scoringRulesText(),
-        'Gjennomfør web-søk for hver underdimensjon. Prioriter offentlige registre (stortinget.no, regjeringen.no) og direkte sitater.',
-        'Returner kun JSON.',
+        'Gjennomfør web-søk for hver underdimensjon. Prioriter troverdige primærkilder — aktørens egne skriverier, offentlige uttalelser og vedtak — og direkte sitater.',
+        'Bruk folkelige, hverdagslige søkeord slik folk flest faktisk omtaler temaene. Unngå akademiske eller juridiske faguttrykk der det finnes et enklere, mer brukt alternativ.',
         'Prosjektmanifest:',
         manifest,
         'ISI-rammeverk:',
@@ -81,11 +84,13 @@ export function buildResearchPlanUserPrompt(dossier: ActorDossier): string {
     `Jurisdiksjon: ${dossier.jurisdiction}`,
     `Periode: ${dossier.period}`,
     dossier.actor.parti ? `Parti: ${dossier.actor.parti}` : null,
-    dossier.actor.tilhørighet ? `Tilhørighet: ${dossier.actor.tilhørighet}` : null,
-    dossier.actor.beskrivelse ? `Beskrivelse: ${dossier.actor.beskrivelse}` : null,
+    dossier.actor.tilhørighet
+      ? `Tilhørighet: ${dossier.actor.tilhørighet}`
+      : null,
+    dossier.actor.beskrivelse
+      ? `Beskrivelse: ${dossier.actor.beskrivelse}`
+      : null,
     `Aliaser: ${dossier.searchAliases.join(', ')}`,
-    `Mulige publiseringskanaler: ${dossier.likelyPublishingChannels.join(', ')}`,
-    `Kjente domener: ${dossier.likelyDomains.join(', ')}`,
     '',
     'Svar med JSON på denne formen:',
     JSON.stringify(
@@ -102,7 +107,6 @@ export function buildResearchPlanUserPrompt(dossier: ActorDossier): string {
           rationale: '',
           searchQueries: [''],
           negativeQueries: [''],
-          preferredDomains: [''],
           stopConditions: [''],
         })),
       },
@@ -114,7 +118,10 @@ export function buildResearchPlanUserPrompt(dossier: ActorDossier): string {
     .join('\n')
 }
 
-export function buildEvidenceHarvestSystemPrompt(framework: string, manifest: string) {
+export function buildEvidenceHarvestSystemPrompt(
+  framework: string,
+  manifest: string,
+) {
   return [
     {
       type: 'text' as const,
@@ -122,10 +129,11 @@ export function buildEvidenceHarvestSystemPrompt(framework: string, manifest: st
         'Du er en målrettet research-agent for Individets Suverenitetsindeks (ISI).',
         'Oppgaven er å finne få, sterke evidenspunkter for en enkelt underdimensjon.',
         scoringRulesText(),
+        'Prioriter troverdige primærkilder — aktørens egne skriverier, offisielle uttalelser og vedtak — fremfor andrehåndskilder.',
+        'Bruk folkelige, hverdagslige søkeord slik folk flest faktisk omtaler temaene. Unngå akademiske eller juridiske faguttrykk der det finnes et enklere, mer brukt alternativ.',
         'Referer til kilder via sitatmetadata. Brødteksten skal inneholde funn og analyse.',
         'Sett dataGap til true når du etter grundig søk finner utilstrekkelig grunnlag. Et ærlig hull er bedre enn spekulativ evidens.',
         'Ikke fabriker URL-er eller kilder du ikke har funnet gjennom søk.',
-        'Returner kun JSON.',
         'Prosjektmanifest:',
         manifest,
         'ISI-rammeverk:',
@@ -141,7 +149,9 @@ export function buildEvidenceHarvestUserPrompt(
   plan: ResearchPlan,
   subdimension: SubdimensionDefinition,
 ): string {
-  const planEntry = plan.subdimensions.find((item) => item.subdimensionId === subdimension.id)
+  const planEntry = plan.subdimensions.find(
+    (item) => item.subdimensionId === subdimension.id,
+  )
 
   return [
     `Aktør: ${dossier.actor.name}`,
@@ -150,8 +160,8 @@ export function buildEvidenceHarvestUserPrompt(
     `Prioritet: ${planEntry?.priority ?? 'medium'}`,
     `Planlagte søk: ${(planEntry?.searchQueries ?? []).join(' | ')}`,
     `Negative søk: ${(planEntry?.negativeQueries ?? []).join(' | ')}`,
-    `Foretrukne domener: ${(planEntry?.preferredDomains ?? []).join(' | ')}`,
     `Søkehints: ${subdimension.searchHints.join(' | ')}`,
+    'Tips: Bruk hverdagslige, folkelige søkeord fremfor akademiske faguttrykk der det er mulig.',
     '',
     'Gyldige verdier: stance = positive|negative|mixed|unknown, confidence = high|medium|low, positionType = explicit|implicit|unknown, evidenceType = primary|secondary|mixed|unknown.',
     'Sett dataGap til true hvis du etter grundig søk mangler tilstrekkelig grunnlag.',
@@ -198,7 +208,10 @@ export function buildEvidenceHarvestUserPrompt(
   ].join('\n')
 }
 
-export function buildEvidenceReviewSystemPrompt(framework: string, manifest: string) {
+export function buildEvidenceReviewSystemPrompt(
+  framework: string,
+  manifest: string,
+) {
   return [
     {
       type: 'text' as const,
@@ -253,13 +266,17 @@ export function buildEvidenceReviewSystemPrompt(framework: string, manifest: str
                 dataGap: false,
                 recommendedFollowUpQueries: [],
                 citations: [
-                  { url: 'https://stortinget.no/...', title: 'Votering vaksineplikt' },
+                  {
+                    url: 'https://stortinget.no/...',
+                    title: 'Votering vaksineplikt',
+                  },
                 ],
               },
               {
                 subdimensionId: 'd6_4',
                 subdimensionName: 'Eierskap til egne data',
-                narrative: 'Utilstrekkelig evidens til å vurdere aktørens posisjon.',
+                narrative:
+                  'Utilstrekkelig evidens til å vurdere aktørens posisjon.',
                 acceptedClaims: [],
                 discardedClaims: [],
                 confidence: 'low',
@@ -324,7 +341,7 @@ export function buildScoringSystemPrompt(framework: string, manifest: string) {
         '',
         '## Output-format',
         '',
-        'Returner JSON med dette skjemaet:',
+        'Eksempel på forventet output:',
         JSON.stringify(
           {
             actorSlug: 'aktør-slug',
@@ -334,7 +351,8 @@ export function buildScoringSystemPrompt(framework: string, manifest: string) {
                 subdimensionId: 'd1_1',
                 subdimensionName: 'Medisinsk selvbestemmelse',
                 score: 1,
-                rationale: 'Konsekvent forsvar for pasientautonomi og motstand mot vaksineplikt.',
+                rationale:
+                  'Konsekvent forsvar for pasientautonomi og motstand mot vaksineplikt.',
                 confidence: 'high',
                 conflictingEvidence: false,
               },
@@ -347,12 +365,15 @@ export function buildScoringSystemPrompt(framework: string, manifest: string) {
                 conflictingEvidence: false,
                 imputationCandidate: 1,
                 imputationBasis: 'party-alignment',
-                imputationRationale: 'Partiprogrammet støtter individets dataeierskap.',
+                imputationRationale:
+                  'Partiprogrammet støtter individets dataeierskap.',
               },
             ],
             keyStrengths: ['Konsekvent på kroppslig autonomi (d1)'],
             keyRisks: ['Tynn dekning på digital autonomi (d6)'],
-            crossDimensionNotes: ['Frihetsprofilen er sterkest i d1-d2, svakere i d5-d6.'],
+            crossDimensionNotes: [
+              'Frihetsprofilen er sterkest i d1-d2, svakere i d5-d6.',
+            ],
           },
           null,
           2,
@@ -391,18 +412,22 @@ export function buildScoringUserPrompt(
   ].join('\n')
 }
 
-export function buildGapResearchSystemPrompt(framework: string, manifest: string) {
+export function buildGapResearchSystemPrompt(
+  framework: string,
+  manifest: string,
+) {
   return [
     {
       type: 'text' as const,
       text: [
         'Du er en oppfølgings-research-agent for Individets Suverenitetsindeks (ISI).',
         'Jobben din er å gjøre målrettede oppfølgingssøk for underdimensjoner som har lav confidence, manglende score eller motstridende evidens fra første runde.',
-        'Forsøk nye søkeinnfallsvinkler og andre kilder enn første runde. Ikke gjenta søk eller kilder fra første runde. Prioriter primærkilder.',
+        'Forsøk nye søkeinnfallsvinkler og andre kilder enn første runde. Ikke gjenta søk eller kilder fra første runde. Prioriter primærkilder og aktørens egne skriverier.',
+        'Bruk folkelige, hverdagslige søkeord slik folk flest faktisk omtaler temaene. Unngå akademiske eller juridiske faguttrykk der det finnes et enklere, mer brukt alternativ.',
         'Rapporter ærlig om gapet fortsatt er åpent etter oppfølgingssøket.',
         scoringRulesText(),
         '',
-        'Returner JSON med dette skjemaet:',
+        'Eksempel på forventet output:',
         JSON.stringify(
           {
             actorSlug: '',

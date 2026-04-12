@@ -1,7 +1,8 @@
 import { MODELS } from './constants.ts'
 import { buildResearchPlanSystemPrompt, buildResearchPlanUserPrompt, buildResearchTools } from './prompts.ts'
+import { RESEARCH_PLAN_OUTPUT_CONFIG } from './schemas.ts'
 import type { ActorDossier, PipelineBatchRequest, ResearchPlan } from './types.ts'
-import { extractText, makeCustomId, parseJsonFromText, requireSucceededResult } from './utils.ts'
+import { extractText, makeCustomId, requireSucceededResult } from './utils.ts'
 
 interface ResearchPlanRequestMeta {
   actorSlug: string
@@ -17,9 +18,10 @@ export function buildResearchPlanRequests(
     meta: { actorSlug: dossier.actorSlug },
     params: {
       model: MODELS.researchPlan,
-      max_tokens: 5000,
+      max_tokens: 16000,
+      output_config: RESEARCH_PLAN_OUTPUT_CONFIG,
       system: buildResearchPlanSystemPrompt(framework, manifest),
-      tools: buildResearchTools(),
+      tools: buildResearchTools(5),
       messages: [
         {
           role: 'user',
@@ -46,7 +48,7 @@ export function parseResearchPlanResults(
       results.get(request.custom_id),
       request.custom_id,
     )
-    const parsed = parseJsonFromText<ResearchPlan>(extractText(succeeded))
+    const parsed = JSON.parse(extractText(succeeded)) as ResearchPlan
     const actorSlug = request.meta?.actorSlug
     if (!actorSlug) {
       throw new Error(`Mangler actorSlug-meta for ${request.custom_id}`)
@@ -83,7 +85,6 @@ export function researchPlanMarkdown(plan: ResearchPlan): string {
       `- Rationale: ${item.rationale}`,
       `- Search queries: ${item.searchQueries.join(' | ')}`,
       `- Negative queries: ${item.negativeQueries.join(' | ')}`,
-      `- Preferred domains: ${item.preferredDomains.join(' | ')}`,
       `- Stop conditions: ${item.stopConditions.join(' | ')}`,
       '',
     ]),

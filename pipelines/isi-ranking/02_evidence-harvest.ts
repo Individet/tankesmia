@@ -4,6 +4,7 @@ import {
   buildEvidenceHarvestUserPrompt,
   buildResearchTools,
 } from './prompts.ts'
+import { EVIDENCE_ARTIFACT_OUTPUT_CONFIG } from './schemas.ts'
 import type {
   ActorDossier,
   EvidenceArtifact,
@@ -14,7 +15,6 @@ import {
   extractText,
   extractUniqueCitations,
   makeCustomId,
-  parseJsonFromText,
   requireSucceededResult,
 } from './utils.ts'
 
@@ -43,7 +43,8 @@ export function buildEvidenceHarvestRequests(
       },
       params: {
         model: MODELS.evidenceHarvest,
-        max_tokens: 3500,
+        max_tokens: 8000,
+        output_config: EVIDENCE_ARTIFACT_OUTPUT_CONFIG,
         system: buildEvidenceHarvestSystemPrompt(framework, manifest),
         tools: buildResearchTools(),
         messages: [
@@ -52,7 +53,11 @@ export function buildEvidenceHarvestRequests(
             content: [
               {
                 type: 'text',
-                text: buildEvidenceHarvestUserPrompt(dossier, plan, subdimension),
+                text: buildEvidenceHarvestUserPrompt(
+                  dossier,
+                  plan,
+                  subdimension,
+                ),
               },
             ],
           },
@@ -73,7 +78,7 @@ export function parseEvidenceHarvestResults(
       results.get(request.custom_id),
       request.custom_id,
     )
-    const parsed = parseJsonFromText<EvidenceArtifact>(extractText(succeeded))
+    const text = extractText(succeeded)
     const actorSlug = request.meta?.actorSlug
     const subdimensionId = request.meta?.subdimensionId
 
@@ -82,6 +87,37 @@ export function parseEvidenceHarvestResults(
     }
 
     const key = `${actorSlug}:${subdimensionId}`
+
+    if (!text.trim()) {
+      // Modellen avsluttet uten tekst-blokk (f.eks. etter tool_use uten funn).
+      // Opprett syntetisk dataGap-artifact — fanges opp av trinn 5 gap-research.
+      const subdimension = SUBDIMENSIONS.find((s) => s.id === subdimensionId)
+      const blockTypes = succeeded.content.map((b: any) => b.type).join(', ')
+      console.warn(
+        `[${request.custom_id}] Ingen tekst-blokk i svar (blokker: [${blockTypes}]). ` +
+          `Oppretter syntetisk dataGap-artifact.`,
+      )
+      artifacts.set(key, {
+        actorSlug,
+        actorName: actorSlug,
+        subdimensionId,
+        subdimensionName: subdimension?.name ?? subdimensionId,
+        harvestedAt: new Date().toISOString().slice(0, 10),
+        summary:
+          'Modellen produserte ingen tekst-blokk etter websøk. Automatisk markert som datagap.',
+        stance: 'unknown',
+        positionType: 'unknown',
+        confidence: 'low',
+        dataGap: true,
+        findings: [],
+        unresolvedQuestions: [],
+        citations: [],
+      })
+      continue
+    }
+
+    const parsed = JSON.parse(text) as EvidenceArtifact
+
     artifacts.set(key, {
       ...parsed,
       actorSlug,

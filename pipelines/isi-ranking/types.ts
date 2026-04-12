@@ -31,8 +31,6 @@ export interface ActorDossier {
   actorSlug: string
   actor: ActorInput
   searchAliases: string[]
-  likelyPublishingChannels: string[]
-  likelyDomains: string[]
   period: string
   jurisdiction: string
   generatedAt: string
@@ -44,7 +42,6 @@ export interface ResearchPlanSubdimension {
   rationale: string
   searchQueries: string[]
   negativeQueries: string[]
-  preferredDomains: string[]
   stopConditions: string[]
 }
 
@@ -215,7 +212,7 @@ export interface BatchSucceededResult {
   type: 'succeeded'
   model?: string
   /** 'end_turn' | 'max_tokens' | 'stop_sequence' | 'tool_use' */
-  stopReason?: string
+  stopReason?: string | null
   usage: BatchUsage
   content: Array<BatchTextBlock | BatchOtherBlock>
 }
@@ -243,6 +240,8 @@ export interface RunPipelineOptions {
   templateFile: string
   dryRun?: boolean
   skipGapResearch?: boolean
+  /** Hopp over steg 1–(N-1) og last allerede ferdig-kjørte artefakter fra disk. */
+  fromStep?: number
   transport?: BatchTransport
 }
 
