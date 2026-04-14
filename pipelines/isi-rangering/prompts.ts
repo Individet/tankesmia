@@ -94,9 +94,9 @@ ${ISI_RAMMEVERK}
 
 ## Instruksjoner
 
-Du mottar nå strukturerte forskningsfunn fra seks dimensjonsagenter. Bruk disse som eneste kildebase.
+Du mottar nå strukturerte forskningsfunn fra åtte dimensjonsagenter. Bruk disse som eneste kildebase.
 
-1. Sett indikatorverdi for alle 26 underdimensjoner (−2 til +2)
+1. Sett indikatorverdi for alle 32 underdimensjoner (−2 til +2)
 2. Beregn per-dimensjon-summer og totalverdi
 3. Fyll ut template.md fullstendig — inkludert YAML frontmatter med alle felt
 4. Ingresssetningen skal være ubetinget og presis — ingen forbehold

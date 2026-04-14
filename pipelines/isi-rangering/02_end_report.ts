@@ -57,7 +57,7 @@ function lagRapportInstruksjoner(mal: string): string {
 ### Rapport 2 — ISI-verdi
 
 
-**Indikatorverdier — 24 underdimensjoner (−2 til +2, eller null):**
+**Indikatorverdier — 32 underdimensjoner (−2 til +2, eller null):**
 
 For hver underdimensjon: identifiser kilde → vurder konsistens over tid → skill eksplisitt fra implisitt posisjon → tildel indikatorverdi → én–tre setninger begrunnelse med kildehenvisning.
 
@@ -119,7 +119,8 @@ function lagRapportData(aktor: Aktor, research: string): string {
   return [
     `Aktør som skal analyseres: ${aktor.name}`,
     '',
-    'Her er funnene fra analysene utført på forhånd (profil og dimensjoner 1-6):',
+    'Her er funnene fra analysene utført på forhånd (profil og dimensjoner 1-8):',
+
     '',
     research,
   ].join('\n')
@@ -153,6 +154,8 @@ export async function endReportPipeline(
       'd4-search.md',
       'd5-search.md',
       'd6-search.md',
+      'd7-search.md',
+      'd8-search.md',
     ]
 
     const fileChecks = await Promise.all(
@@ -178,7 +181,7 @@ export async function endReportPipeline(
       continue
     }
 
-    const [profilData, d1Data, d2Data, d3Data, d4Data, d5Data, d6Data] =
+    const [profilData, d1Data, d2Data, d3Data, d4Data, d5Data, d6Data, d7Data, d8Data] =
       await Promise.all(
         requiredFiles.map((file) =>
           fs.readFile(path.join(actorDir, file), 'utf-8'),
@@ -193,6 +196,8 @@ export async function endReportPipeline(
       `### D4: Rettsstat\n${d4Data}`,
       `### D5: Foreningsfrihet\n${d5Data}`,
       `### D6: Digital autonomi\n${d6Data}`,
+      `### D7: Beskyttelseskapasitet\n${d7Data}`,
+      `### D8: Barn, familie og statsmakt\n${d8Data}`,
     ].join('\n\n')
 
     requests.push({
