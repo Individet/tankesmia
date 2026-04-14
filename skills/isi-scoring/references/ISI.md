@@ -2,6 +2,10 @@
 
 Et rammeverk for å vurdere om samfunnsaktører fremmer eller hemmer individets suverenitet.
 
+_Versjon 0.3 — Tankesmia Individet_
+
+---
+
 ## Grunnlag og filosofisk forankring
 
 ISI er forankret i selveierskapsprinsippet: ethvert menneske eier seg selv — sin kropp, sin tanke, sitt arbeid og fruktene av dette arbeidet. Denne innsikten, formulert av Locke, presisert av Bastiat, operasjonalisert av Rothbard og Spencer, bekreftet empirisk av Hayek og forsvart moralsk av Rand, utgjør indeksens normative kjerne.
@@ -20,6 +24,8 @@ ISI er forankret i selveierskapsprinsippet: ethvert menneske eier seg selv — s
 - Publiserte dokumenter, programmer og manifester
 - Konkrete policy-forslag
 - Partitilhørighet
+
+---
 
 ## Filosofiske akser
 
@@ -48,6 +54,8 @@ ISI er forankret i selveierskapsprinsippet: ethvert menneske eier seg selv — s
 5. **Ytringsfrihet** — tanken og ytringen som utenfor statens domene
 6. **Voluntarisme** — frivillig samarbeid som normativ standard for sosial organisering
 
+---
+
 ## ISI — Dimensjoner og verdikriterier
 
 ### Skala
@@ -58,7 +66,8 @@ Hver underdimensjon får en **indikatorverdi på skalaen −2 til +2**:
 | -------------- | -------------------------------------------------------------------------------- |
 | **+2**         | Aktøren fremmer aktivt og konsekvent denne friheten                              |
 | **+1**         | Aktøren støtter denne friheten, men med viktige forbehold eller inkonsekvent     |
-| **0**          | Nøytral, uklar posisjon eller ingen dokumentert standpunkt                       |
+| **0**          | Dokumentert blandet eller reelt balansert profil på underdimensjonen             |
+| **null**       | Utilstrekkelig datagrunnlag — datagap, ikke nøytral vurdering                    |
 | **−1**         | Aktøren støtter tiltak som begrenser denne friheten, men ikke som eksplisitt mål |
 | **−2**         | Aktøren fremmer aktivt politikk eller retorikk som krenker denne friheten        |
 
@@ -74,7 +83,7 @@ _Forankring: Locke (selveierskapet), Rothbard (selveierskapsaksiomet), Mill (ska
 
 Støtter aktøren individets rett til egne medisinske beslutninger uten statlig tvang? Har aktøren støttet obligatoriske medisinske tiltak?
 
-#### 1.2 Sosial frihet/Livsstilsautonomi
+#### 1.2 Sosial frihet / Livsstilsautonomi
 
 Fremmer aktøren individets rett til å velge livsstil (familieliv, kosthold, rusmidler til eget bruk, seksualitet, religiøs praksis) uten statlig innblanding der ingen tredjepart skades?
 
@@ -172,7 +181,7 @@ Fremmer aktøren statlige løsninger der frivillig sivilsamfunn historisk har fy
 
 #### 5.4 Forsamlingsfrihet
 
-Har aktøren støttet tiltak som begrenser retten til å møtes, demonstrere eller samles? Har aktøren ytret støtte til overvåking, identifisering av eller statlig trakkasering av lovlydige individer på bakgrunn av at de møtes, demonstrerer eller samles?
+Har aktøren støttet tiltak som begrenser retten til å møtes, demonstrere eller samles? Har aktøren ytret støtte til overvåking, identifisering av eller statlig trakassering av lovlydige individer på bakgrunn av at de møtes, demonstrerer eller samles?
 
 ---
 
@@ -198,19 +207,73 @@ Støtter aktøren individets rett til å eie og kontrollere egne data — eller 
 
 ---
 
-### Vektingsmodell (v0.1)
+### Dimensjon 7: Kapasitet og vilje til å beskytte individets suverenitet (D7)
+
+_Forankring: Locke (statens eneste legitime formål er å beskytte individets rettigheter), Bastiat (loven som vern, ikke plyndring), Nozick (minimalstaten), Rand (statens vold er kun legitimt som gjengjeldelse mot aggresjon — politi, domstoler og militær er statens eneste rettmessige funksjoner)_
+
+Denne dimensjonen måler den symmetriske siden av NAP: ikke bare at staten unnlater å initiere makt mot individet, men at den faktisk er kapabel og villig til å beskytte individet mot andres initiering av makt. Dette er Lockes primære begrunnelse for statens eksistens — og et hull i de fleste libertære analyserammeverk.
+
+#### 7.1 Forsvar mot ekstern aggresjon
+
+Argumenterer aktøren for et troverdig forsvar mot utenlandsk makt — og tar aktøren stilling til verneplikt vs. frivillig forsvar?
+
+#### 7.2 Politiets kapasitet og integritet
+
+Prioriterer aktøren effektiv beskyttelse av person og eiendom, kombinert med sterk rettssikkerhet mot politiovergrep?
+
+#### 7.3 Straffesystemets beskyttende logikk
+
+Er aktørens straffepolitikk orientert mot å beskytte potensielle ofre mot aggressorer — eller støtter aktøren straff for ikke-aggressive handlinger?
+
+#### 7.4 Håndhevelse av kontrakter og eiendomsrett
+
+Støtter aktøren et fungerende rettsvesen som håndhever kontrakter og eiendomsrett effektivt i praksis?
+
+**Verdinote D7:** Verneplikt er analytisk atskilt fra forsvarskapasitet. Verneplikt vurderes negativt i D1 (kroppslig autonomi). D7.1 vurderer utelukkende om aktøren argumenterer for et troverdig forsvar — ikke på hvilke midler. En aktør kan dermed få −2 på D1 og +2 på D7.1 simultant uten inkonsistens.
+
+---
+
+### Dimensjon 8: Barn, familie og statsmakt (D8)
+
+_Forankring: Locke (selveierskapet gjelder det modne individet — barn er på vei mot suverenitet), Nozick (forpliktelser som springer fra frivillige handlinger er bindende), Mill (individet må formes til å kunne utøve frihet), Rand (utdanningens eneste legitime formål er å lære barnet å tenke selvstendig — statlig formasjon undergraver produksjonen av rasjonelle individer)_
+
+Denne dimensjonen adresserer et av liberalismens mest umodne spørsmål: hvem har autoritet over individet i den perioden det ikke fullt ut kan forsvare sin egen autonomi? Barn er ikke suverene aktører — de er vesener på vei mot suverenitet. Foreldreforpliktelsen er ikke en positiv rettighet i velferdsstatlig forstand, men en bindende forpliktelse som springer fra en frivillig handling (unnfangelse). Statens rolle er subsidiær: den trer inn kun ved dokumentert, alvorlig svikt — og alltid med sterk rettssikkerhet.
+
+#### 8.1 Rett til privat og alternativ opplæring
+
+Argumenterer aktøren for eller mot foreldres rett til å velge privat, religiøs eller hjemmebasert opplæring?
+
+#### 8.2 Læreplankontroll og foreldres myndighet
+
+Støtter aktøren sentralisert statlig læreplankontroll, eller foreldres og lokalsamfunnets pedagogiske myndighet?
+
+#### 8.3 Barnevern og statlig familieintervensjon
+
+Argumenterer aktøren for lav eller høy terskel for statlig familieintervensjon — og krever aktøren sterk rettssikkerhet i barnevernssaker?
+
+#### 8.4 Statlig verdiformidling og ideologisk formasjon
+
+Fremmer aktøren statlig finansiert verdiformidling som nøytral og legitim — eller problematiserer aktøren statens rolle som ideologisk formasjonsinstitusjon?
+
+**Verdinote D8:** ISI vurderer aktørers argumentasjon i offentligheten — ikke staten som institusjon. Spørsmålet er alltid: hva sier denne aktøren om forholdet mellom foreldre, barn og stat? Fravær av standpunkt gir `null` og noteres som datagap. D8.3 er analytisk atskilt fra D7: barnevern som beskyttelse mot faktisk misbruk er D7-logikk (statens beskyttelsesplikt); barnevern som kulturell normering eller lavterskelintervensjon er D8-logikk (statlig overskridelse av familiens autonomi).
+
+---
+
+### Vektingsmodell (v0.3)
 
 Alle dimensjoner vektes likt. Begrunnelse: NAP impliserer at alle former for tvang er likeverdige krenker av individets suverenitet.
 
-| Dimensjon                            | Underdimensjoner | Maks poeng |
-| ------------------------------------ | ---------------- | ---------- |
-| D1. Kroppslig autonomi               | 4                | ±8         |
-| D2. Ytringsfrihet                    | 4                | ±8         |
-| D3. Eiendomsrett og økonomisk frihet | 4                | ±8         |
-| D4. Rettsstat og likebehandling      | 4                | ±8         |
-| D5. Forenings- og religionsfrihet    | 4                | ±8         |
-| D6. Digital autonomi                 | 4                | ±8         |
-| **Totalt**                           | **24**           | **±48**    |
+| Dimensjon                                                    | Underdimensjoner | Maks poeng |
+| ------------------------------------------------------------ | ---------------- | ---------- |
+| D1. Kroppslig autonomi                                       | 4                | ±8         |
+| D2. Ytringsfrihet                                            | 4                | ±8         |
+| D3. Eiendomsrett og økonomisk frihet                         | 4                | ±8         |
+| D4. Rettsstat og likebehandling                              | 4                | ±8         |
+| D5. Forenings- og religionsfrihet                            | 4                | ±8         |
+| D6. Digital autonomi                                         | 4                | ±8         |
+| D7. Kapasitet og vilje til å beskytte individets suverenitet | 4                | ±8         |
+| D8. Barn, familie og statsmakt                               | 4                | ±8         |
+| **Totalt**                                                   | **32**           | **±64**    |
 
 ---
 
@@ -229,6 +292,12 @@ Alle dimensjoner vektes likt. Begrunnelse: NAP impliserer at alle former for tva
 - 6.1 Overvåkning: +2
 - Kommentar: Intern inkonsistens noteres; aktøren viser selektiv frihetsorientering
 
+**Eksempel — Politiker som støtter verneplikt men argumenterer for sterkt forsvar:**
+
+- 1.1 Medisinsk selvbestemmelse / kroppslig autonomi: −1 (verneplikt)
+- 7.1 Forsvar mot ekstern aggresjon: +1
+- Kommentar: Ikke en inkonsistens — to separate analytiske akser
+
 ---
 
 ## Filosofisk metanote
@@ -238,3 +307,8 @@ ISI er ikke politisk nøytral. Den er fundert i en konsistent etisk posisjon: at
 - **ISI skiller mellom frihet og resultat.** En aktør som ønsker god helse for befolkningen, men oppnår det gjennom tvang, får negativ indikatorverdi.
 - **ISI er immun mot intensjonsargumentet.** Gode intensjoner endrer ikke den moralske karakteren av tvang.
 - **ISI er asymmetrisk.** De fleste politiske aktører i moderne stater opererer innenfor et paradigme som forutsetter statlig intervensjon som standard. En konsekvent suverenitetsforkjemper er unntaket, ikke regelen.
+- **ISI måler aktører, ikke stater.** Spørsmålet er alltid hva denne aktøren argumenterer for i offentligheten — ikke hva staten faktisk gjør. Fravær av dokumentert posisjon gir `null` og noteres som datagap.
+
+---
+
+_ISI v0.3 — Tankesmia Individet_
