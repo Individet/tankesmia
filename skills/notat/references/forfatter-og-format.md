@@ -243,7 +243,6 @@ Kildeprioritet:
 
 Norsk bokmål. Presist, klart, uten akademisk jargong.
 
-- «Poengsum» og «rangering», ikke «skår» eller «score»
 - «Frivillig samarbeid vs. initiering av makt» — Individets
   kjerneformulering, foretrukket over «NAP» (som er et rothbardiansk
   begrep ukjent for folk flest)
@@ -268,8 +267,7 @@ Et notat eksisterer ikke i et vakuum. Det bygger på og refererer til:
   mellom land, referer til portalen (individet.no/frihet-og-velstand/)
 - **Reportasjer** — tidligere Individet-artikler som belyser temaet fra
   historisk eller narrativ vinkel
-- **IIS-data** — når det foreligger, bruk landrangeringer som empirisk
-  grunnlag
+
 
 Kryssreferanser styrker hvert enkelt produkt og bygger Individet som
 kunnskapsbase.
