@@ -49,7 +49,17 @@ function batchFileToResultsMap(batchJson: { results: Record<string, any> }): Map
         outputTokens: msg.usage?.output_tokens ?? 0,
       },
       content: (msg.content ?? []).map((block: any) =>
-        block.type === 'text' ? { type: 'text' as const, text: block.text } : block,
+        block.type === 'text'
+          ? {
+              type: 'text' as const,
+              text: block.text,
+              citations: (block.citations ?? []).map((citation: any) => ({
+                url: citation?.url ?? citation?.source?.url ?? '',
+                title: citation?.title ?? citation?.source?.title ?? '',
+                citedText: citation?.cited_text ?? citation?.citedText ?? '',
+              })),
+            }
+          : block,
       ),
     })
   }
