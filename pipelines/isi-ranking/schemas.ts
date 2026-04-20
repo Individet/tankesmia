@@ -35,7 +35,6 @@ export const RESEARCH_PLAN_OUTPUT_CONFIG: OutputConfig = {
       properties: {
         actorSlug: { type: 'string' },
         actorName: { type: 'string' },
-        generatedAt: { type: 'string' },
         profileSummary: { type: 'string' },
         primarySourcePriorities: { type: 'array', items: { type: 'string' } },
         secondarySourcePriorities: { type: 'array', items: { type: 'string' } },
@@ -73,7 +72,6 @@ export const EVIDENCE_ARTIFACT_OUTPUT_CONFIG: OutputConfig = {
         actorName: { type: 'string' },
         subdimensionId: { type: 'string' },
         subdimensionName: { type: 'string' },
-        harvestedAt: { type: 'string' },
         summary: { type: 'string' },
         stance: { type: 'string', enum: ['positive', 'negative', 'mixed', 'unknown'] },
         positionType: { type: 'string', enum: ['explicit', 'implicit', 'unknown'] },
@@ -97,7 +95,6 @@ export const EVIDENCE_MATRIX_OUTPUT_CONFIG: OutputConfig = {
       properties: {
         actorSlug: { type: 'string' },
         actorName: { type: 'string' },
-        generatedAt: { type: 'string' },
         overallNarrative: { type: 'string' },
         crossDimensionNotes: { type: 'array', items: { type: 'string' } },
         subdimensions: {

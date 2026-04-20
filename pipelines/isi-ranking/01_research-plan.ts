@@ -2,7 +2,7 @@ import { MODELS } from './constants.ts'
 import { buildResearchPlanSystemPrompt, buildResearchPlanUserPrompt, buildResearchTools } from './prompts.ts'
 import { RESEARCH_PLAN_OUTPUT_CONFIG } from './schemas.ts'
 import type { ActorDossier, PipelineBatchRequest, ResearchPlan } from './types.ts'
-import { extractText, makeCustomId, requireSucceededResult } from './utils.ts'
+import { extractText, makeCustomId, nowIso, requireSucceededResult } from './utils.ts'
 
 interface ResearchPlanRequestMeta {
   actorSlug: string
@@ -57,6 +57,7 @@ export function parseResearchPlanResults(
     plans.set(actorSlug, {
       ...parsed,
       actorSlug,
+      generatedAt: nowIso(),
     })
   }
 

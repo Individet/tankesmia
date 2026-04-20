@@ -10,7 +10,7 @@ import type {
   EvidenceMatrix,
   PipelineBatchRequest,
 } from './types.ts'
-import { extractText, makeCustomId, requireSucceededResult } from './utils.ts'
+import { extractText, makeCustomId, nowIso, requireSucceededResult } from './utils.ts'
 
 interface EvidenceReviewMeta {
   actorSlug: string
@@ -74,6 +74,7 @@ export function parseEvidenceReviewResults(
     matrices.set(actorSlug, {
       ...parsed,
       actorSlug,
+      generatedAt: nowIso(),
     })
   }
 

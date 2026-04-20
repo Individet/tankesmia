@@ -15,6 +15,7 @@ import {
   extractText,
   extractUniqueCitations,
   makeCustomId,
+  nowIso,
   requireSucceededResult,
 } from './utils.ts'
 
@@ -122,6 +123,7 @@ export function parseEvidenceHarvestResults(
       ...parsed,
       actorSlug,
       subdimensionId,
+      harvestedAt: nowIso(),
       citations: extractUniqueCitations(succeeded),
     })
   }
