@@ -36,7 +36,7 @@ export function dossierMarkdown(dossier: ActorDossier): string {
     `- Jurisdiction: ${dossier.jurisdiction}`,
     `- Period: ${dossier.period}`,
     dossier.actor.parti ? `- Parti: ${dossier.actor.parti}` : null,
-    dossier.actor.tilhørighet ? `- Tilhorighet: ${dossier.actor.tilhørighet}` : null,
+    dossier.actor.tilhørighet ? `- Tilhørighet: ${dossier.actor.tilhørighet}` : null,
     dossier.actor.beskrivelse ? `- Beskrivelse: ${dossier.actor.beskrivelse}` : null,
     `- Search aliases: ${dossier.searchAliases.join(', ')}`,
     '',
