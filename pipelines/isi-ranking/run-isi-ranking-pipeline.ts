@@ -15,10 +15,22 @@ function parseArgs(argv: string[]) {
   // Bruk env-variabel som primær kilde: FROM_STEP=3 npm run isi-ranking
   const fromStepArg = args.find((arg) => arg.startsWith('--from-step='))
   const fromStepRaw = fromStepArg?.split('=')[1] ?? process.env.FROM_STEP
+
+  let fromStep: number | undefined
+  if (fromStepRaw) {
+    const n = parseInt(fromStepRaw, 10)
+    if (!Number.isFinite(n) || n < 1) {
+      throw new Error(
+        `Ugyldig --from-step/FROM_STEP-verdi: "${fromStepRaw}". Må være et heltall ≥ 1.`,
+      )
+    }
+    fromStep = n
+  }
+
   return {
     dryRun: args.includes('--dry-run'),
     skipGapResearch: args.includes('--skip-gap-research'),
-    fromStep: fromStepRaw ? parseInt(fromStepRaw, 10) : undefined,
+    fromStep,
     actorFile: args.find((arg) => !arg.startsWith('-')) ?? DEFAULT_ACTOR_FILE,
     outputDir:
       args.find((arg) => arg.startsWith('--output-dir='))?.split('=')[1] ??

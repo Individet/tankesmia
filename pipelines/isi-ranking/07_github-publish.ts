@@ -99,49 +99,59 @@ async function opprettBranch(
   })
 }
 
-async function hentFilShaHvisFinnes(
+async function batchCommit(
   repo: RepoConfig,
   branch: string,
-  filePath: string,
-): Promise<string | undefined> {
-  const octokit = getOctokitClient()
-
-  try {
-    const { data } = await octokit.repos.getContent({
-      owner: repo.owner,
-      repo: repo.repo,
-      path: filePath,
-      ref: branch,
-    })
-
-    if (!Array.isArray(data) && 'sha' in data) {
-      return data.sha
-    }
-  } catch {
-    // Fil finnes ikke - dette er forventet ved ny opprettelse.
-  }
-
-  return undefined
-}
-
-async function upsertFile(
-  repo: RepoConfig,
-  branch: string,
-  filePath: string,
-  content: string,
+  files: Array<{ path: string; content: string }>,
+  deletions: string[],
   message: string,
 ): Promise<void> {
-  const octokit = getOctokitClient()
-  const sha = await hentFilShaHvisFinnes(repo, branch, filePath)
+  if (files.length === 0 && deletions.length === 0) return
 
-  await octokit.repos.createOrUpdateFileContents({
+  const octokit = getOctokitClient()
+  const baseSha = await hentBaseSha(repo, branch)
+
+  const treeItems: Array<{
+    path: string
+    mode: '100644'
+    type: 'blob'
+    content?: string
+    sha?: string | null
+  }> = [
+    ...files.map((file) => ({
+      path: file.path,
+      mode: '100644' as const,
+      type: 'blob' as const,
+      content: file.content,
+    })),
+    ...deletions.map((filePath) => ({
+      path: filePath,
+      mode: '100644' as const,
+      type: 'blob' as const,
+      sha: null,
+    })),
+  ]
+
+  const { data: tree } = await octokit.git.createTree({
     owner: repo.owner,
     repo: repo.repo,
-    path: filePath,
+    base_tree: baseSha,
+    tree: treeItems,
+  })
+
+  const { data: commit } = await octokit.git.createCommit({
+    owner: repo.owner,
+    repo: repo.repo,
     message,
-    branch,
-    content: Buffer.from(content, 'utf8').toString('base64'),
-    sha,
+    tree: tree.sha,
+    parents: [baseSha],
+  })
+
+  await octokit.git.updateRef({
+    owner: repo.owner,
+    repo: repo.repo,
+    ref: `heads/${branch}`,
+    sha: commit.sha,
   })
 }
 
@@ -186,24 +196,6 @@ async function listRemoteFilesRecursively(
 
   await walk(rootPath)
   return filer
-}
-
-async function slettFil(
-  repo: RepoConfig,
-  branch: string,
-  filePath: string,
-  sha: string,
-  message: string,
-): Promise<void> {
-  const octokit = getOctokitClient()
-  await octokit.repos.deleteFile({
-    owner: repo.owner,
-    repo: repo.repo,
-    path: filePath,
-    message,
-    branch,
-    sha,
-  })
 }
 
 async function opprettPR(
@@ -271,16 +263,21 @@ async function lagWebsitePr(
   const baseSha = await hentBaseSha(WEBSITE_REPO, BASE_BRANCH)
   await opprettBranch(WEBSITE_REPO, branchNavn, baseSha)
 
+  const reportFiles = reports.map((report) => ({
+    path: `${WEBSITE_TARGET_DIR}/${report.actorSlug}.md`,
+    content: report.content,
+  }))
+
+  await batchCommit(
+    WEBSITE_REPO,
+    branchNavn,
+    reportFiles,
+    [],
+    `feat: oppdater ISI-rapporter (${reports.length})`,
+  )
+
   for (const report of reports) {
-    const repoPath = `${WEBSITE_TARGET_DIR}/${report.actorSlug}.md`
-    await upsertFile(
-      WEBSITE_REPO,
-      branchNavn,
-      repoPath,
-      report.content,
-      `feat: oppdater ISI-rapport for ${report.actorSlug}`,
-    )
-    console.log(`[07_github-publish] Oppdaterte ${repoPath} i PR-branch.`)
+    console.log(`[07_github-publish] Oppdaterte ${WEBSITE_TARGET_DIR}/${report.actorSlug}.md i PR-branch.`)
   }
 
   const prUrl = await opprettPR(
@@ -344,30 +341,30 @@ async function syncRawData(
       continue
     }
 
+    const upsertFiles: Array<{ path: string; content: string }> = []
     for (const relativeFilePath of localRelativeFiles) {
       const absolutePath = path.join(localActorDir, relativeFilePath)
       const content = await fs.readFile(absolutePath, 'utf8')
       const remotePath = `${remoteRoot}/${relativeFilePath}`.replace(/\\/g, '/')
-
-      await upsertFile(
-        RAW_DATA_REPO,
-        BASE_BRANCH,
-        remotePath,
-        content,
-        `chore: sync ISI rådata for ${actorSlug}`,
-      )
-      console.log(`[07_github-publish] Synket ${remotePath} til main.`)
+      upsertFiles.push({ path: remotePath, content })
     }
 
-    for (const [remoteFilePath, remoteSha] of filerSomSkalSlettes) {
-      await slettFil(
+    const deletionPaths = filerSomSkalSlettes.map(([remoteFilePath]) => remoteFilePath)
+
+    if (upsertFiles.length > 0 || deletionPaths.length > 0) {
+      await batchCommit(
         RAW_DATA_REPO,
         BASE_BRANCH,
-        remoteFilePath,
-        remoteSha,
-        `chore: fjern foreldet ISI rådata for ${actorSlug}`,
+        upsertFiles,
+        deletionPaths,
+        `chore: sync ISI rådata for ${actorSlug}`,
       )
-      console.log(`[07_github-publish] Slettet foreldet fil ${remoteFilePath}.`)
+      for (const file of upsertFiles) {
+        console.log(`[07_github-publish] Synket ${file.path} til main.`)
+      }
+      for (const filePath of deletionPaths) {
+        console.log(`[07_github-publish] Slettet foreldet fil ${filePath}.`)
+      }
     }
   }
 }
