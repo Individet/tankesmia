@@ -52,8 +52,8 @@ async function readTextFile(filePath: string): Promise<string> {
 async function loadFromDisk<T>(filePath: string, stepName: string): Promise<T> {
   try {
     return await readJsonFile<T>(filePath)
-  } catch (err: any) {
-    if (err.code === 'ENOENT') {
+  } catch (err: unknown) {
+    if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
       throw new Error(
         `--from-step: Mangler forventet fil fra ${stepName}: ${filePath}\n` +
           `Kjør pipelinen fra et tidligere steg for å generere filen.`,

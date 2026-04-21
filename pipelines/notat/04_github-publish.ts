@@ -277,8 +277,8 @@ async function syncRawData(
   dryRun: boolean,
 ): Promise<void> {
   const localNotatDir = outputDir
-  const actorDirExists = await fileExists(localNotatDir)
-  if (!actorDirExists) {
+  const notatDirExists = await fileExists(localNotatDir)
+  if (!notatDirExists) {
     console.warn(
       `[04_github-publish] Hopper over rådata-sync: mappe finnes ikke (${localNotatDir}).`,
     )

@@ -206,7 +206,7 @@ export function buildWriterSystemPrompt(
         '- Alle faktuelt verifiserbare utsagn skal ha fotnotereferanse ([^N]).',
         '- Fotnotene samles på slutten av dokumentet.',
         '- `sources` i frontmatter er en komplett liste over alle kilder brukt i fotnotene.',
-        '- Slug: små bokstaver, æ→ae/ø→oe/å→aa, mellomrom→bindestrek, maks 50 tegn.',
+        '- Slug: små bokstaver, æ→ae/ø→o/å→a, mellomrom→bindestrek, maks 50 tegn.',
         '- Lengde: 2 000–6 000 ord.',
         '',
         '## Prosjektmanifest',
