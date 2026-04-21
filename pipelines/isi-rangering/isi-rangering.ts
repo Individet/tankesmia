@@ -213,6 +213,52 @@ export const DIMENSJONER = [
       datadeling, digital grenseovervåkning. Prioriter primærkilder.
     `,
   },
+  {
+    id: 'D7',
+    navn: 'Kapasitet og vilje til å beskytte individets suverenitet',
+    forankring:
+      'Locke (statens eneste legitime formål er å beskytte individets rettigheter), Bastiat (loven som vern, ikke plyndring), Nozick (minimalstaten), Rand (statens vold er kun legitimt som gjengjeldelse mot aggresjon)',
+    underdimensjoner: [
+      '7.1 Forsvar mot ekstern aggresjon',
+      '7.2 Politiets kapasitet og integritet',
+      '7.3 Straffesystemets beskyttende logikk',
+      '7.4 Håndhevelse av kontrakter og eiendomsrett',
+    ],
+    beskrivelser: [
+      'Argumenterer aktøren for et troverdig forsvar mot utenlandsk makt — og tar aktøren stilling til verneplikt vs. frivillig forsvar?',
+      'Prioriterer aktøren effektiv beskyttelse av person og eiendom, kombinert med sterk rettssikkerhet mot politiovergrep?',
+      'Er aktørens straffepolitikk orientert mot å beskytte potensielle ofre mot aggressorer — eller støtter aktøren straff for ikke-aggressive handlinger?',
+      'Støtter aktøren et fungerende rettsvesen som håndhever kontrakter og eiendomsrett effektivt i praksis?',
+    ],
+    søkestrategi: `
+      Søk etter: forsvarspolitikk, verneplikt, NATO, politireform, straffepolitikk,
+      kriminalitetsbekjempelse, rettshåndhevelse, kontraktshåndhevelse, eiendomsrett i praksis,
+      politiovergrep, rettssikkerhet. Prioriter primærkilder.
+    `,
+  },
+  {
+    id: 'D8',
+    navn: 'Barn, familie og statsmakt',
+    forankring:
+      'Locke (selveierskapet gjelder det modne individet — barn er på vei mot suverenitet), Nozick (forpliktelser som springer fra frivillige handlinger er bindende), Mill (individet må formes til å kunne utøve frihet), Rand (utdanningens eneste legitime formål er å lære barnet å tenke selvstendig)',
+    underdimensjoner: [
+      '8.1 Rett til privat og alternativ opplæring',
+      '8.2 Læreplankontroll og foreldres myndighet',
+      '8.3 Barnevern og statlig familieintervensjon',
+      '8.4 Statlig verdiformidling og ideologisk formasjon',
+    ],
+    beskrivelser: [
+      'Argumenterer aktøren for eller mot foreldres rett til å velge privat, religiøs eller hjemmebasert opplæring?',
+      'Støtter aktøren sentralisert statlig læreplankontroll, eller foreldres og lokalsamfunnets pedagogiske myndighet?',
+      'Argumenterer aktøren for lav eller høy terskel for statlig familieintervensjon — og krever aktøren sterk rettssikkerhet i barnevernssaker?',
+      'Fremmer aktøren statlig finansiert verdiformidling som nøytral og legitim — eller problematiserer aktøren statens rolle som ideologisk formasjonsinstitusjon?',
+    ],
+    søkestrategi: `
+      Søk etter: friskoler, privatskoler, hjemmeskole, læreplan, foreldrerett,
+      barnevern, omsorgsovertakelse, statlig utdanning, verdiformidling i skolen,
+      ideologisk indoktrinering, religiøs opplæring. Prioriter primærkilder.
+    `,
+  },
 ]
 
 // ─── Hjelpefunksjoner ─────────────────────────────────────────────────────────

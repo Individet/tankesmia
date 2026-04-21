@@ -116,6 +116,38 @@ export const DIMENSJONER: Dimensjon[] = [
       'Støtter aktøren individets rett til å eie og kontrollere egne data — eller fremmer aktøren statlig/korporativ datahøsting uten reelt samtykke?',
     ],
   },
+  {
+    id: 'D7',
+    navn: 'Kapasitet og vilje til å beskytte individets suverenitet',
+    underdimensjoner: [
+      '7.1 Forsvar mot ekstern aggresjon',
+      '7.2 Politiets kapasitet og integritet',
+      '7.3 Straffesystemets beskyttende logikk',
+      '7.4 Håndhevelse av kontrakter og eiendomsrett',
+    ],
+    beskrivelser: [
+      'Argumenterer aktøren for et troverdig forsvar mot utenlandsk makt — og tar aktøren stilling til verneplikt vs. frivillig forsvar?',
+      'Prioriterer aktøren effektiv beskyttelse av person og eiendom, kombinert med sterk rettssikkerhet mot politiovergrep?',
+      'Er aktørens straffepolitikk orientert mot å beskytte potensielle ofre mot aggressorer — eller støtter aktøren straff for ikke-aggressive handlinger?',
+      'Støtter aktøren et fungerende rettsvesen som håndhever kontrakter og eiendomsrett effektivt i praksis?',
+    ],
+  },
+  {
+    id: 'D8',
+    navn: 'Barn, familie og statsmakt',
+    underdimensjoner: [
+      '8.1 Rett til privat og alternativ opplæring',
+      '8.2 Læreplankontroll og foreldres myndighet',
+      '8.3 Barnevern og statlig familieintervensjon',
+      '8.4 Statlig verdiformidling og ideologisk formasjon',
+    ],
+    beskrivelser: [
+      'Argumenterer aktøren for eller mot foreldres rett til å velge privat, religiøs eller hjemmebasert opplæring?',
+      'Støtter aktøren sentralisert statlig læreplankontroll, eller foreldres og lokalsamfunnets pedagogiske myndighet?',
+      'Argumenterer aktøren for lav eller høy terskel for statlig familieintervensjon — og krever aktøren sterk rettssikkerhet i barnevernssaker?',
+      'Fremmer aktøren statlig finansiert verdiformidling som nøytral og legitim — eller problematiserer aktøren statens rolle som ideologisk formasjonsinstitusjon?',
+    ],
+  },
 ]
 
 function lagSystemPrompt(

@@ -94,11 +94,11 @@ ${ISI_RAMMEVERK}
 
 ## Instruksjoner
 
-Du mottar nå strukturerte forskningsfunn fra seks dimensjonsagenter. Bruk disse som eneste kildebase.
+Du mottar nå strukturerte forskningsfunn fra åtte dimensjonsagenter. Bruk disse som eneste kildebase.
 
-1. Sett indikatorverdi for alle 26 underdimensjoner (−2 til +2)
+1. Sett indikatorverdi for alle 32 underdimensjoner: bruk et tall fra −2 til +2 når funnene gir tilstrekkelig grunnlag, og bruk `null` ved datagap eller når dokumentasjonen er for svak til å underbygge en forsvarlig verdi
 2. Beregn per-dimensjon-summer og totalverdi
-3. Fyll ut template.md fullstendig — inkludert YAML frontmatter med alle felt
+3. Fyll ut template.md fullstendig — inkludert YAML frontmatter med alle felt; dersom en underdimensjon mangler tilstrekkelig grunnlag, skal feltet settes til `null` i stedet for å anslå en verdi
 4. Ingresssetningen skal være ubetinget og presis — ingen forbehold
 5. Konklusjonen skal si hva analysen faktisk viser
 

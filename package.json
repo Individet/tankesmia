@@ -7,11 +7,18 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "vitest",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "isi-rangering": "tsx pipelines/isi-rangering/run-isi-pipeline.ts",
+    "isi-ranking": "tsx pipelines/isi-ranking/run-isi-ranking-pipeline.ts",
+    "isi-ranking:dry": "tsx pipelines/isi-ranking/run-isi-ranking-pipeline.ts --dry-run",
+    "isi-ranking:from": "tsx pipelines/isi-ranking/run-isi-ranking-pipeline.ts",
     "auto-reportasje": "tsx pipelines/auto-reportasje/run-pipeline.ts",
     "isi-rangering:cold": "tsx pipelines/isi-rangering/run-isi-pipeline.ts --cold-run",
-    "search-pipeline:test": "tsx pipelines/search_pipeline_test.ts"
+    "search-pipeline:test": "tsx pipelines/search_pipeline_test.ts",
+    "getbatch": "tsx pipelines/isi-ranking/dump-batch.ts",
+    "replay-evidence": "tsx pipelines/isi-ranking/replay-evidence-batch.ts",
+    "replay-gap": "tsx pipelines/isi-ranking/replay-gap-batch.ts"
   },
   "repository": {
     "type": "git",
@@ -26,15 +33,15 @@
   },
   "homepage": "https://github.com/Individet/tankesmia#readme",
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.80.0",
-    "@google/genai": "^1.47.0",
+    "@anthropic-ai/sdk": "^0.88.0",
+    "@google/genai": "^1.49.0",
     "@octokit/rest": "^22.0.1",
     "gray-matter": "^4.0.3",
     "tsx": "^4.21.0",
-    "vitest": "^4.1.1"
+    "vitest": "^4.1.4"
   },
   "devDependencies": {
-    "@types/node": "^25.5.0"
+    "@types/node": "^25.6.0"
   },
   "prettier": {
     "semi": false,
