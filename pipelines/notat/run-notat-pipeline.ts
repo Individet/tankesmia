@@ -7,6 +7,26 @@ import {
   DEFAULT_OUTPUT_DIR,
 } from './constants.ts'
 import { runNotatPipeline } from './pipeline.ts'
+import type { NotatInput } from './types.ts'
+
+function readInputFromEnv(): NotatInput | null {
+  const tema = process.env.NOTAT_TEMA
+  const beskrivelse = process.env.NOTAT_BESKRIVELSE
+  if (!tema || !beskrivelse) return null
+
+  const input: NotatInput = { tema, beskrivelse }
+
+  const yearRaw = process.env.NOTAT_YEAR
+  if (yearRaw) {
+    const year = parseInt(yearRaw, 10)
+    if (Number.isFinite(year)) input.year = year
+  }
+
+  const number = process.env.NOTAT_NUMBER
+  if (number) input.number = number
+
+  return input
+}
 
 function parseArgs(argv: string[]) {
   const args = argv.slice(2)
@@ -39,8 +59,17 @@ function parseArgs(argv: string[]) {
 }
 
 async function main() {
+  const envInput = readInputFromEnv()
   const options = parseArgs(process.argv)
-  const summary = await runNotatPipeline(options)
+
+  if (envInput) {
+    console.log(`[notat] Bruker input fra miljøvariabler: ${envInput.tema}`)
+  }
+
+  const summary = await runNotatPipeline({
+    ...options,
+    ...(envInput ? { envInput } : {}),
+  })
   console.log('\n=== Pipeline ferdig ===')
   console.log(`Notat slug     : ${summary.notatSlug}`)
   console.log(`Steg fullført  : ${summary.stepsCompleted}`)

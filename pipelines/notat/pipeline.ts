@@ -112,7 +112,7 @@ export async function runNotatPipeline(
     assertAuth(authResult)
   }
 
-  const input = await readJsonFile<NotatInput>(inputFile)
+  const input = options.envInput ?? await readJsonFile<NotatInput>(inputFile)
   const manifest = await readTextFile(manifestFile)
   const manifestKort = await readTextFile(manifestKortFile)
   const manifestFull = await readTextFile(manifestFullFile)

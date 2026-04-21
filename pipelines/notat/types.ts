@@ -102,6 +102,8 @@ export interface RunNotatPipelineOptions {
   manifestKortFile: string
   manifestFullFile: string
   formatFile: string
+  /** Inline input supplied via env vars — overrides inputFile when set. */
+  envInput?: NotatInput
   dryRun?: boolean
   fromStep?: number
   transport?: BatchTransport

@@ -1,0 +1,49 @@
+name: Generer Individet-notat
+
+on:
+  workflow_dispatch:
+    inputs:
+      tema:
+        description: 'Temaet for notatet, f.eks. "Demoniseringen av individet på grunnskolen"'
+        required: true
+        type: string
+      beskrivelse:
+        description: 'Oppdragsbeskrivelse — hva notatet skal undersøke og argumentere for'
+        required: true
+        type: string
+      year:
+        description: 'Årstall for notatet (valgfritt — standard: inneværende år)'
+        required: false
+        type: string
+      number:
+        description: 'Notatnummer, f.eks. "06" (valgfritt)'
+        required: false
+        type: string
+
+jobs:
+  generer-notat:
+    name: Generer notat
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - run: npm ci
+
+      - name: Kjør notat-pipeline
+        run: npx tsx pipelines/notat/run-notat-pipeline.ts
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          NOTAT_TEMA: ${{ inputs.tema }}
+          NOTAT_BESKRIVELSE: ${{ inputs.beskrivelse }}
+          NOTAT_YEAR: ${{ inputs.year }}
+          NOTAT_NUMBER: ${{ inputs.number }}
