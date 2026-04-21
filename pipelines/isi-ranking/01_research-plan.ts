@@ -39,7 +39,7 @@ export function buildResearchPlanRequests(
 
 export function parseResearchPlanResults(
   requests: PipelineBatchRequest<ResearchPlanRequestMeta>[],
-  results: Map<string, ReturnType<typeof requireSucceededResult> extends never ? never : any>,
+  results: Map<string, any>,
 ): Map<string, ResearchPlan> {
   const plans = new Map<string, ResearchPlan>()
 
