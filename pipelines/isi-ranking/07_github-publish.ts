@@ -1,6 +1,7 @@
 import { promises as fs } from 'fs'
 import path from 'path'
 import { Octokit } from '@octokit/rest'
+import { createOctokit } from '../utils/octokit.ts'
 
 type RepoConfig = {
   owner: string
@@ -24,12 +25,8 @@ const RAW_DATA_TARGET_DIR = 'isi-ranking'
 let octokitClient: Octokit | undefined
 
 function getOctokitClient(): Octokit {
-  if (!process.env.GITHUB_TOKEN) {
-    throw new Error('GITHUB_TOKEN mangler. Sett variabelen før steg 07 kjøres.')
-  }
-
   if (!octokitClient) {
-    octokitClient = new Octokit({ auth: process.env.GITHUB_TOKEN })
+    octokitClient = createOctokit()
   }
 
   return octokitClient
@@ -374,16 +371,22 @@ export async function publishReports(
   outputDir: string,
   dryRun: boolean,
 ): Promise<{ prUrl?: string }> {
-  if (!process.env.GITHUB_TOKEN) {
+  if (!process.env.GITHUB_TOKEN && !process.env.GITHUB_APP_ID) {
     console.warn(
-      '[07_github-publish] GITHUB_TOKEN mangler — hopper over GitHub-publisering.',
+      '[07_github-publish] Ingen GitHub-autentisering funnet — hopper over GitHub-publisering.',
     )
     return {}
   }
 
-  const prUrl = await lagWebsitePr(actorSlugs, outputDir, dryRun)
-  await syncRawData(actorSlugs, outputDir, dryRun)
+  try {
+    const prUrl = await lagWebsitePr(actorSlugs, outputDir, dryRun)
+    await syncRawData(actorSlugs, outputDir, dryRun)
 
-  console.log('[07_github-publish] Ferdig med publisering til GitHub-repoer.')
-  return { prUrl }
+    console.log('[07_github-publish] Ferdig med publisering til GitHub-repoer.')
+    return { prUrl }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    console.warn(`[07_github-publish] Publisering feilet — hopper over: ${message}`)
+    return {}
+  }
 }

@@ -38,7 +38,9 @@ jobs:
         run: npx tsx pipelines/auto-reportasje/run-pipeline.ts
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          GITHUB_APP_ID: ${{ vars.APP_ID }}
+          GITHUB_APP_INSTALLATION_ID: ${{ vars.APP_INSTALLATION_ID }}
+          GITHUB_APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
           ARTIKKEL_TEMA: ${{ inputs.tema }}
           ARTIKKEL_SLUG: ${{ inputs.slug }}
           ARTIKKEL_PITCH: ${{ inputs.pitch }}

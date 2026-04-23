@@ -54,7 +54,9 @@ jobs:
         run: npx tsx pipelines/isi-ranking/run-isi-ranking-pipeline.ts
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          GITHUB_APP_ID: ${{ vars.APP_ID }}
+          GITHUB_APP_INSTALLATION_ID: ${{ vars.APP_INSTALLATION_ID }}
+          GITHUB_APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
           ISI_NAME: ${{ inputs.name }}
           ISI_TYPE: ${{ inputs.type }}
           ISI_PARTI: ${{ inputs.parti }}
