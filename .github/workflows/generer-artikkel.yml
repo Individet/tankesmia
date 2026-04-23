@@ -25,8 +25,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-        with:
-          token: ${{ secrets.GH_PAT }}
 
       - uses: actions/setup-node@v6
         with:
