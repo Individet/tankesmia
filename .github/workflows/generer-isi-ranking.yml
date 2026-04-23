@@ -15,7 +15,7 @@ on:
         description: 'Politisk parti, f.eks. "Høyre" (valgfritt)'
         required: false
         type: string
-      tilhørighet:
+      tilhorighet:
         description: 'Organisasjonstilhørighet (valgfritt)'
         required: false
         type: string
@@ -60,7 +60,7 @@ jobs:
           ISI_NAME: ${{ inputs.name }}
           ISI_TYPE: ${{ inputs.type }}
           ISI_PARTI: ${{ inputs.parti }}
-          ISI_TILHORIGHET: ${{ inputs.tilhørighet }}
+          ISI_TILHORIGHET: ${{ inputs.tilhorighet }}
           ISI_JURISDIKSJON: ${{ inputs.jurisdiksjon }}
           ISI_PERIODE: ${{ inputs.periode }}
           ISI_BESKRIVELSE: ${{ inputs.beskrivelse }}
