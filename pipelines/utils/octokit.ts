@@ -3,12 +3,25 @@ import { createAppAuth } from '@octokit/auth-app'
 
 export function createOctokit(): Octokit {
   if (process.env.GITHUB_APP_ID) {
+    const appId = Number(process.env.GITHUB_APP_ID)
+    const installationId = Number(process.env.GITHUB_APP_INSTALLATION_ID)
+    const privateKey = process.env.GITHUB_APP_PRIVATE_KEY
+
+    if (!privateKey) {
+      throw new Error('GITHUB_APP_PRIVATE_KEY mangler. Sett variabelen når GITHUB_APP_ID er satt.')
+    }
+    if (!process.env.GITHUB_APP_INSTALLATION_ID || Number.isNaN(installationId)) {
+      throw new Error(
+        'GITHUB_APP_INSTALLATION_ID mangler eller er ugyldig. Sett variabelen når GITHUB_APP_ID er satt.',
+      )
+    }
+
     return new Octokit({
       authStrategy: createAppAuth,
       auth: {
-        appId: Number(process.env.GITHUB_APP_ID),
-        privateKey: process.env.GITHUB_APP_PRIVATE_KEY!,
-        installationId: Number(process.env.GITHUB_APP_INSTALLATION_ID),
+        appId,
+        privateKey,
+        installationId,
       },
     })
   }
