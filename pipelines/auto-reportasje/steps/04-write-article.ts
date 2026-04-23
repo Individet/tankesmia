@@ -256,17 +256,19 @@ export async function writeArticle(
 
   const fm = parsed.data as Partial<ArticleFrontmatter>
 
-  if (!fm.slug) throw new Error('Artikkelen mangler frontmatter-felt: slug')
-  if (!fm.title) throw new Error('Artikkelen mangler frontmatter-felt: title')
-  if (!fm.date) throw new Error('Artikkelen mangler frontmatter-felt: date')
-  if (!fm.description)
-    throw new Error('Artikkelen mangler frontmatter-felt: description')
+  function resolveField(field: string, value: unknown, fallback: string): string {
+    if (value) return String(value)
+    console.warn(
+      `[04-write-article] Mangler frontmatter-felt ${field} — bruker fallback: "${fallback}"`,
+    )
+    return fallback
+  }
 
   const frontmatter: ArticleFrontmatter = {
-    title: String(fm.title),
-    date: String(fm.date),
-    slug: String(fm.slug),
-    description: String(fm.description),
+    title: resolveField('title', fm.title, topic.title),
+    date: resolveField('date', fm.date, today),
+    slug: resolveField('slug', fm.slug, topic.slug),
+    description: resolveField('description', fm.description, topic.pitch ?? topic.title),
     tags: Array.isArray(fm.tags) ? fm.tags.map(String) : [],
   }
 
