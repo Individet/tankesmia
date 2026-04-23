@@ -18,7 +18,9 @@
     "search-pipeline:test": "tsx pipelines/search_pipeline_test.ts",
     "getbatch": "tsx pipelines/isi-ranking/dump-batch.ts",
     "replay-evidence": "tsx pipelines/isi-ranking/replay-evidence-batch.ts",
-    "replay-gap": "tsx pipelines/isi-ranking/replay-gap-batch.ts"
+    "replay-gap": "tsx pipelines/isi-ranking/replay-gap-batch.ts",
+    "notat": "tsx pipelines/notat/run-notat-pipeline.ts",
+    "notat:dry": "tsx pipelines/notat/run-notat-pipeline.ts --dry-run"
   },
   "repository": {
     "type": "git",
