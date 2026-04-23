@@ -273,7 +273,7 @@ export async function runIsiRankingPipeline(
     assertAuth(authResult)
   }
 
-  const actors = await readJsonFile<ActorInput[]>(actorFile)
+  const actors = options.envActors ?? await readJsonFile<ActorInput[]>(actorFile)
   const framework = await readTextFile(frameworkFile)
   const template = await readTextFile(templateFile)
   const manifest = await readTextFile(manifestFile)

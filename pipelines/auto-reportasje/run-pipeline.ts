@@ -24,7 +24,26 @@ import {
   nextIncompleteStep,
 } from './pipeline-state.ts'
 
-// ─── Logging ────────────────────────────────────────────────────────────────
+// ─── Env-var topic injection ─────────────────────────────────────────────────
+
+function readTopicFromEnv(): Topic | null {
+  const tema = process.env.ARTIKKEL_TEMA
+  if (!tema) return null
+
+  const rawSlug = process.env.ARTIKKEL_SLUG?.trim()
+  const slug = rawSlug
+    ? rawSlug
+    : tema
+        .toLowerCase()
+        .replace(/[åæ]/g, 'a')
+        .replace(/ø/g, 'o')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+
+  const pitch = process.env.ARTIKKEL_PITCH?.trim() || undefined
+
+  return { slug, title: tema, ...(pitch ? { pitch } : {}) }
+}
 
 function log(step: string, message: string): void {
   console.log(`[${new Date().toISOString()}] ${step} ${message}`)
@@ -50,14 +69,23 @@ async function runStep(step: StepName, ctx: StepContext): Promise<void> {
 
   switch (step) {
     case 'choose-topic': {
-      log('STEG 1/6', 'Velger emne...')
-      const result: ChooseTopicResult = await chooseTopic()
-      ctx.topic = result.topic
-      await saveArtifact(ctx.state.runId, '01-choose-topic.json', {
-        topic: result.topic,
-        candidateLog: result.candidateLog,
-      })
-      log('STEG 1/6', `✓ Valgte emne: ${ctx.topic.slug} — "${ctx.topic.title}"`)
+      if (ctx.topic) {
+        // Topic injected from environment variables — skip automated selection
+        log('STEG 1/6', `Emne fra miljøvariabel: ${ctx.topic.slug} — "${ctx.topic.title}"`)
+        await saveArtifact(ctx.state.runId, '01-choose-topic.json', {
+          topic: ctx.topic,
+          candidateLog: [],
+        })
+      } else {
+        log('STEG 1/6', 'Velger emne...')
+        const result: ChooseTopicResult = await chooseTopic()
+        ctx.topic = result.topic
+        await saveArtifact(ctx.state.runId, '01-choose-topic.json', {
+          topic: result.topic,
+          candidateLog: result.candidateLog,
+        })
+        log('STEG 1/6', `✓ Valgte emne: ${ctx.topic.slug} — "${ctx.topic.title}"`)
+      }
       break
     }
 
@@ -260,6 +288,7 @@ function parseArgs(): { resume?: string } {
 
 async function runPipeline(): Promise<void> {
   const { resume } = parseArgs()
+  const envTopic = readTopicFromEnv()
   let state: PipelineState
   let ctx: Partial<StepContext>
 
@@ -275,7 +304,12 @@ async function runPipeline(): Promise<void> {
     state = createInitialState(runId, date)
     await saveState(state)
     ctx = { state, date }
-    log('PIPELINE', `🚀 Starter auto-reportasje pipeline (run: ${runId})`)
+    if (envTopic) {
+      ctx.topic = envTopic
+      log('PIPELINE', `🚀 Starter artikkel-pipeline for "${envTopic.title}" (run: ${runId})`)
+    } else {
+      log('PIPELINE', `🚀 Starter auto-reportasje pipeline (run: ${runId})`)
+    }
   }
 
   const startStep = nextIncompleteStep(state)
@@ -293,8 +327,10 @@ async function runPipeline(): Promise<void> {
     await runStep(step, ctx as StepContext)
   }
 
-  // ── Marker emne som brukt ─────────────────────────────────────────────────
-  await markTopicAsUsed(ctx.topic!.slug)
+  // ── Marker emne som brukt (kun for automatisk emnevalg) ───────────────────
+  if (!envTopic) {
+    await markTopicAsUsed(ctx.topic!.slug)
+  }
 
   // ── Skriv oppsummering ────────────────────────────────────────────────────
   const summary = {

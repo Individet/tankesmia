@@ -1,0 +1,64 @@
+name: Generer ISI-ranking
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Aktørens fulle navn, f.eks. "Erna Solberg"'
+        required: true
+        type: string
+      type:
+        description: 'Aktørtype, f.eks. "politician", "organization", "media"'
+        required: true
+        type: string
+      parti:
+        description: 'Politisk parti, f.eks. "Høyre" (valgfritt)'
+        required: false
+        type: string
+      tilhørighet:
+        description: 'Organisasjonstilhørighet (valgfritt)'
+        required: false
+        type: string
+      jurisdiksjon:
+        description: 'Jurisdiksjon/land, f.eks. "Norge" (valgfritt)'
+        required: false
+        type: string
+      periode:
+        description: 'Aktivitetsperiode, f.eks. "2013–2021" (valgfritt)'
+        required: false
+        type: string
+      beskrivelse:
+        description: 'Kort beskrivelse av aktøren (valgfritt)'
+        required: false
+        type: string
+
+jobs:
+  generer-isi-ranking:
+    name: Generer ISI-ranking
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - run: npm ci
+
+      - name: Kjør ISI-ranking-pipeline
+        run: npx tsx pipelines/isi-ranking/run-isi-ranking-pipeline.ts
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          ISI_NAME: ${{ inputs.name }}
+          ISI_TYPE: ${{ inputs.type }}
+          ISI_PARTI: ${{ inputs.parti }}
+          ISI_TILHORIGHET: ${{ inputs.tilhørighet }}
+          ISI_JURISDIKSJON: ${{ inputs.jurisdiksjon }}
+          ISI_PERIODE: ${{ inputs.periode }}
+          ISI_BESKRIVELSE: ${{ inputs.beskrivelse }}
