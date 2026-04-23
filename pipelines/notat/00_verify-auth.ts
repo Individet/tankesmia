@@ -1,5 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk'
-import { createOctokit } from '../utils/octokit.ts'
+import { verifyGitHub } from '../utils/octokit.ts'
 
 export interface AuthVerificationResult {
   anthropic: { ok: true; models: number } | { ok: false; error: string }
@@ -13,30 +13,6 @@ async function verifyAnthropic(
     const client = new Anthropic({ apiKey })
     const { data } = await client.models.list({ limit: 1 })
     return { ok: true, models: data.length }
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error)
-    return { ok: false, error: message }
-  }
-}
-
-async function verifyGitHub(): Promise<AuthVerificationResult['github']> {
-  try {
-    const octokit = createOctokit()
-    const rateLimitResponse = await octokit.rest.rateLimit.get()
-
-    let login: string
-    if (process.env.GITHUB_APP_ID) {
-      login = `app:${process.env.GITHUB_APP_ID}`
-    } else {
-      const userResponse = await octokit.rest.users.getAuthenticated()
-      login = userResponse.data.login
-    }
-
-    return {
-      ok: true,
-      login,
-      rateLimit: rateLimitResponse.data.rate.remaining,
-    }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
     return { ok: false, error: message }
