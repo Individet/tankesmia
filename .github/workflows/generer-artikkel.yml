@@ -1,0 +1,44 @@
+name: Generer Individet-artikkel
+
+on:
+  workflow_dispatch:
+    inputs:
+      tema:
+        description: 'Tittelen/emnet for artikkelen, f.eks. "Nikolai Vavilov og vitenskapens martyrer"'
+        required: true
+        type: string
+      slug:
+        description: 'URL-slug for artikkelen, f.eks. "nikolai-vavilov" (valgfritt — utledes fra tema)'
+        required: false
+        type: string
+      pitch:
+        description: 'Kort beskrivelse av vinkelen — hvorfor passer dette til Individet? (valgfritt)'
+        required: false
+        type: string
+
+jobs:
+  generer-artikkel:
+    name: Generer artikkel
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - run: npm ci
+
+      - name: Kjør artikkel-pipeline
+        run: npx tsx pipelines/auto-reportasje/run-pipeline.ts
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          ARTIKKEL_TEMA: ${{ inputs.tema }}
+          ARTIKKEL_SLUG: ${{ inputs.slug }}
+          ARTIKKEL_PITCH: ${{ inputs.pitch }}

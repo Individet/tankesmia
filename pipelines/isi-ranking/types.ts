@@ -243,6 +243,8 @@ export interface RunPipelineOptions {
   /** Hopp over steg 1–(N-1) og last allerede ferdig-kjørte artefakter fra disk. */
   fromStep?: number
   transport?: BatchTransport
+  /** Aktørdata injisert direkte (f.eks. fra miljøvariabler), overstyrer actorFile. */
+  envActors?: ActorInput[]
 }
 
 export interface RunPipelineSummary {

@@ -8,6 +8,32 @@ import {
   DEFAULT_TEMPLATE_FILE,
 } from './constants.ts'
 import { runIsiRankingPipeline } from './pipeline.ts'
+import type { ActorInput } from './types.ts'
+
+function readActorFromEnv(): ActorInput | null {
+  const name = process.env.ISI_NAME
+  const type = process.env.ISI_TYPE
+  if (!name || !type) return null
+
+  const actor: ActorInput = { name, type }
+
+  const parti = process.env.ISI_PARTI
+  if (parti) actor.parti = parti
+
+  const tilhørighet = process.env.ISI_TILHORIGHET
+  if (tilhørighet) actor.tilhørighet = tilhørighet
+
+  const jurisdiksjon = process.env.ISI_JURISDIKSJON
+  if (jurisdiksjon) actor.jurisdiksjon = jurisdiksjon
+
+  const periode = process.env.ISI_PERIODE
+  if (periode) actor.periode = periode
+
+  const beskrivelse = process.env.ISI_BESKRIVELSE
+  if (beskrivelse) actor.beskrivelse = beskrivelse
+
+  return actor
+}
 
 function parseArgs(argv: string[]) {
   const args = argv.slice(2)
@@ -45,7 +71,16 @@ function parseArgs(argv: string[]) {
 
 async function main() {
   const options = parseArgs(process.argv)
-  const summary = await runIsiRankingPipeline(options)
+  const envActor = readActorFromEnv()
+
+  if (envActor) {
+    console.log(`[isi-ranking] Bruker aktør fra miljøvariabler: ${envActor.name}`)
+  }
+
+  const summary = await runIsiRankingPipeline({
+    ...options,
+    ...(envActor ? { envActors: [envActor] } : {}),
+  })
   console.log('\n=== Pipeline ferdig ===')
   console.log(`Aktører behandlet : ${summary.actorCount}`)
   console.log(`Rapporter generert: ${summary.reportsGenerated}`)
