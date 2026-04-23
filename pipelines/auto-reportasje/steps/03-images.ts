@@ -29,8 +29,7 @@ interface WikiImageInfo {
 
 const WIKIMEDIA_API = 'https://commons.wikimedia.org/w/api.php'
 const MAX_INLINE_IMAGES = 3
-export const PLACEHOLDER_IMAGE_URL =
-  'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/480px-No_image_available.svg.png'
+export const PLACEHOLDER_IMAGE_URL = 'https://individet.no/logo.svg'
 
 export function createFallbackImages(title: string): ArticleImages {
   return {
