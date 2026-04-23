@@ -8,6 +8,7 @@ import { writeArticle } from './steps/04-write-article.ts'
 import type { Article } from './steps/04-write-article.ts'
 import { saveRawdata } from './steps/05-save-rawdata.ts'
 import { createPR } from './steps/06-create-pr.ts'
+import { assertGitHubAuth } from '../utils/octokit.ts'
 import {
   type PipelineState,
   type StepName,
@@ -291,6 +292,8 @@ async function runPipeline(): Promise<void> {
   const envTopic = readTopicFromEnv()
   let state: PipelineState
   let ctx: Partial<StepContext>
+
+  await assertGitHubAuth()
 
   if (resume) {
     log('PIPELINE', `🔄 Gjenopptar kjøring: ${resume}`)

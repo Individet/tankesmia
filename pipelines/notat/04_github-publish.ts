@@ -1,6 +1,7 @@
 import { promises as fs } from 'fs'
 import path from 'path'
 import { Octokit } from '@octokit/rest'
+import { createOctokit } from '../utils/octokit.ts'
 
 type RepoConfig = {
   owner: string
@@ -24,12 +25,8 @@ const RAW_DATA_TARGET_DIR = 'notat'
 let octokitClient: Octokit | undefined
 
 function getOctokitClient(): Octokit {
-  if (!process.env.GITHUB_TOKEN) {
-    throw new Error('GITHUB_TOKEN mangler. Sett variabelen før publisering kjøres.')
-  }
-
   if (!octokitClient) {
-    octokitClient = new Octokit({ auth: process.env.GITHUB_TOKEN })
+    octokitClient = createOctokit()
   }
 
   return octokitClient
@@ -352,9 +349,9 @@ export async function publishNotat(
   outputDir: string,
   dryRun: boolean,
 ): Promise<{ prUrl?: string }> {
-  if (!process.env.GITHUB_TOKEN) {
+  if (!process.env.GITHUB_TOKEN && !process.env.GITHUB_APP_ID) {
     console.warn(
-      '[04_github-publish] GITHUB_TOKEN mangler — hopper over GitHub-publisering.',
+      '[04_github-publish] Ingen GitHub-autentisering funnet — hopper over GitHub-publisering.',
     )
     return {}
   }

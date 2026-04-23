@@ -1,4 +1,4 @@
-import { Octokit } from '@octokit/rest'
+import { createOctokit } from '../../utils/octokit.ts'
 import type { Article } from './04-write-article.ts'
 import type { ArticleImages } from './03-images.ts'
 
@@ -14,11 +14,7 @@ export async function createPR(
   images: ArticleImages,
   date: string,
 ): Promise<string> {
-  if (!process.env.GITHUB_TOKEN) {
-    throw new Error('GITHUB_TOKEN mangler')
-  }
-
-  const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN })
+  const octokit = createOctokit()
 
   const { slug, title } = article.frontmatter
   const branchName = `article/${slug}`

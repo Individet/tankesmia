@@ -1,4 +1,4 @@
-import { Octokit } from '@octokit/rest'
+import { createOctokit } from '../../utils/octokit.ts'
 
 const RAW_DATA_REPO = {
   owner: 'Individet',
@@ -10,11 +10,7 @@ export async function saveRawdata(
   date: string,
   rawBatch: unknown,
 ): Promise<void> {
-  if (!process.env.GITHUB_TOKEN) {
-    throw new Error('GITHUB_TOKEN mangler')
-  }
-
-  const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN })
+  const octokit = createOctokit()
 
   const filename = `${date}-${slug}-research.json`
   const filePath = `raw/articles/${filename}`

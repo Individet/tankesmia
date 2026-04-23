@@ -42,7 +42,9 @@ jobs:
         run: npx tsx pipelines/notat/run-notat-pipeline.ts
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          GITHUB_APP_ID: ${{ vars.APP_ID }}
+          GITHUB_APP_INSTALLATION_ID: ${{ vars.APP_INSTALLATION_ID }}
+          GITHUB_APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
           NOTAT_TEMA: ${{ inputs.tema }}
           NOTAT_BESKRIVELSE: ${{ inputs.beskrivelse }}
           NOTAT_YEAR: ${{ inputs.year }}
