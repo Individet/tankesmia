@@ -2,7 +2,7 @@ import { chooseTopic, markTopicAsUsed } from './steps/01-choose-topic.ts'
 import type { Topic, ChooseTopicResult } from './steps/01-choose-topic.ts'
 import { doResearch } from './steps/02-research.ts'
 import type { ResearchResults } from './steps/02-research.ts'
-import { findArticleImages } from './steps/03-images.ts'
+import { findArticleImages, createFallbackImages } from './steps/03-images.ts'
 import type { ArticleImages } from './steps/03-images.ts'
 import { writeArticle } from './steps/04-write-article.ts'
 import type { Article } from './steps/04-write-article.ts'
@@ -108,13 +108,27 @@ async function runStep(step: StepName, ctx: StepContext): Promise<void> {
 
     case 'images': {
       log('STEG 3/6', 'Finner bilder fra Wikimedia Commons...')
-      const { images, searchLog } = await findArticleImages(ctx.topic)
-      ctx.images = images
-      await saveArtifact(ctx.state.runId, '03-images.json', {
-        images,
-        searchLog,
-      })
-      log('STEG 3/6', `✓ Bilder funnet: hero + ${images.inline.length} inline`)
+      try {
+        const { images, searchLog } = await findArticleImages(ctx.topic)
+        ctx.images = images
+        await saveArtifact(ctx.state.runId, '03-images.json', {
+          images,
+          searchLog,
+        })
+        log('STEG 3/6', `✓ Bilder funnet: hero + ${images.inline.length} inline`)
+      } catch (err) {
+        log(
+          'STEG 3/6',
+          `⚠ Bildesøk feilet: ${err instanceof Error ? err.message : String(err)} — fortsetter uten bilder`,
+        )
+        const fallbackImages = createFallbackImages(ctx.topic.title)
+        ctx.images = fallbackImages
+        await saveArtifact(ctx.state.runId, '03-images.json', {
+          images: fallbackImages,
+          searchLog: [],
+        })
+        log('STEG 3/6', '✓ Lagret tom bildeplassholder, fortsetter til steg 4')
+      }
       break
     }
 

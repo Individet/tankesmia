@@ -29,6 +29,40 @@ interface WikiImageInfo {
 
 const WIKIMEDIA_API = 'https://commons.wikimedia.org/w/api.php'
 const MAX_INLINE_IMAGES = 3
+export const PLACEHOLDER_IMAGE_URL =
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/480px-No_image_available.svg.png'
+
+export function createFallbackImages(title: string): ArticleImages {
+  return {
+    hero: {
+      id: 'hero',
+      url: PLACEHOLDER_IMAGE_URL,
+      license: 'Public Domain',
+      attribution: 'Wikimedia Commons',
+      alt: title,
+    },
+    inline: [],
+  }
+}
+
+const WIKIMEDIA_HEADERS = {
+  'User-Agent': 'Individet-Tankesmia/1.0 (https://individet.no)',
+  Accept: 'application/json',
+}
+
+async function wikimediaFetchJson(url: string): Promise<unknown> {
+  const res = await fetch(url, { headers: WIKIMEDIA_HEADERS })
+  if (!res.ok) {
+    throw new Error(`Wikimedia API feilet: ${res.status} ${res.statusText}`)
+  }
+  const contentType = res.headers.get('content-type') ?? ''
+  if (!contentType.includes('application/json')) {
+    throw new Error(
+      `Wikimedia API returnerte ikke JSON (content-type: ${contentType})`,
+    )
+  }
+  return res.json()
+}
 
 async function searchWikimedia(query: string): Promise<WikiSearchResult[]> {
   const params = new URLSearchParams({
@@ -41,8 +75,7 @@ async function searchWikimedia(query: string): Promise<WikiSearchResult[]> {
     origin: '*',
   })
 
-  const res = await fetch(`${WIKIMEDIA_API}?${params}`)
-  const data = (await res.json()) as {
+  const data = (await wikimediaFetchJson(`${WIKIMEDIA_API}?${params}`)) as {
     query?: { search?: WikiSearchResult[] }
   }
   return data.query?.search ?? []
@@ -58,8 +91,7 @@ async function fetchImageInfo(filename: string): Promise<WikiImageInfo | null> {
     origin: '*',
   })
 
-  const res = await fetch(`${WIKIMEDIA_API}?${params}`)
-  const data = (await res.json()) as {
+  const data = (await wikimediaFetchJson(`${WIKIMEDIA_API}?${params}`)) as {
     query?: {
       pages?: Record<string, { imageinfo?: WikiImageInfo[] }>
     }
@@ -255,13 +287,7 @@ export async function findArticleImages(topic: {
     console.warn(
       `[03-images] Ingen hero-bilde funnet for "${topic.title}", bruker placeholder`,
     )
-    hero = {
-      id: 'hero',
-      url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/480px-No_image_available.svg.png',
-      license: 'Public Domain',
-      attribution: 'Wikimedia Commons',
-      alt: topic.title,
-    }
+    hero = createFallbackImages(topic.title).hero
   }
 
   const inlineImages = await findImages(
