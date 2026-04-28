@@ -84,6 +84,7 @@ Du MÅ følge denne malen NØYAKTIG. Start med YAML frontmatter, deretter skriv 
 title: "Tittel på reportasjen"
 date: YYYY-MM-DD
 slug: emne-slug
+author: "${MODEL}"
 description: "Kort beskrivelse på 1-2 setninger for søkemotorer og forhåndsvisning"
 tags: [tag1, tag2, tag3]
 ---
