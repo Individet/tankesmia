@@ -31,7 +31,7 @@ export interface Article {
 }
 
 const MODEL = 'claude-opus-4-6'
-const MAX_TOKENS = 8000
+const MAX_TOKENS = 10000
 const MANIFEST_PATH = path.join('manifest-kondensert.md')
 
 function lagSystemPrompt(manifest: string): string {
