@@ -44,10 +44,10 @@ export function buildEvidenceHarvestRequests(
       },
       params: {
         model: MODELS.evidenceHarvest,
-        max_tokens: 8000,
+        max_tokens: 12000,
         output_config: EVIDENCE_ARTIFACT_OUTPUT_CONFIG,
         system: buildEvidenceHarvestSystemPrompt(framework, manifest),
-        tools: buildResearchTools(),
+        tools: buildResearchTools(15),
         messages: [
           {
             role: 'user',

@@ -168,7 +168,7 @@ export function buildFinalReportRequests(
       meta: { actorSlug: dossier.actorSlug },
       params: {
         model: MODELS.finalReport,
-        max_tokens: 16000,
+        max_tokens: 20000,
         system: buildFinalReportSystemPrompt(framework, manifest),
         messages: [
           {

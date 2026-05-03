@@ -45,7 +45,7 @@ export function buildGapResearchPlans(
     const targets = draft.subdimensions
       .filter((item) => item.score === null || item.conflictingEvidence)
       .sort((a, b) => gapPriority(a) - gapPriority(b))
-      .slice(0, 4)
+      .slice(0, 6)
       .map((item) => ({
         actorSlug: dossier.actorSlug,
         subdimensionId: item.subdimensionId,
@@ -97,7 +97,7 @@ export function buildGapResearchRequests(
         },
         params: {
           model: MODELS.gapResearch,
-          max_tokens: 8000,
+          max_tokens: 12000,
           output_config: EVIDENCE_ARTIFACT_OUTPUT_CONFIG,
           system: buildGapResearchSystemPrompt(framework, manifest),
           tools: buildResearchTools(),

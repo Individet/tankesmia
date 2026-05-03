@@ -28,6 +28,35 @@ function scoringRulesText(): string {
   ].join('\n')
 }
 
+function scoringAnchorsText(): string {
+  return [
+    '## Kalibreringsankere for scorer',
+    '',
+    '+2 — Sterkt, konsekvent og godt dokumentert forsvar for friheten over tid. Primærkilder (stemmegivning, egne skriverier, partiprogram). Knapt noen unntak. Aktøren er en aktiv forkjemper. Krever solide bevis.',
+    '+1 — Generelt frihetsvennlig posisjon med ett eller to unntak eller forbehold. Tydelig mønster, men ikke fullstendig konsekvent.',
+    ' 0 — Dokumentert blandet eller balansert profil: aktøren har støttet friheten i noen sammenhenger og begrenset den i andre, omtrent likt. Krever aktivt dokumentert balanse — ikke manglende data.',
+    '-1 — Generelt restriktiv, men med unntak eller modererende trekk. Har støttet begrensninger uten å drive dem aktivt, eller har myket opp historiske posisjoner.',
+    '-2 — Sterkt og konsekvent fremmet begrensninger på friheten. Har aktivt drevet frem restriksjoner, stemt for tvang eller vedtatt begrensende politikk. Krever solide bevis.',
+    'null — Utilstrekkelig datagrunnlag etter grundig søk. Bruk aldri null for å unngå en vanskelig vurdering.',
+    '',
+    'Krav til ±2: Disse ekstreme scorene krever solide primærbevis og ingen signifikante unntak. Tvilstilfeller rundes aldri opp/ned til ±2 — bruk ±1 ved usikkerhet.',
+  ].join('\n')
+}
+
+function consistencyCheckText(): string {
+  return [
+    '## Konsistenssjekk før du returnerer',
+    '',
+    'Gjennomgå alle 24 scores som helhet og kontroller:',
+    '1. Indre inkonsistens: Finnes det scores som motstrider hverandre uten forklaring (f.eks. +2 på ytringsfrihet og -2 på plattformregulering)?',
+    '2. Kalibrering: Er noen scores mer ekstreme enn evidensen tilsier? ±2 skal være sjeldent og alltid forankret i primærkilder.',
+    '3. null-misbruk: Er null-scorer genuint manglende data, eller har du unngått en vanskelig vurdering?',
+    '4. Begrunnelseskvalitet: Støtter rationale-teksten faktisk scoren — ikke bare gjenfortelling av evidensen?',
+    '',
+    'Dersom du oppdager inkonsistenser eller feilkalibrering, juster scorene og oppdater rationale før du returnerer.',
+  ].join('\n')
+}
+
 export function buildResearchTools(maxWebSearches = 10) {
   return [
     {
@@ -152,9 +181,12 @@ export function buildEvidenceHarvestUserPrompt(
   const planEntry = plan.subdimensions.find(
     (item) => item.subdimensionId === subdimension.id,
   )
+  const parentDimension = DIMENSIONS.find((d) => d.id === subdimension.dimensionId)
 
   return [
     `Aktør: ${dossier.actor.name}`,
+    `Dimensjon: ${parentDimension?.number}. ${parentDimension?.name}`,
+    parentDimension ? `Filosofisk grunnlag: ${parentDimension.philosophicalBasis}` : '',
     `Underdimensjon: ${subdimension.number} ${subdimension.name}`,
     `Beskrivelse: ${subdimension.description}`,
     `Prioritet: ${planEntry?.priority ?? 'medium'}`,
@@ -332,6 +364,8 @@ export function buildScoringSystemPrompt(framework: string, manifest: string) {
         'Tildel observed score for alle 24 underdimensjoner. Ikke regn ut totalscore — det gjøres automatisk av pipelinen.',
         scoringRulesText(),
         '',
+        scoringAnchorsText(),
+        '',
         '## Imputering ved datahull',
         '',
         'Når observed score er null (datahull), foreslå en svak imputationCandidate basert på partitilhørighet, organisasjonstilhørighet, mønster innen samme dimensjon eller samlet profil.',
@@ -380,6 +414,8 @@ export function buildScoringSystemPrompt(framework: string, manifest: string) {
         ),
         '',
         'Returner nøyaktig 24 subdimensions-poster, én per underdimensjon (d1_1 til d6_4).',
+        '',
+        consistencyCheckText(),
         '',
         '## Prosjektkontekst',
         '',

@@ -54,7 +54,7 @@ export function buildScoringDraftRequests(
       meta: { actorSlug: matrix.actorSlug },
       params: {
         model: MODELS.scoringDraft,
-        max_tokens: 12000,
+        max_tokens: 16000,
         output_config: SCORE_DRAFT_OUTPUT_CONFIG,
         system: buildScoringSystemPrompt(framework, manifest),
         messages: [
