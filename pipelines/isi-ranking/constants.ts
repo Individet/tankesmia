@@ -12,7 +12,7 @@ export const DEFAULT_TEMPLATE_FILE =
 export const MODELS = {
   researchPlan: 'claude-sonnet-4-6',
   evidenceHarvest: 'claude-sonnet-4-6',
-  evidenceReview: 'claude-haiku-4-5',
+  evidenceReview: 'claude-sonnet-4-6',
   scoringDraft: 'claude-sonnet-4-6',
   gapResearch: 'claude-sonnet-4-6',
   finalReport: 'claude-opus-4-6',
