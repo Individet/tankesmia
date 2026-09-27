@@ -1,0 +1,51 @@
+name: Oppdater skribentprofiler
+
+on:
+  schedule:
+    # Hver mandag 04:47 UTC. Kjøringen er billig når ingenting har skjedd.
+    - cron: '47 4 * * 1'
+  workflow_dispatch:
+    inputs:
+      only:
+        description: 'Kjør bare for disse id-ene, kommaseparert (valgfritt)'
+        required: false
+        type: string
+      force:
+        description: 'Tving full ny profil: "all" eller kommaseparerte id-er (valgfritt)'
+        required: false
+        type: string
+
+concurrency:
+  group: skribenter
+  cancel-in-progress: false
+
+jobs:
+  oppdater-skribenter:
+    name: Oppdater skribentprofiler
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - run: npm ci
+
+      - name: Kjør skribent-pipeline
+        run: npx tsx pipelines/skribenter/run-skribenter-pipeline.ts
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_APP_ID: ${{ vars.APP_ID }}
+          GITHUB_APP_INSTALLATION_ID: ${{ vars.APP_INSTALLATION_ID }}
+          GITHUB_APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
+          SKRIBENTER_ONLY: ${{ inputs.only }}
+          SKRIBENTER_FORCE: ${{ inputs.force }}
+
+      - name: Kjørerapport
+        if: always()
+        run: cat output/skribenter/run-report.md >> "$GITHUB_STEP_SUMMARY" || true
