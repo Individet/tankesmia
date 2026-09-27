@@ -1,0 +1,193 @@
+{
+  "$comment": "Register over frihetsorienterte norske skribenter. Pipelinen pipelines/skribenter bygger én profilside per skribent. 'id' er stabil og brukes som slug — endre den aldri etter første publisering. 'identification' hjelper modellen å skille personen fra navnebrødre. 'suggested: true' markerer forslag lagt til utover den opprinnelige lista — sett 'enabled: false' for å utelate en skribent. Endringer i en oppføring (utenom 'enabled') utløser en full ny profilering neste kjøring.",
+  "writers": [
+    {
+      "id": "mathilde-fasting",
+      "name": "Mathilde Fasting",
+      "description": "Siviløkonom og idéhistoriker, Civita",
+      "affiliations": ["Civita"],
+      "identification": "Siviløkonom (NHH) og idéhistoriker (UiO) med doktorgrad, knyttet til tankesmien Civita. Har skrevet bl.a. «Valgfrihet» og «Marked og moral» (med Ulla Fjeldstad).",
+      "links": [
+        { "type": "forfatterside", "url": "https://civita.no/person/mathilde-fasting/", "label": "Civita" },
+        { "type": "forfatterside", "url": "https://agendamagasin.no/forfatter/mathilde-fasting/", "label": "Agenda Magasin" },
+        { "type": "linkedin", "url": "https://www.linkedin.com/in/mathilde-fasting-54073348/" }
+      ],
+      "feeds": []
+    },
+    {
+      "id": "eirik-lokke",
+      "name": "Eirik Løkke",
+      "description": "Rådgiver i Civita og programleder for podkasten Liberal halvtime",
+      "affiliations": ["Civita"],
+      "identification": "Rådgiver i Civita, programleder for Civitas podkast «Liberal halvtime». Tidligere digital rådgiver i UNICEF Norge og kampanjerådgiver i Høyre.",
+      "links": [
+        { "type": "forfatterside", "url": "https://civita.no/person/eirik-lokke/", "label": "Civita" },
+        { "type": "x", "url": "https://twitter.com/eiriklokke" },
+        { "type": "facebook", "url": "https://www.facebook.com/elokke/" },
+        { "type": "instagram", "url": "https://www.instagram.com/eiriklokke/" }
+      ],
+      "feeds": []
+    },
+    {
+      "id": "kristian-skagen-ekeli",
+      "name": "Kristian Skagen Ekeli",
+      "description": "Professor i filosofi, Universitetet i Stavanger",
+      "affiliations": ["Universitetet i Stavanger"],
+      "identification": "Professor i filosofi ved Universitetet i Stavanger (politisk, rettslig og moralfilosofi). Arbeider med en libertariansk teori om retten til ytringsfrihet.",
+      "links": [
+        { "type": "akademisk", "url": "https://philpeople.org/profiles/kristian-skagen-ekeli", "label": "PhilPeople" },
+        { "type": "akademisk", "url": "https://scholar.google.no/citations?user=b65nMqMAAAAJ", "label": "Google Scholar" },
+        { "type": "akademisk", "url": "https://stavanger.academia.edu/KristianSkagenEkeli", "label": "Academia.edu" }
+      ],
+      "feeds": []
+    },
+    {
+      "id": "arne-eidshagen",
+      "name": "Arne Eidshagen",
+      "description": "Skribent i Liberaleren, Liberalistene",
+      "affiliations": ["Liberalistene", "Liberaleren"],
+      "identification": "Fullt navn Arne Werner Eidshagen. Styremedlem og kandidat for partiet Liberalistene, skriver jevnlig i nettavisen Liberaleren.",
+      "links": [
+        { "type": "forfatterside", "url": "https://www.liberaleren.no/author/eidshagen/", "label": "Liberaleren" }
+      ],
+      "feeds": ["https://www.liberaleren.no/author/eidshagen/feed/"]
+    },
+    {
+      "id": "john-e-willoch",
+      "name": "John E. Willoch",
+      "description": "Liberalist og talsperson for nullskatt",
+      "affiliations": ["Liberalistene"],
+      "identification": "Liberalist knyttet til Liberalistene (bl.a. Oslo-laget), kjent for visjonen om «nullskatt» (gjest i Liberaleren Podcast #214). Ikke å forveksle med statsminister Kåre Willoch.",
+      "links": [
+        { "type": "podcast", "url": "https://www.podpage.com/liberaleren-podcast/214-john-willoch-nullskatt-er-losningen-for/", "label": "Liberaleren Podcast #214" }
+      ],
+      "feeds": []
+    },
+    {
+      "id": "lars-peder-nordbakken",
+      "name": "Lars Peder Nordbakken",
+      "description": "Siviløkonom og forfatter, Civita",
+      "affiliations": ["Civita", "Mont Pelerin Society"],
+      "identification": "Siviløkonom (NHH), økonom i Civita, medlem av Mont Pelerin Society. Forfatter av «Liberale tenkere for vår tid» (2017) og «Muligheter for alle» (2006). Opptatt av ordoliberalisme.",
+      "links": [
+        { "type": "forfatterside", "url": "https://civita.no/person/lars-peder-nordbakken-3/", "label": "Civita" },
+        { "type": "forfatterside", "url": "https://www.liberaleren.no/emne/lars-peder-nordbakken/", "label": "Liberaleren" }
+      ],
+      "feeds": ["https://www.liberaleren.no/emne/lars-peder-nordbakken/feed/"]
+    },
+    {
+      "id": "helge-hiram-jensen",
+      "name": "Helge Hiram Jensen",
+      "description": "Kultursosiolog og statsviter, skribent",
+      "affiliations": ["Liberaleren"],
+      "identification": "Født 1976, norsk med libanesiske røtter. Kultursosiolog (UiO) og ph.d. i statsvitenskap (European University Institute), førsteamanuensis i metode. Skriver bl.a. i Liberaleren. Kalles også Helge Hiram Abdelnoor Jensen.",
+      "links": [
+        { "type": "linkedin", "url": "https://www.linkedin.com/in/helgehiram/" },
+        { "type": "akademisk", "url": "https://hil-no.academia.edu/HelgeHiramJensen", "label": "Academia.edu" }
+      ],
+      "feeds": []
+    },
+    {
+      "id": "jan-brogger",
+      "name": "Jan Brøgger",
+      "description": "Skribent",
+      "affiliations": ["Liberaleren"],
+      "identification": "Skriver om libertarianisme i Liberaleren. OBS: Identiteten må avklares — sosialantropologen Jan Christian Brøgger (1936–2006, professor ved NTNU) er den mest kjente med navnet, men Liberaleren-skribenten kan være en annen, nålevende Jan Brøgger (f.eks. @JanBrogger på X). Profilen skal gjelde personen som skriver frihetsorientert i Liberaleren.",
+      "links": [],
+      "feeds": []
+    },
+    {
+      "id": "sigmund-knag",
+      "name": "Sigmund Knag",
+      "description": "Filosof",
+      "affiliations": [],
+      "identification": "Norsk filosof, forfatter av «The Almighty, Impotent State» (om statsmakt og autoritet). Har publisert i Liberaleren.",
+      "links": [
+        { "type": "akademisk", "url": "https://www.academia.edu/5902479/The_Almighty_Impotent_State", "label": "The Almighty, Impotent State" }
+      ],
+      "feeds": []
+    },
+    {
+      "id": "vegard-martinsen",
+      "name": "Vegard Martinsen",
+      "description": "Objektivist, forfatter og skribent i Gullstandard",
+      "affiliations": ["Foreningen Gullstandard", "Stiftelsen Frihet", "Det Liberale Folkepartiet"],
+      "identification": "Objektivist og laissez-faire-kapitalist, sentral i Gullstandard og Stiftelsen Frihet. Forfatter av «Frihet, likhet, brorskap. Kapitalismen i teori og praksis». Podkasten «Vegard og Magnus».",
+      "links": [
+        { "type": "forfatterside", "url": "https://www.gullstandard.no/author/vegard-martinsen/", "label": "Gullstandard" },
+        { "type": "blogg", "url": "https://vegmar.wordpress.com/", "label": "Vegard Martinsens hjemmeside" },
+        { "type": "podcast", "url": "https://creators.spotify.com/pod/profile/gullstandard/", "label": "Vegard og Magnus" }
+      ],
+      "feeds": [
+        "https://www.gullstandard.no/author/vegard-martinsen/feed/",
+        "https://vegmar.wordpress.com/feed/"
+      ]
+    },
+    {
+      "id": "jan-arild-snoen",
+      "name": "Jan Arild Snoen",
+      "description": "Journalist og kommentator, Minerva og Civita",
+      "affiliations": ["Minerva", "Civita"],
+      "identification": "Journalist og kommentator, var med på å starte Civita (2004) og sitter i styret. Deltidsstilling i Minerva 2006–2021. Forfatter av «Trump-sjokket» (2020). Skriver på Substack (SNOEN).",
+      "links": [
+        { "type": "substack", "url": "https://snoen.substack.com/", "label": "SNOEN" },
+        { "type": "x", "url": "https://twitter.com/jasnoen" },
+        { "type": "forfatterside", "url": "https://www.amerikanskpolitikk.no/author/snoen/", "label": "AmerikanskPolitikk.no" }
+      ],
+      "feeds": ["https://snoen.substack.com/feed"]
+    },
+    {
+      "id": "bent-johan-mosfjell",
+      "name": "Bent Johan Mosfjell",
+      "description": "Lærer, grunnlegger av Liberaleren",
+      "affiliations": ["Liberaleren", "Libertariansk Forum"],
+      "identification": "Lærer, skribent og debattant. Startet nettavisen Liberaleren i 1999 og var redaktør de første årene. Startet Libertariansk Forum og redigerer tidsskriftet Nytt Paradigme.",
+      "suggested": true,
+      "links": [
+        { "type": "wikipedia", "url": "https://no.wikipedia.org/wiki/Bent_Johan_Mosfjell" },
+        { "type": "forfatterside", "url": "https://www.liberaleren.no/author/bent/", "label": "Liberaleren" }
+      ],
+      "feeds": ["https://www.liberaleren.no/author/bent/feed/"]
+    },
+    {
+      "id": "onar-am",
+      "name": "Onar Åm",
+      "description": "Forfatter og redaktør",
+      "affiliations": ["Det Liberale Folkepartiet"],
+      "identification": "Født 1973. Forfatter og skribent, beskriver seg som liberalist. Bøker bl.a. «Kampen for klimaet» og «Kunsten å krige». Har skrevet i Liberaleren og DLFs blad Liberal.",
+      "suggested": true,
+      "links": [
+        { "type": "wikipedia", "url": "https://no.wikipedia.org/wiki/Onar_%C3%85m" }
+      ],
+      "feeds": []
+    },
+    {
+      "id": "bard-larsen",
+      "name": "Bård Larsen",
+      "description": "Historiker, Civita",
+      "born": 1964,
+      "affiliations": ["Civita"],
+      "identification": "Født 1964, historiker i Civita. Forfatter av «Storebror dreper!», «Idealistene» og «Demokrati i trøbbel». Skriver om totalitarisme og det liberale demokratiets fiender.",
+      "suggested": true,
+      "links": [
+        { "type": "wikipedia", "url": "https://no.wikipedia.org/wiki/B%C3%A5rd_Larsen" },
+        { "type": "forfatterside", "url": "https://civita.no/person/bard-larsen/", "label": "Civita" }
+      ],
+      "feeds": []
+    },
+    {
+      "id": "trygve-j-b-hoff",
+      "name": "Trygve J. B. Hoff",
+      "description": "Økonom og redaktør av Farmand",
+      "born": 1895,
+      "died": 1982,
+      "affiliations": ["Farmand", "Mont Pelerin Society"],
+      "identification": "Norsk økonom og mangeårig redaktør og eier av ukebladet Farmand. Forfatter av «Økonomisk kalkulasjon i socialistiske samfund» (1938). Historisk skikkelse — profilen er et ettermæle, ikke en løpende nyhetssak.",
+      "suggested": true,
+      "links": [
+        { "type": "wikipedia", "url": "https://no.wikipedia.org/wiki/Trygve_J._B._Hoff" }
+      ],
+      "feeds": []
+    }
+  ]
+}
