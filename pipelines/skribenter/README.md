@@ -34,10 +34,39 @@ Tre utfall per skribent:
 - **full**: ny research og ny profiltekst.
 
 Hendelser som allerede er tatt hensyn til (`knownEvents`) utløser ikke noe på
-nytt. Tekster dedupliseres på normalisert URL, eller på tittel og år.
+nytt. Endringssjekken får lista over kjente hendelser, og funn datert mer enn
+30 dager før forrige sjekk ignoreres (`dropStaleFindings`), så en modell som
+gjenforteller gamle nyheter ikke utløser omskriving hver uke. Tekster
+dedupliseres på normalisert URL, eller på tittel og år.
 
-Feiler endringssjekk, research eller skriving for én skribent, beholdes den
-gamle profilen. Resten av kjøringen fortsetter.
+### Når noe feiler
+
+- Feiler endringssjekk, research eller skriving for én skribent, beholdes den
+  gamle profilen og resten av kjøringen fortsetter.
+- Var det bestemt en **full** oppdatering som feilet, lagres
+  `state.pendingFull` (grunner, hendelser, antall forsøk, siste feil). Neste
+  kjøring gjør da full oppdatering direkte. Hendelsen blir ikke glemt.
+- Svar som ikke kan brukes, avvises: `max_tokens`, `refusal`, `pause_turn`,
+  tomt svar, research uten navn/tagline, profiltekst under 120 ord.
+  URL-er som ikke er http(s), fjernes før de havner på siden.
+- Tilstanden lagres i r-data **før** publisering. Feiler PR-en, er
+  LLM-arbeidet likevel tatt vare på, og neste kjøring publiserer sidene.
+- Før noe koster penger, sjekkes registeret (gyldige id-er, ingen duplikater),
+  `only`/`force`-id-ene og tilgangen til både r-data og nettsiden.
+
+### Feilsøking
+
+- **Kjørerapporten** (`output/skribenter/run-report.md`, og jobbsammendraget i
+  Actions) viser status, PR-lenke, en tabell over problemer og beslutning med
+  begrunnelse per skribent.
+- **Feil** (❌) gjør Actions-jobben rød og vises som annotasjoner øverst i
+  kjøringen. **Advarsler** (⚠️: en feed som er nede, et bilde som ikke kunne
+  lastes ned) gjør den ikke rød.
+- **Hele `output/skribenter`** lastes opp som artefakt (30 dager):
+  modellsvar per skribent i `runs/{id}/`, rendrede sider i `site/`, tilstand i
+  `state/`.
+- `state.json` i r-data har `lastDecision` og eventuelt `pendingFull` per
+  skribent.
 
 ## Filer
 
@@ -45,6 +74,8 @@ gamle profilen. Resten av kjøringen fortsetter.
 |---|---|
 | `data/skribenter.json` | Registeret: id (= slug), navn, beskrivelse, `identification` (skiller personen fra navnebrødre), kjente lenker og feeds. |
 | `decide.ts` | All beslutningslogikk (rene funksjoner, godt testet). |
+| `pipeline.ts` | Orkestrering. `nextStoredWriter()` samler hvordan tilstanden endres etter en kjøring. |
+| `results.ts` | Avviser batch-svar som ikke kan brukes (refusal, pause_turn, tomt). |
 | `feeds.ts` | Minimal RSS/Atom-parser. |
 | `01_change-check.ts`, `02_research.ts`, `03_write-profile.ts` | De tre LLM-stegene (Message Batches, 50 % rabatt). |
 | `render.ts` | Setter sammen profilside og `_index.md` deterministisk. Bare brødteksten kommer fra LLM. |
@@ -63,10 +94,13 @@ Nettsiden får én samlet PR per kjøring:
 - `static/img/skribenter/{id}.{ext}`: nedlastede profilbilder
 
 Alle sider rendres hver gang, og filer som er identiske med `main` filtreres
-bort. Er ingenting endret, lages ingen PR. En side som mangler fordi en
-tidligere PR aldri ble flettet, kommer automatisk med i neste PR. Hver PR
-inneholder hele differansen mot `main`, så en eldre, uflettet
-skribent-PR kan lukkes når en ny kommer.
+bort. Er ingenting endret, lages ingen PR.
+
+Det er bare én skribent-PR om gangen. Branchen `skribenter/oppdatering`
+bygges på nytt fra `main` hver kjøring (force-push). Finnes det en åpen PR fra
+den, oppdateres den i stedet for at det lages en ny. En PR som ikke er flettet,
+blir altså bare mer komplett, og det hoper seg ikke opp PR-er. Ikke gjør
+manuelle endringer på den branchen, for de overskrives ved neste kjøring.
 
 ## Kjøring
 
@@ -98,8 +132,8 @@ endres etter publisering. Fyll ut `identification` godt, og legg til
 `feeds` hvis personen har RSS (Substack: `https://navn.substack.com/feed`,
 WordPress: `…/author/navn/feed/`). Feeds gjør at nye tekster fanges opp gratis.
 
-En endring i en eksisterende oppføring (utenom `enabled`) gir automatisk ny
-full profil ved neste kjøring. `"enabled": false` tar en skribent ut uten å
+En endring i en eksisterende oppføring (utenom `enabled` og `suggested`) gir
+automatisk ny full profil ved neste kjøring. `"enabled": false` tar en skribent ut uten å
 slette tilstanden.
 
 ## Testing

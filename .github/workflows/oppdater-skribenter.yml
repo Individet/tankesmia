@@ -36,6 +36,10 @@ jobs:
 
       - run: npm ci
 
+      # Billig vakt: ikke bruk penger på LLM-kall hvis logikken er brukket.
+      - name: Tester
+        run: npx vitest run pipelines/skribenter
+
       - name: Kjør skribent-pipeline
         run: npx tsx pipelines/skribenter/run-skribenter-pipeline.ts
         env:
@@ -48,4 +52,15 @@ jobs:
 
       - name: Kjørerapport
         if: always()
-        run: cat output/skribenter/run-report.md >> "$GITHUB_STEP_SUMMARY" || true
+        run: cat output/skribenter/run-report.md >> "$GITHUB_STEP_SUMMARY" || echo "Ingen kjørerapport — pipelinen stoppet før den kom så langt. Se loggen." >> "$GITHUB_STEP_SUMMARY"
+
+      # Alt pipelinen skrev (modellsvar, profiler, rendrede sider, rapport) —
+      # for feilsøking når noe ser rart ut.
+      - name: Last opp output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: skribenter-output-${{ github.run_id }}
+          path: output/skribenter
+          retention-days: 30
+          if-no-files-found: ignore
