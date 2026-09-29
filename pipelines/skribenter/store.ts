@@ -32,9 +32,16 @@ function deserialize(
 ): StoredWriter | null {
   const state = files.get(FILES.state)
   if (!state) return null
-  const imageName = Array.from(files.keys()).find((name) => /\.(jpe?g|png|webp|gif)$/i.test(name))
+  const parsedState: StoredWriter['state'] = JSON.parse(state.toString('utf8'))
+  // Eldre tilstand uten imagePath: bruk den første bildefila vi finner.
+  const imageName =
+    parsedState.imagePath === undefined
+      ? Array.from(files.keys()).find((name) => /\.(jpe?g|png|webp|gif)$/i.test(name))
+      : parsedState.imagePath && files.has(parsedState.imagePath)
+        ? parsedState.imagePath
+        : undefined
   return {
-    state: JSON.parse(state.toString('utf8')),
+    state: parsedState,
     profile: files.has(FILES.profile) ? JSON.parse(files.get(FILES.profile)!.toString('utf8')) : null,
     body: files.get(FILES.body)?.toString('utf8') ?? null,
     image: imageName ? { fileName: imageName, data: files.get(imageName)! } : null,
@@ -74,8 +81,9 @@ export class LocalWriterStore implements WriterStore {
 
 /**
  * Tilstanden lever i `Individet/r-data` under `skribenter/{id}/`, slik at den
- * overlever mellom CI-kjøringer. Skriver også lokalt for innsyn. Alle
- * endringer committes samlet i `flush()`.
+ * overlever mellom CI-kjøringer. r-data er alltid fasiten: en gammel lokal
+ * kopi skal aldri overskrive nyere tilstand fra CI. Lokal kopi skrives bare
+ * for innsyn. Alle endringer committes samlet i `flush()`.
  */
 export class GitHubWriterStore implements WriterStore {
   private readonly pending: PublishedFile[] = []
@@ -86,8 +94,6 @@ export class GitHubWriterStore implements WriterStore {
   }
 
   async load(writerId: string): Promise<StoredWriter | null> {
-    const local = await this.local.load(writerId)
-    if (local) return local
     const dir = `${RAW_DATA.rootDir}/${writerId}`
     const paths = await listRemoteDir(RAW_DATA_REPO, RAW_DATA.branch, dir)
     if (paths.length === 0) return null

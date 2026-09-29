@@ -1,10 +1,12 @@
-import { MODELS } from './constants.ts'
+import { MAX_TOKENS, MODELS } from './constants.ts'
 import {
   buildChangeCheckSystemPrompt,
   buildChangeCheckTools,
   buildChangeCheckUserPrompt,
 } from './prompts.ts'
+import { requireFinalText } from './results.ts'
 import { CHANGE_CHECK_OUTPUT_CONFIG } from './schemas.ts'
+import { isHttpUrl, sanitizeTexts } from './texts.ts'
 import type {
   ChangeCheckResult,
   PipelineBatchRequest,
@@ -13,13 +15,7 @@ import type {
   WriterRegistryEntry,
   WrittenText,
 } from './types.ts'
-import {
-  extractText,
-  makeCustomId,
-  nowIso,
-  parseJsonFromText,
-  requireSucceededResult,
-} from '../notat/utils.ts'
+import { makeCustomId, nowIso, parseJsonFromText } from '../notat/utils.ts'
 
 interface ChangeCheckMeta {
   writerId: string
@@ -35,7 +31,7 @@ export function buildChangeCheckRequest(
     meta: { writerId: entry.id },
     params: {
       model: MODELS.changeCheck,
-      max_tokens: 4000,
+      max_tokens: MAX_TOKENS.changeCheck,
       output_config: CHANGE_CHECK_OUTPUT_CONFIG,
       system: buildChangeCheckSystemPrompt(),
       tools: buildChangeCheckTools(),
@@ -65,15 +61,15 @@ export function parseChangeCheckResults(
   for (const request of requests) {
     const writerId = request.meta!.writerId
     try {
-      const succeeded = requireSucceededResult(results.get(request.custom_id), request.custom_id)
-      const parsed = parseJsonFromText<Omit<ChangeCheckResult, 'writerId' | 'checkedAt'>>(
-        extractText(succeeded),
-      )
+      const { text } = requireFinalText(results.get(request.custom_id), request.custom_id)
+      const parsed = parseJsonFromText<Omit<ChangeCheckResult, 'writerId' | 'checkedAt'>>(text)
       checks.set(writerId, {
         writerId,
         checkedAt: nowIso(),
-        newTexts: (parsed.newTexts ?? []).map((t) => ({ ...t, foundBy: 'change-check' as const })),
-        events: parsed.events ?? [],
+        newTexts: sanitizeTexts(parsed.newTexts ?? []).map((t) => ({ ...t, foundBy: 'change-check' as const })),
+        events: (parsed.events ?? [])
+          .filter((e) => e?.description?.trim())
+          .map(({ url, ...e }) => (isHttpUrl(url) ? { ...e, url } : e)),
         notes: parsed.notes ?? '',
       })
     } catch (error) {

@@ -115,9 +115,36 @@ export interface WriterState {
   knownTexts: WrittenText[]
   /** Hendelser som allerede er tatt hensyn til i gjeldende profiltekst. */
   knownEvents: NewsEvent[]
-  /** Lokal filsti eller URL til bildet som brukes på siden. */
-  imagePath?: string
+  /**
+   * Filnavnet til det nedlastede bildet i tilstandsmappa, eller null når det
+   * ikke finnes noe (da hotlinkes `profile.image.url`, om den finnes).
+   * Avgjør hvilken bildefil som hører til når det ligger flere i mappa.
+   */
+  imagePath?: string | null
   lastDecision?: WriterDecision
+  /**
+   * Satt når en full oppdatering var bestemt, men research eller skriving
+   * feilet. Neste kjøring gjør da full oppdatering uansett, med de samme
+   * hendelsene, i stedet for å glemme dem.
+   */
+  pendingFull?: PendingFull
+}
+
+export interface PendingFull {
+  reasons: string[]
+  events: NewsEvent[]
+  failedAttempts: number
+  lastError: string
+}
+
+export type ProblemSeverity = 'error' | 'warning'
+
+/** Noe som gikk galt i kjøringen. Samles opp og vises i rapporten og i CI. */
+export interface RunProblem {
+  severity: ProblemSeverity
+  writerId?: string
+  step: 'feed' | 'change-check' | 'research' | 'write' | 'image' | 'publish' | 'state'
+  message: string
 }
 
 export interface StoredWriter {
@@ -155,6 +182,7 @@ export interface Publisher {
   publish(
     files: PublishedFile[],
     summary: string,
+    problems?: string,
   ): Promise<{ prUrl?: string }>
 }
 
@@ -183,4 +211,5 @@ export interface RunSkribenterSummary {
   usage: BatchUsage
   changedFiles: string[]
   prUrl?: string
+  problems: RunProblem[]
 }

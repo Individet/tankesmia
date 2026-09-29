@@ -11,6 +11,18 @@ export const MODELS = {
 } as const
 
 /**
+ * Sonnet 5 og Opus 5 tenker adaptivt som standard, og tenkingen teller mot
+ * max_tokens. I Message Batches er det ingen HTTP-timeout, så vi gir god
+ * margin: et avkuttet svar (`max_tokens`) er ubrukelig og koster en hel
+ * research-runde.
+ */
+export const MAX_TOKENS = {
+  changeCheck: 8000,
+  research: 48000,
+  writeProfile: 32000,
+} as const
+
+/**
  * Øk denne når prompt, sidemal eller profilskjema endres på en måte som
  * gjør at alle eksisterende profiler bør skrives på nytt.
  */
@@ -25,6 +37,11 @@ export const THRESHOLDS = {
   minCheckIntervalDays: 5,
   /** Så mange nye tekster (uten andre hendelser) utløser full omskriving. */
   rewriteOnNewTexts: 5,
+  /**
+   * Funn fra endringssjekken datert mer enn så mange dager før forrige sjekk
+   * regnes som gamle og ignoreres (se `dropStaleFindings`).
+   */
+  staleFindingSlackDays: 30,
   /** Maks antall websøk per steg. */
   changeCheckSearches: 4,
   researchSearches: 15,

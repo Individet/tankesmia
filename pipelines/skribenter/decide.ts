@@ -38,6 +38,12 @@ export function triageWriter(
   if (!stored?.profile || !stored.body) return full(['ingen eksisterende profil'])
 
   const { state } = stored
+  if (state.pendingFull) {
+    return full([
+      `forrige fulle oppdatering feilet (${state.pendingFull.failedAttempts}. forsøk): ${state.pendingFull.lastError}`,
+      ...state.pendingFull.reasons,
+    ])
+  }
   if (state.registryHash !== registryHash(entry)) {
     return full(['registeroppføringen er endret'])
   }
@@ -138,6 +144,43 @@ export function unseenEvents(
 ): ChangeCheckResult['events'] {
   const knownKeys = new Set(known.map(eventKey))
   return events.filter((e) => !knownKeys.has(eventKey(e)))
+}
+
+/**
+ * Siste mulige dag for en dato som kan være delvis (YYYY, YYYY-MM eller
+ * YYYY-MM-DD). Returnerer undefined for datoer vi ikke forstår.
+ */
+function latestPossibleDay(date: string | undefined): string | undefined {
+  if (!date) return undefined
+  const trimmed = date.trim()
+  if (/^\d{4}$/.test(trimmed)) return `${trimmed}-12-31`
+  if (/^\d{4}-\d{2}$/.test(trimmed)) return `${trimmed}-31`
+  if (/^\d{4}-\d{2}-\d{2}/.test(trimmed)) return trimmed.slice(0, 10)
+  return undefined
+}
+
+/**
+ * Endringssjekken skal bare rapportere det som er NYTT, men en modell
+ * returnerer iblant gamle tekster eller hendelser (omformulert, så de ikke
+ * gjenkjennes som kjente). Alt som er datert tydelig før forrige sjekk (med
+ * litt slakk for sen indeksering) filtreres bort, så det ikke utløser
+ * unødvendige oppdateringer. Udaterte funn beholdes.
+ */
+export function dropStaleFindings<T extends { date?: string }>(
+  findings: T[],
+  sinceIso: string | undefined,
+  slackDays = THRESHOLDS.staleFindingSlackDays,
+): { kept: T[]; dropped: T[] } {
+  if (!sinceIso || Number.isNaN(Date.parse(sinceIso))) return { kept: findings, dropped: [] }
+  const cutoff = new Date(Date.parse(sinceIso) - slackDays * 86_400_000).toISOString().slice(0, 10)
+  const kept: T[] = []
+  const dropped: T[] = []
+  for (const finding of findings) {
+    const latest = latestPossibleDay(finding.date)
+    if (latest && latest < cutoff) dropped.push(finding)
+    else kept.push(finding)
+  }
+  return { kept, dropped }
 }
 
 function eventKey(event: { description: string; url?: string }): string {
