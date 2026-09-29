@@ -27,6 +27,30 @@ function normalizeTitle(title: string): string {
     .trim()
 }
 
+/**
+ * Bare vanlige nettadresser slipper gjennom til siden. Stopper
+ * `javascript:`-lenker, relative stier og annet rusk fra modellsvar.
+ */
+export function isHttpUrl(value: string | undefined | null): value is string {
+  if (!value) return false
+  try {
+    const url = new URL(value.trim())
+    return url.protocol === 'https:' || url.protocol === 'http:'
+  } catch {
+    return false
+  }
+}
+
+/** Fjerner ugyldige URL-er fra tekster fra modell eller feed (teksten beholdes). */
+export function sanitizeTexts(texts: WrittenText[]): WrittenText[] {
+  return texts
+    .filter((t) => typeof t?.title === 'string' && t.title.trim())
+    .map((t) => {
+      const { url, ...rest } = t
+      return isHttpUrl(url) ? { ...rest, url: url.trim(), title: t.title.trim() } : { ...rest, title: t.title.trim() }
+    })
+}
+
 /** Nøkkel for deduplisering: URL når den finnes, ellers tittel + år. */
 export function textKey(text: WrittenText): string {
   if (text.url) return `url:${normalizeUrl(text.url)}`
@@ -103,9 +127,13 @@ export function stableStringify(value: unknown): string {
   return JSON.stringify(value)
 }
 
-/** Hash av registeroppføringen — endres den, profileres skribenten på nytt. */
+/**
+ * Hash av registeroppføringen — endres den, profileres skribenten på nytt.
+ * `enabled` og `suggested` påvirker ikke profilen og er holdt utenfor, så å
+ * godkjenne et forslag eller skru en skribent av og på koster ingenting.
+ */
 export function registryHash(entry: WriterRegistryEntry): string {
-  const { enabled: _enabled, ...rest } = entry
+  const { enabled: _enabled, suggested: _suggested, ...rest } = entry
   return createHash('sha256').update(stableStringify(rest)).digest('hex').slice(0, 16)
 }
 

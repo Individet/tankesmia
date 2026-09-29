@@ -12,7 +12,7 @@ import {
   PROFILE_TEMPLATE_VERSION,
   WEBSITE,
 } from './constants.ts'
-import { resolveDecision, triageWriter, unseenEvents } from './decide.ts'
+import { dropStaleFindings, resolveDecision, triageWriter, unseenEvents } from './decide.ts'
 import { fetchWriterFeeds } from './feeds.ts'
 import { downloadImage } from './images.ts'
 import { renderIndexPage, renderWriterPage } from './render.ts'
@@ -25,6 +25,7 @@ import type {
   NewsEvent,
   PipelineBatchRequest,
   PublishedFile,
+  RunProblem,
   RunSkribenterOptions,
   RunSkribenterSummary,
   StoredWriter,
@@ -46,18 +47,20 @@ import {
 } from '../notat/utils.ts'
 
 /** Arbeidsminne for én skribent gjennom kjøringen. */
-interface WriterRun {
+export interface WriterRun {
   entry: WriterRegistryEntry
   stored: StoredWriter | null
   /** Tekster funnet denne kjøringen som ikke var kjent fra før. */
   pendingTexts: WrittenText[]
-  /** Hendelser fra endringssjekken som ikke var kjent fra før. */
+  /** Hendelser fra endringssjekken (eller en tidligere feilet kjøring) som ikke er tatt hensyn til. */
   pendingEvents: NewsEvent[]
   checked: boolean
   decision?: WriterDecision
   profile?: WriterProfile
   body?: string
   image?: StoredWriter['image']
+  /** Satt når en full oppdatering var bestemt, men research eller skriving feilet. */
+  fullFailure?: { reasons: string[]; error: string }
 }
 
 async function runBatch(
@@ -85,6 +88,10 @@ function emptyState(entry: WriterRegistryEntry): WriterState {
   }
 }
 
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error)
+}
+
 export async function runSkribenterPipeline(
   options: Partial<RunSkribenterOptions> = {},
 ): Promise<RunSkribenterSummary> {
@@ -96,6 +103,12 @@ export async function runSkribenterPipeline(
   const fetchFn: FetchLike = options.fetchFn ?? (fetch as unknown as FetchLike)
   const store = options.store ?? new LocalWriterStore(path.join(outputDir, 'state'))
   const transport = options.transport
+  const problems: RunProblem[] = []
+  const problem = (p: RunProblem) => {
+    problems.push(p)
+    const who = p.writerId ? ` ${p.writerId}` : ''
+    console.warn(`[${p.step}]${who}: ${p.message}`)
+  }
 
   if (!dryRun && !transport) {
     throw new Error('runSkribenterPipeline: transport mangler (kreves utenom --dry-run).')
@@ -109,10 +122,12 @@ export async function runSkribenterPipeline(
   ])
 
   const allEntries = registry.writers.filter((w) => w.enabled !== false)
-  const ids = new Set<string>()
-  for (const entry of allEntries) {
-    if (ids.has(entry.id)) throw new Error(`Duplisert skribent-id i registeret: ${entry.id}`)
-    ids.add(entry.id)
+  validateRegistry(allEntries)
+  const unknownIds = [...(options.only ?? []), ...(Array.isArray(options.force) ? options.force : [])].filter(
+    (id) => !allEntries.some((e) => e.id === id),
+  )
+  if (unknownIds.length > 0) {
+    throw new Error(`Ukjent eller deaktivert skribent-id i only/force: ${unknownIds.join(', ')}`)
   }
   const selected = options.only?.length
     ? allEntries.filter((w) => options.only!.includes(w.id))
@@ -131,10 +146,12 @@ export async function runSkribenterPipeline(
       let pendingTexts: WrittenText[] = []
       if (!options.skipFeeds && entry.feeds?.length) {
         const { items, errors } = await fetchWriterFeeds(entry.feeds, fetchFn)
-        for (const error of errors) console.warn(`[feed] ${entry.id}: ${error}`)
+        for (const error of errors) problem({ severity: 'warning', step: 'feed', writerId: entry.id, message: error })
         pendingTexts = mergeTexts(stored?.state.knownTexts ?? [], items, runAt).added
       }
-      return { entry, stored, pendingTexts, pendingEvents: [], checked: false }
+      // Hendelser fra en tidligere full oppdatering som feilet, tas med videre.
+      const pendingEvents = stored?.state.pendingFull?.events ?? []
+      return { entry, stored, pendingTexts, pendingEvents, checked: false }
     }),
   )
   for (const run of loaded) runs.set(run.entry.id, run)
@@ -168,7 +185,7 @@ export async function runSkribenterPipeline(
     }
     const researchRequests = Array.from(runs.values())
       .filter((run) => run.decision?.action === 'full')
-      .map((run) => buildResearchRequest(run.entry, run.stored, run.pendingTexts, [], manifestKort))
+      .map((run) => buildResearchRequest(run.entry, run.stored, run.pendingTexts, run.pendingEvents, manifestKort))
     if (researchRequests.length > 0) {
       await writeJsonFile(path.join(outputDir, 'dry-run', '02_research.requests.json'), researchRequests)
     }
@@ -176,9 +193,9 @@ export async function runSkribenterPipeline(
       run.decision = { writerId: run.entry.id, action: 'skip', reasons: ['dry-run: endringssjekk ikke kjørt'] }
     }
     const decisions = Array.from(runs.values()).map((r) => r.decision!)
-    await writeRunReport(outputDir, runAt, decisions, usage, [])
+    await writeRunReport(outputDir, { runAt, decisions, usage, files: [], problems })
     printDecisions(decisions)
-    return { decisions, usage, changedFiles: [] }
+    return { decisions, usage, changedFiles: [], problems }
   }
 
   if (checkRequests.length > 0) {
@@ -188,16 +205,33 @@ export async function runSkribenterPipeline(
     for (const run of needsCheck) {
       const check = checks.get(run.entry.id)
       if (!check) {
-        console.warn(`[steg 1] Endringssjekk feilet for ${run.entry.id}: ${failures.get(run.entry.id)}`)
+        problem({
+          severity: 'error',
+          step: 'change-check',
+          writerId: run.entry.id,
+          message: `${failures.get(run.entry.id)} — prøves igjen neste kjøring`,
+        })
         run.decision = resolveDecision(run.entry.id, run.pendingTexts, [], ['endringssjekk feilet'])
         continue
       }
       run.checked = true
       await writeJsonFile(path.join(outputDir, 'runs', run.entry.id, 'change-check.json'), check)
+
+      const since = run.stored?.state.lastCheckedAt ?? run.stored?.state.lastResearchedAt
+      const texts = dropStaleFindings(check.newTexts, since)
+      const events = dropStaleFindings(check.events, since)
+      const dropped = texts.dropped.length + events.dropped.length
+      if (dropped > 0) {
+        console.log(`[steg 1] ${run.entry.id}: ignorerte ${dropped} funn datert før forrige sjekk`)
+      }
+
       const known = [...(run.stored?.state.knownTexts ?? []), ...run.pendingTexts]
-      const added = mergeTexts(known, check.newTexts, runAt).added
+      const added = mergeTexts(known, texts.kept, runAt).added
       run.pendingTexts = [...run.pendingTexts, ...added]
-      run.pendingEvents = unseenEvents(check.events, run.stored?.state.knownEvents ?? [])
+      run.pendingEvents = [
+        ...run.pendingEvents,
+        ...unseenEvents(events.kept, [...(run.stored?.state.knownEvents ?? []), ...run.pendingEvents]),
+      ]
       run.decision = resolveDecision(run.entry.id, run.pendingTexts, run.pendingEvents)
     }
     console.log(`[steg 1] Ferdig (${formatUsage(u)})`)
@@ -222,8 +256,9 @@ export async function runSkribenterPipeline(
         await writeJsonFile(path.join(outputDir, 'runs', run.entry.id, 'profile.json'), profile)
         continue
       }
-      console.warn(`[steg 2] Research feilet for ${run.entry.id}: ${failures.get(run.entry.id)}`)
-      degrade(run, `research feilet: ${failures.get(run.entry.id)}`)
+      const error = `research feilet: ${failures.get(run.entry.id)}`
+      problem({ severity: 'error', step: 'research', writerId: run.entry.id, message: error })
+      degrade(run, error)
     }
     console.log(`[steg 2] Ferdig (${formatUsage(u)})`)
   }
@@ -244,10 +279,12 @@ export async function runSkribenterPipeline(
       const body = bodies.get(run.entry.id)
       if (body) {
         run.body = body
+        await writeMarkdownFile(path.join(outputDir, 'runs', run.entry.id, 'profiltekst.md'), body)
         continue
       }
-      console.warn(`[steg 3] Skriving feilet for ${run.entry.id}: ${failures.get(run.entry.id)}`)
-      degrade(run, `skriving feilet: ${failures.get(run.entry.id)}`)
+      const error = `skriving feilet: ${failures.get(run.entry.id)}`
+      problem({ severity: 'error', step: 'write', writerId: run.entry.id, message: error })
+      degrade(run, error)
     }
     console.log(`[steg 3] Ferdig (${formatUsage(u)})`)
   }
@@ -255,56 +292,37 @@ export async function runSkribenterPipeline(
   // -------------------------------------------------------------------------
   // Steg 4: Bilder + oppdater tilstand
   // -------------------------------------------------------------------------
-  const finalWriters: Array<{ entry: WriterRegistryEntry; stored: StoredWriter; changed: boolean }> = []
+  const finalWriters: Array<{ entry: WriterRegistryEntry; stored: StoredWriter }> = []
   for (const run of runs.values()) {
-    const action = run.decision!.action
-    const previous = run.stored
-    const fullDone = action === 'full' && run.profile && run.body
-
-    if (fullDone && run.profile!.image) {
-      const sameImage = previous?.profile?.image?.url === run.profile!.image.url && previous?.image
-      run.image = sameImage
-        ? previous!.image
-        : await downloadImage(run.entry.id, run.profile!.image, fetchFn)
+    if (run.profile && run.body) {
+      await resolveImage(run, fetchFn, (message) =>
+        problem({ severity: 'warning', step: 'image', writerId: run.entry.id, message }),
+      )
     }
-
-    const baseState = previous?.state ?? emptyState(run.entry)
-    const incoming = [...run.pendingTexts, ...(fullDone ? run.profile!.texts : [])]
-    const { merged } = mergeTexts(baseState.knownTexts, incoming, runAt)
-
-    const stored: StoredWriter = {
-      state: {
-        ...baseState,
-        knownTexts: merged,
-        knownEvents: [...baseState.knownEvents, ...run.pendingEvents],
-        lastCheckedAt: run.checked ? runAt : baseState.lastCheckedAt,
-        lastDecision: run.decision,
-        ...(fullDone
-          ? {
-              registryHash: registryHash(run.entry),
-              templateVersion: PROFILE_TEMPLATE_VERSION,
-              lastResearchedAt: runAt,
-              lastWrittenAt: runAt,
-              lastCheckedAt: runAt,
-            }
-          : {}),
-      },
-      profile: fullDone ? run.profile! : previous?.profile ?? null,
-      body: fullDone ? run.body! : previous?.body ?? null,
-      image: fullDone ? run.image ?? null : previous?.image ?? null,
-    }
-
-    const touched = action !== 'skip' || run.checked || run.pendingEvents.length > 0
+    const { stored, touched } = nextStoredWriter(run, runAt)
     if (touched) await store.save(run.entry.id, stored)
-    if (stored.body) finalWriters.push({ entry: run.entry, stored, changed: action !== 'skip' })
+    if (stored.body) finalWriters.push({ entry: run.entry, stored })
   }
 
   // Skribenter utenfor --only skal fortsatt med på oversiktssiden.
   if (options.only?.length) {
     for (const entry of allEntries.filter((e) => !runs.has(e.id))) {
       const stored = await store.load(entry.id)
-      if (stored?.body) finalWriters.push({ entry, stored, changed: false })
+      if (stored?.body) finalWriters.push({ entry, stored })
     }
+  }
+
+  // Tilstanden lagres FØR publisering: feiler publiseringen, er LLM-arbeidet
+  // likevel tatt vare på, og neste kjøring publiserer sidene (de rendres alltid
+  // på nytt fra tilstanden). Motsatt rekkefølge ville kastet bort arbeidet.
+  try {
+    await store.flush(`chore(skribenter): oppdater tilstand ${runAt.slice(0, 10)}`)
+  } catch (error) {
+    problem({
+      severity: 'error',
+      step: 'state',
+      message: `klarte ikke å lagre tilstand: ${errorMessage(error)} — neste kjøring gjør arbeidet på nytt`,
+    })
   }
 
   // -------------------------------------------------------------------------
@@ -333,31 +351,134 @@ export async function runSkribenterPipeline(
   console.log(`\n[totalt] ${formatUsage(usage)}`)
 
   let prUrl: string | undefined
-  const summaryText = decisionsMarkdown(decisions)
   if (options.publisher) {
     try {
-      prUrl = (await options.publisher.publish(files, summaryText)).prUrl
+      prUrl = (await options.publisher.publish(files, decisionsMarkdown(decisions), problemsMarkdown(problems))).prUrl
     } catch (error) {
-      console.warn(`[publish] Publisering feilet: ${error instanceof Error ? error.message : error}`)
+      problem({ severity: 'error', step: 'publish', message: `publisering feilet: ${errorMessage(error)}` })
     }
   }
 
-  await store.flush(`chore(skribenter): oppdater tilstand ${runAt.slice(0, 10)}`)
-  await writeRunReport(outputDir, runAt, decisions, usage, files.map((f) => f.path))
+  await writeRunReport(outputDir, { runAt, decisions, usage, files: files.map((f) => f.path), problems, prUrl })
 
-  return { decisions, usage, changedFiles: files.map((f) => f.path), prUrl }
+  return { decisions, usage, changedFiles: files.map((f) => f.path), prUrl, problems }
+}
+
+/** Stopper åpenbare feil i registeret før vi bruker penger på LLM-kall. */
+export function validateRegistry(entries: WriterRegistryEntry[]) {
+  const ids = new Set<string>()
+  const errors: string[] = []
+  for (const entry of entries) {
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(entry.id ?? '')) {
+      errors.push(`ugyldig id «${entry.id}» (bare a–z, 0–9 og bindestrek)`)
+    }
+    if (ids.has(entry.id)) errors.push(`duplisert id: ${entry.id}`)
+    ids.add(entry.id)
+    if (!entry.name?.trim()) errors.push(`${entry.id}: mangler name`)
+    if (!entry.description?.trim()) errors.push(`${entry.id}: mangler description`)
+    for (const feed of entry.feeds ?? []) {
+      if (!/^https?:\/\//.test(feed)) errors.push(`${entry.id}: ugyldig feed-URL ${feed}`)
+    }
+  }
+  if (errors.length > 0) throw new Error(`Feil i skribent-registeret:\n  • ${errors.join('\n  • ')}`)
+}
+
+/**
+ * Bildet lastes ned bare når det er nytt. Finner research ikke noe bilde denne
+ * gangen, beholdes det forrige, så siden ikke mister bildet sitt.
+ */
+async function resolveImage(run: WriterRun, fetchFn: FetchLike, warn: (message: string) => void) {
+  const previous = run.stored
+  const image = run.profile!.image
+  if (!image) {
+    if (previous?.profile?.image) {
+      run.profile = { ...run.profile!, image: previous.profile.image }
+      run.image = previous.image ?? null
+    }
+    return
+  }
+  if (previous?.profile?.image?.url === image.url && previous.image) {
+    run.image = previous.image
+    return
+  }
+  run.image = await downloadImage(run.entry.id, image, fetchFn)
+  if (!run.image) warn(`kunne ikke laste ned ${image.url} — siden lenker direkte til bildet`)
+}
+
+/**
+ * Regner ut ny tilstand for én skribent etter kjøringen. Samlet på ett sted
+ * fordi det er her inkrementaliteten avgjøres:
+ *
+ * - `full` fullført: alt oppdateres, hendelsene regnes som tatt hensyn til.
+ * - `full` feilet: profilen står, men hendelsene regnes IKKE som tatt hensyn
+ *   til; `pendingFull` gjør at neste kjøring prøver igjen.
+ * - `update-list`: bare tekstlista vokser.
+ * - `skip`: bare sjekk-tidspunktet oppdateres (hvis endringssjekken kjørte).
+ */
+export function nextStoredWriter(
+  run: WriterRun,
+  runAt: string,
+): { stored: StoredWriter; touched: boolean } {
+  const previous = run.stored
+  const base = previous?.state ?? emptyState(run.entry)
+  const fullDone = !!(run.profile && run.body)
+  const incoming = [...run.pendingTexts, ...(fullDone ? run.profile!.texts : [])]
+  const { merged } = mergeTexts(base.knownTexts, incoming, runAt)
+
+  const state: WriterState = {
+    ...base,
+    knownTexts: merged,
+    lastCheckedAt: run.checked ? runAt : base.lastCheckedAt,
+    lastDecision: run.decision,
+  }
+
+  if (fullDone) {
+    Object.assign(state, {
+      knownEvents: [...base.knownEvents, ...run.pendingEvents],
+      registryHash: registryHash(run.entry),
+      templateVersion: PROFILE_TEMPLATE_VERSION,
+      lastResearchedAt: runAt,
+      lastWrittenAt: runAt,
+      lastCheckedAt: runAt,
+    })
+    delete state.pendingFull
+  } else if (run.fullFailure) {
+    state.pendingFull = {
+      reasons: run.fullFailure.reasons,
+      events: run.pendingEvents,
+      failedAttempts: (base.pendingFull?.failedAttempts ?? 0) + 1,
+      lastError: run.fullFailure.error,
+    }
+  } else {
+    // Hendelser som ikke var vesentlige nok til omskriving er nå «sett».
+    state.knownEvents = [...base.knownEvents, ...run.pendingEvents]
+  }
+
+  const image = fullDone ? run.image ?? null : previous?.image ?? null
+  state.imagePath = image?.fileName ?? null
+  const stored: StoredWriter = {
+    state,
+    profile: fullDone ? run.profile! : previous?.profile ?? null,
+    body: fullDone ? run.body! : previous?.body ?? null,
+    image,
+  }
+  const touched =
+    run.decision?.action !== 'skip' || run.checked || run.pendingEvents.length > 0 || !!run.fullFailure
+  return { stored, touched }
 }
 
 /**
  * Når research eller skriving feiler: behold den gamle profilen, men ta med
- * nye tekster i lista om vi har noen.
+ * nye tekster i lista om vi har noen. Feilen huskes, så neste kjøring prøver
+ * full oppdatering igjen.
  */
-function degrade(run: WriterRun, reason: string) {
+function degrade(run: WriterRun, error: string) {
   const hasPrevious = !!run.stored?.body
+  run.fullFailure = { reasons: run.decision?.reasons ?? [], error }
   run.decision = {
     writerId: run.entry.id,
     action: hasPrevious && run.pendingTexts.length > 0 ? 'update-list' : 'skip',
-    reasons: [...(run.decision?.reasons ?? []), reason],
+    reasons: [...(run.decision?.reasons ?? []), `${error} — prøves igjen neste kjøring`],
   }
   run.profile = undefined
   run.body = undefined
@@ -370,26 +491,64 @@ function printDecisions(decisions: WriterDecision[]) {
   }
 }
 
+function escapeCell(value: string): string {
+  return value.replace(/\|/g, '\\|').replace(/\n/g, ' ')
+}
+
 function decisionsMarkdown(decisions: WriterDecision[]): string {
   const label = { full: '🔄 Ny profil', 'update-list': '➕ Nye tekster', skip: '— Uendret' }
   return [
     '| Skribent | Handling | Begrunnelse |',
     '|---|---|---|',
-    ...decisions.map((d) => `| ${d.writerId} | ${label[d.action]} | ${d.reasons.join('; ')} |`),
+    ...decisions.map((d) => `| ${d.writerId} | ${label[d.action]} | ${escapeCell(d.reasons.join('; '))} |`),
+  ].join('\n')
+}
+
+export function problemsMarkdown(problems: RunProblem[]): string {
+  if (problems.length === 0) return '✅ Ingen problemer.'
+  const icon = { error: '❌', warning: '⚠️' }
+  return [
+    '| | Steg | Skribent | Melding |',
+    '|---|---|---|---|',
+    ...problems.map(
+      (p) => `| ${icon[p.severity]} | ${p.step} | ${p.writerId ?? ''} | ${escapeCell(p.message)} |`,
+    ),
   ].join('\n')
 }
 
 async function writeRunReport(
   outputDir: string,
-  runAt: string,
-  decisions: WriterDecision[],
-  usage: BatchUsage,
-  files: string[],
+  report: {
+    runAt: string
+    decisions: WriterDecision[]
+    usage: BatchUsage
+    files: string[]
+    problems: RunProblem[]
+    prUrl?: string
+  },
 ) {
-  await writeJsonFile(path.join(outputDir, 'run-report.json'), { runAt, decisions, usage, files })
+  const errors = report.problems.filter((p) => p.severity === 'error').length
+  const warnings = report.problems.length - errors
+  const status =
+    errors > 0 ? `❌ ${errors} feil, ${warnings} advarsler` : warnings > 0 ? `⚠️ ${warnings} advarsler` : '✅ OK'
+  await writeJsonFile(path.join(outputDir, 'run-report.json'), report)
   await writeMarkdownFile(
     path.join(outputDir, 'run-report.md'),
-    [`# Skribent-kjøring ${runAt}`, '', decisionsMarkdown(decisions), '', `**Forbruk:** ${formatUsage(usage)}`].join('\n'),
+    [
+      `# Skribent-kjøring ${report.runAt}`,
+      '',
+      `**Status:** ${status}`,
+      report.prUrl ? `**Pull request:** ${report.prUrl}` : '**Pull request:** ingen (ingen endringer, eller publisering av)',
+      '',
+      '## Problemer',
+      '',
+      problemsMarkdown(report.problems),
+      '',
+      '## Beslutninger',
+      '',
+      decisionsMarkdown(report.decisions),
+      '',
+      `**Forbruk:** ${formatUsage(report.usage)}`,
+    ].join('\n'),
   )
 }
-

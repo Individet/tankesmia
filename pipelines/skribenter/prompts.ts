@@ -92,6 +92,8 @@ export function buildChangeCheckSystemPrompt() {
         '',
         '- Gjør få, målrettede søk. Vær sparsom.',
         '- Ikke list tekster som allerede står i lista over kjente tekster.',
+        '- Ikke rapporter hendelser som allerede står i lista over kjente hendelser, heller ikke omformulert.',
+        '- Alle hendelser skal ha dato (YYYY-MM-DD, YYYY-MM eller YYYY). Hendelser fra før datoen for forrige sjekk er ikke nye.',
         '- Ikke fabrikér URL-er, titler eller datoer. Tom liste er et helt gyldig svar.',
         '- Pass på navnebrødre — bruk identifikasjonen for å være sikker på at det er riktig person.',
         '- Datoer som YYYY-MM-DD når kjent, ellers YYYY-MM eller YYYY.',
@@ -119,6 +121,12 @@ export function buildChangeCheckUserPrompt(
     '',
     recentTexts(stored.state.knownTexts, 25),
     '',
+    stored.state.knownEvents.length > 0
+      ? `## Kjente hendelser (allerede tatt hensyn til — ikke rapporter disse på nytt)\n\n${stored.state.knownEvents
+          .slice(-25)
+          .map((e) => `- ${e.date ?? ''} ${e.description}`)
+          .join('\n')}\n`
+      : '',
     feedTexts.length > 0
       ? `## Allerede funnet via RSS denne kjøringen (ikke list disse på nytt)\n\n${feedTexts.map((t) => `- ${t.date ?? ''} ${t.title}`).join('\n')}\n`
       : '',

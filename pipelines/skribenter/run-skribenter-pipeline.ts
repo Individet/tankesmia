@@ -7,10 +7,19 @@ import {
   DEFAULT_REGISTRY_FILE,
   DEFAULT_STYLE_FILE,
 } from './constants.ts'
-import { WebsitePublisher, hasGitHubCredentials } from './github.ts'
+import { WebsitePublisher, hasGitHubCredentials, verifyRepoAccess } from './github.ts'
 import { runSkribenterPipeline } from './pipeline.ts'
 import { GitHubWriterStore, LocalWriterStore } from './store.ts'
 import path from 'path'
+import type { RunProblem } from './types.ts'
+
+/** I GitHub Actions blir disse til røde/gule annotasjoner øverst i kjøringen. */
+function annotate(problem: RunProblem) {
+  if (!process.env.GITHUB_ACTIONS) return
+  const title = `skribenter/${problem.step}${problem.writerId ? ` ${problem.writerId}` : ''}`
+  const message = problem.message.replace(/%/g, '%25').replace(/\r/g, '%0D').replace(/\n/g, '%0A')
+  console.log(`::${problem.severity} title=${title}::${message}`)
+}
 
 function listArg(args: string[], name: string, envName: string): string[] | undefined {
   const raw = args.find((a) => a.startsWith(`--${name}=`))?.split('=')[1] ?? process.env[envName]
@@ -33,6 +42,7 @@ async function main() {
   if (!dryRun) {
     if (useGitHub) {
       assertAuth(await verifyAuth())
+      await verifyRepoAccess()
     } else if (!process.env.ANTHROPIC_API_KEY) {
       throw new Error('ANTHROPIC_API_KEY mangler.')
     }
@@ -65,6 +75,13 @@ async function main() {
   console.log(`Nye tekster    : ${count('update-list')}`)
   console.log(`Uendret        : ${count('skip')}`)
   if (summary.prUrl) console.log(`Pull request   : ${summary.prUrl}`)
+
+  for (const problem of summary.problems) annotate(problem)
+  const errors = summary.problems.filter((p) => p.severity === 'error')
+  const warnings = summary.problems.length - errors.length
+  console.log(`Problemer      : ${errors.length} feil, ${warnings} advarsler (se run-report.md)`)
+  // Tilstand og sider er lagret, men en rød kjøring gjør at feil blir lagt merke til.
+  if (errors.length > 0) process.exitCode = 1
 }
 
 main().catch((error) => {

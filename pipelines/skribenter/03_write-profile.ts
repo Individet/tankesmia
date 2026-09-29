@@ -1,4 +1,5 @@
-import { MODELS } from './constants.ts'
+import { MAX_TOKENS, MODELS } from './constants.ts'
+import { requireFinalText } from './results.ts'
 import { buildWriterSystemPrompt, buildWriterUserPrompt } from './prompts.ts'
 import type {
   PipelineBatchRequest,
@@ -6,7 +7,7 @@ import type {
   WriterProfile,
   WriterRegistryEntry,
 } from './types.ts'
-import { extractText, makeCustomId, requireSucceededResult } from '../notat/utils.ts'
+import { makeCustomId } from '../notat/utils.ts'
 
 interface WriteMeta {
   writerId: string
@@ -24,7 +25,7 @@ export function buildWriteProfileRequest(
     meta: { writerId: entry.id },
     params: {
       model: MODELS.writeProfile,
-      max_tokens: 16000,
+      max_tokens: MAX_TOKENS.writeProfile,
       system: buildWriterSystemPrompt(manifest, styleGuide),
       messages: [
         {
@@ -46,6 +47,13 @@ export function cleanBody(markdown: string): string {
     .trim()
 }
 
+/** Kortere enn dette er nesten alltid et avbrutt eller mislykket svar. */
+const MIN_BODY_WORDS = 120
+
+function countWords(text: string): number {
+  return text.split(/\s+/).filter(Boolean).length
+}
+
 export function parseWriteProfileResults(
   requests: PipelineBatchRequest<WriteMeta>[],
   results: Map<string, PipelineBatchResult>,
@@ -56,9 +64,12 @@ export function parseWriteProfileResults(
   for (const request of requests) {
     const writerId = request.meta!.writerId
     try {
-      const succeeded = requireSucceededResult(results.get(request.custom_id), request.custom_id)
-      const body = cleanBody(extractText(succeeded))
-      if (!body) throw new Error('tomt svar')
+      const { text } = requireFinalText(results.get(request.custom_id), request.custom_id)
+      const body = cleanBody(text)
+      if (!body) throw new Error('tomt svar etter opprensking')
+      if (countWords(body) < MIN_BODY_WORDS) {
+        throw new Error(`profilteksten er bare ${countWords(body)} ord (minimum ${MIN_BODY_WORDS})`)
+      }
       bodies.set(writerId, body)
     } catch (error) {
       failures.set(writerId, error instanceof Error ? error.message : String(error))

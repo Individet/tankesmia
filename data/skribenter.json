@@ -1,5 +1,5 @@
 {
-  "$comment": "Register over frihetsorienterte norske skribenter. Pipelinen pipelines/skribenter bygger én profilside per skribent. 'id' er stabil og brukes som slug — endre den aldri etter første publisering. 'identification' hjelper modellen å skille personen fra navnebrødre. 'suggested: true' markerer forslag lagt til utover den opprinnelige lista — sett 'enabled: false' for å utelate en skribent. Endringer i en oppføring (utenom 'enabled') utløser en full ny profilering neste kjøring.",
+  "$comment": "Register over frihetsorienterte norske skribenter. Pipelinen pipelines/skribenter bygger én profilside per skribent. 'id' er stabil og brukes som slug — endre den aldri etter første publisering. 'identification' hjelper modellen å skille personen fra navnebrødre. 'suggested: true' markerer forslag lagt til utover den opprinnelige lista — sett 'enabled: false' for å utelate en skribent. Endringer i en oppføring (utenom 'enabled' og 'suggested') utløser en full ny profilering neste kjøring.",
   "writers": [
     {
       "id": "mathilde-fasting",

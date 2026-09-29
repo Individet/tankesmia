@@ -44,7 +44,7 @@ export const CHANGE_CHECK_OUTPUT_CONFIG: OutputConfig = {
               url: { type: 'string' },
               significance: { type: 'string', enum: ['high', 'low'] },
             },
-            required: ['description', 'significance'],
+            required: ['description', 'date', 'significance'],
             additionalProperties: false,
           },
         },
